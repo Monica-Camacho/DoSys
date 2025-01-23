@@ -1,11 +1,11 @@
 <?php
-// Configuración de la conexión a la base de datos en Hostinger
-$servername = "localhost"; // Servidor MySQL (en Hostinger es 'localhost')
-$username = "u312858745_DoSys"; // Usuario MySQL (ver en Hostinger)
-$password = "TU_CONTRASEÑA"; // Contraseña de la BD en Hostinger
+// Datos de conexión a MySQL en Hostinger
+$servername = "191.96.56.1"; // O usa la IP "191.96.56.1 o srv825.hstgr.io"
+$username = "u312858745_DoSysTeamcito"; // Usuario de MySQL en Hostinger
+$password = "Dosys1234"; // La contraseña que configuraste
 $database = "u312858745_dosis"; // Nombre de la base de datos
 
-// Crear conexión
+// Crear conexión con MySQL en Hostinger
 $conn = new mysqli($servername, $username, $password, $database);
 
 // Verificar conexión
@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $correo = $_POST["correo"];
     $tipo_donacion = $_POST["tipo_donacion"];
 
-    // Verificar si el correo ya está registrado
+    // Verificar si el correo ya existe
     $check_email = "SELECT id FROM pre_registros WHERE correo_electronico = ?";
     $stmt_check = $conn->prepare($check_email);
     $stmt_check->bind_param("s", $correo);
@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($stmt_check->num_rows > 0) {
         echo json_encode(["status" => "error", "message" => "Este correo ya está registrado."]);
     } else {
-        // Insertar los datos en la base de datos
+        // Insertar en la base de datos
         $sql = "INSERT INTO pre_registros (nombre, apellido_paterno, apellido_materno, correo_electronico, tipo_donacion) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("sssss", $nombre, $apellido_paterno, $apellido_materno, $correo, $tipo_donacion);
