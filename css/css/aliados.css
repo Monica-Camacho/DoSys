@@ -1,0 +1,50 @@
+#aliados-container img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+#aliados-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#aliados-container .col-md-3 {
+    flex: 1 1 22%;
+    max-width: 22%;
+    margin: 10px;
+}
+
+
+#empresas-container .emp-img {
+    max-width: 150px; /* Ajusta el tamaño máximo de las imágenes */
+    height: auto;
+    margin: 0 auto;
+    display: block;
+}
+
+#empresas-container h4 {
+    font-size: 1.25rem;
+    margin-top: 15px;
+    color: var(--bs-primary);
+}
+
+#empresas-container p {
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+.punto-clave-info {
+    margin-top: 20px;
+}
+
+.punto-clave-info h3 {
+    margin-bottom: 15px;
+    color: var(--bs-primary);
+}
+
+.punto-clave-info p {
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}

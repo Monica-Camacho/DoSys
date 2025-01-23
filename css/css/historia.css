@@ -1,0 +1,17 @@
+.history-content img {
+    border-radius: 10px;
+    max-width: 50%;
+    height: auto;
+    margin: 20px 0;
+}
+
+.history-content p, .history-content ul {
+    text-align: justify;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.history-content ul {
+    padding-left: 20px;
+    list-style-type: disc;
+}

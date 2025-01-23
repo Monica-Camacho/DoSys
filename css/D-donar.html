@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <title>DoSys - Sistema de Donaciones Altruistas</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="" name="keywords">
+        <meta content="" name="description">
+
+        <!-- Google Web Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
+
+        <!-- Icon Font Stylesheet -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+        <!-- Libraries Stylesheet -->
+        <link rel="stylesheet" href="lib/animate/animate.min.css"/>
+        <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+        <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+
+        <!-- Customized Bootstrap Stylesheet -->
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Template Stylesheet -->
+        <link href="css/style.css" rel="stylesheet">
+    </head>
+
+    <body>
+
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Cargando...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+        <!-- MENÚ PRINCIPAL -->
+        <!-- Navbar & Hero Start -->
+        <div class="container-fluid nav-bar px-0 px-lg-4 py-lg-0">
+            <div class="container">
+                <nav class="navbar navbar-expand-lg navbar-light"> 
+                    <a href="index.html" class="navbar-brand p-0">
+                        <img src="img/logos/DoSys_largo_fondoTransparente.png" alt="DoSys_Logo" >
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                        <span class="fa fa-bars"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarCollapse">
+                        <div class="navbar-nav mx-0 mx-lg-auto">
+                            
+                            <!-- Boton inicio -->
+                            <a href="index.html" class="nav-item nav-link active">Inicio</a>
+                            <!-- Fin Boton inicio-->
+
+                            <!-- Boton desplegable Donaciones  -->
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link" data-bs-toggle="dropdown">
+                                    <span class="dropdown-toggle">Donaciones</span>
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a href="D-donar_acercaDe.html" class="dropdown-item">Acerca De</a>
+                                    <a href="D-donar.html" class="dropdown-item">Quiero Donar</a>
+
+                                </div>
+                            </div>
+                            <!-- Fin Boton Donaciones -->
+
+                            <!-- Boton desplegable novedades  -->
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link" data-bs-toggle="dropdown">
+                                    <span class="dropdown-toggle">Novedades</span>
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a href="N-noticias.html" class="dropdown-item">Noticias</a>
+                                    <a href="N-beneficios.html" class="dropdown-item">Beneficios</a>
+                                    <a href="N-estadísticas.html" class="dropdown-item">Estadísticas</a>
+                                </div>
+                            </div>
+                            <!-- Fin Boton Novedades -->
+
+                            <!-- Boton desplegable Red de Apoyo  -->
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link" data-bs-toggle="dropdown">
+                                    <span class="dropdown-toggle">Red de Apoyo</span>
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a href="R-aliados.html" class="dropdown-item">Aliados</a>
+                                    <a href="R-empresas.html" class="dropdown-item">Empresas</a>
+                                    <a href="R-puntos_clave.html" class="dropdown-item">Puntos Clave</a>
+                                </div>
+                            </div>
+                            <!-- Fin Boton Red de Apoyo -->
+
+                            <!-- Boton desplegable Conócenos  -->
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link" data-bs-toggle="dropdown">
+                                    <span class="dropdown-toggle">Conócenos</span>
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a href="C-quienes_somos.html" class="dropdown-item">Quiénes somos</a>
+                                    <a href="C-historia.html" class="dropdown-item">Historia</a>
+                                </div>
+                            </div>
+                            <!-- Fin Boton Conócenos -->
+
+                            <!-- Seeción de Registrarse e Iniciar sesión  -->
+                            <div class="nav-item dropdown">
+                                <div class="nav-btn px-3">
+                                    <a class="btn btn-primary rounded-pill py-2 px-4 ms-3 flex-shrink-0" data-bs-toggle="modal" data-bs-target="#preRegistroModal">Pre-registrate</a>
+                                </div>
+                                </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!-- Navbar & Hero End -->
+
+        <!-- Sección de imagen principal con título y subtítulo -->
+<div class="container-fluid banner-donar text-white py-5 mb-5 fadeInLeft">
+    <div class="container py-5">
+        <div class="row justify-content-center ">
+            <div class="col-lg-8 text-center ">
+                <h4 class="text-white text-uppercase fw-bold mb-4">Una DoSys de esperanza, puede cambiar una vida.</h4>
+                <h1 class="display-1 text-white mb-4">¡Conoce acerca de nuestro sistema de Donación!</h1>
+                <p class="mb-5 fs-5">¡Con DoSys, iniciar un proceso de donación es muy facil!
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- SEGMENTOS DE DONACION-->
+    <div class="container-fluid feature bg-light py-5">
+        <div class="container py-5">
+            <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 100%; width: 100%;">
+                <h1 class="display-4 mb-4">Escoge un segmento de Donación</h1>
+                <p class="mb-0" style="text-align: center;">Tu donación puede marcar la diferencia en la vida de alguien. ¡Únete a nuestra causa y ayuda a salvar vidas con DoSys!</p>
+            </div>                               
+            <div class="row g-4 justify-content-center">
+                <div class="col-md-6 col-lg-4 col-xl-4 wow fadeInUp" data-wow-delay="0.2s">
+                    <div class="feature-item p-4 pt-0">
+                        <div class="feature-icon p-4 mb-4">
+                            <i class="fa fa-tint fa-3x"></i>
+                        </div>
+                        <h4 class="mb-4">Donación de Sangre</h4>
+                        <p class="mb-4" style="text-align: justify; height: 120px;">Inicia un proceso de donación o realiza una solicitud para recibirla.
+                        </p>
+                        <button class="btn btn-primary rounded-pill py-2 px-4" onclick="showDonationInfo('sangre')">Leer más</button>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4 col-xl-4 wow fadeInUp" data-wow-delay="0.4s">
+                    <div class="feature-item p-4 pt-0">
+                        <div class="feature-icon p-4 mb-4">
+                            <i class="fas fa-tablets fa-3x"></i>
+                        </div>
+                        <h4 class="mb-4">Medicamentos</h4>
+                        <p class="mb-4" style="text-align: justify; height: 120px;">Dona esos medicamentos sobrantes para aprovechar su uso y evitar su desperdicio.
+                        </p>
+                        <button class="btn btn-primary rounded-pill py-2 px-4" onclick="showDonationInfo('medicamentos')">Leer más</button>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4 col-xl-4 wow fadeInUp" data-wow-delay="0.6s">
+                    <div class="feature-item p-4 pt-0">
+                        <div class="feature-icon p-4 mb-4">
+                            <i class="fas fa-syringe fa-3x"></i>
+                        </div>
+                        <h4 class="mb-4">Dispositivos de Asistencia</h4>
+                        <p class="mb-4" style="text-align: justify; height: 120px;">Le conseguimos un nuevo uso a todos los equipos de asistencia que tienes en casa, como muletas, sillas de ruedas, medidores de glucosa y más.
+                        </p>
+                        <button class="btn btn-primary rounded-pill py-2 px-4" onclick="showDonationInfo('asistencia')">Leer más</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- FIN DE SEGMENTOS DE DONACIÓN -->
+
+    <!-- Información de donación -->
+    <div id="donation-info" class="container-fluid feature bg-light py-5 d-none">
+        <div class="container py-5">
+            <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 100%; width: 100%;">
+                <h1 class="display-4 mb-4" id="donation-title"></h1>
+                <p class="mb-0" id="donation-description" style="text-align: justify;"></p>
+            </div>                               
+            <div class="row g-4 justify-content-center" id="donation-details">
+                <!-- Detalles se insertarán aquí -->
+            </div>
+            <div class="text-center">
+                <button class="btn btn-primary rounded-pill py-2 px-4" onclick="hideDonationInfo()">Regresar</button>
+            </div>
+        </div>
+    </div>
+    <!-- FIN DE INFORMACIÓN DE DONACIÓN -->
+
+
+        <!-- PROCESO DE DONACIÓN -->
+        <div class="container-fluid bg-light about pb-5">
+            <div class="container pb-5">
+                <div class="row justify-content-center">
+                    <div class="col-xl-10 col-lg-10 wow fadeInLeft" data-wow-delay="0.2s">
+                        <div class="about-item-content bg-white rounded p-5 h-100">
+                            <h4 class="text-primary text-center">Cómo Funciona DoSys</h4>
+                            <h1 class="display-4 mb-4 text-center">Proceso para Donar o Recibir Donaciones</h1>
+                            <ol>
+                                <li><strong>Accede a DoSys desde cualquier dispositivo:</strong>
+                                    <div class="d-flex align-items-start mb-3">
+                                        <img src="img/donacion/proceso-1.png" class="img-fluid me-3" alt="Accede a DoSys" style="width: 80px;">
+                                        <p style="text-align: justify;">Ingresa a la plataforma DoSys utilizando tu computadora, tablet o smartphone a través del navegador web.</p>
+                                    </div>
+                                </li>
+                                <li><strong>Crea una cuenta o inicia sesión:</strong>
+                                    <div class="d-flex align-items-start mb-3">
+                                        <img src="img/donacion/proceso-2.png" class="img-fluid me-3" alt="Crea una cuenta o inicia sesión" style="width: 80px;">
+                                        <p style="text-align: justify;">Si eres nuevo en DoSys, regístrate creando una cuenta con tu información básica. Si ya tienes una cuenta, inicia sesión utilizando tus credenciales.</p>
+                                    </div>
+                                </li>
+                                <li><strong>Selecciona uno de los tres segmentos de donación:</strong>
+                                    <div class="d-flex align-items-start mb-3">
+                                        <img src="img/donacion/proceso-3.png" class="img-fluid me-3" alt="Selecciona uno de los tres segmentos de donación" style="width: 80px;">
+                                        <p style="text-align: justify;">Una vez dentro, elige el tipo de donación que deseas realizar o recibir entre las opciones disponibles: Donación de Sangre, Medicamentos, o Dispositivos de Asistencia.</p>
+                                    </div>
+                                </li>
+                                <li><strong>Solicita o ofrece una donación:</strong>
+                                    <div class="d-flex align-items-start mb-3">
+                                        <img src="img/donacion/proceso-4.png" class="img-fluid me-3" alt="Solicita o ofrece una donación" style="width: 80px;">
+                                        <p style="text-align: justify;">Para ofrecer una donación, selecciona la opción correspondiente y completa el formulario con los detalles de lo que deseas donar. Para recibir una donación, selecciona la opción correspondiente y completa el formulario con los detalles de lo que necesitas.</p>
+                                    </div>
+                                </li>
+                                <li><strong>Visita la asociación o banco de sangre más cercano:</strong>
+                                    <div class="d-flex align-items-start mb-3">
+                                        <img src="img/donacion/proceso-5.png" class="img-fluid me-3" alt="Visita la asociación o banco de sangre más cercano" style="width: 80px;">
+                                        <p style="text-align: justify;">Una vez que hayas completado el formulario, dirígete a la asociación altruista o banco de sangre más cercano, según la información proporcionada por DoSys.</p>
+                                    </div>
+                                </li>
+                                <li><strong>Las asociaciones altruistas o bancos de sangre se encargan del resto:</strong>
+                                    <div class="d-flex align-items-start mb-3">
+                                        <img src="img/donacion/proceso-6.png" class="img-fluid me-3" alt="Las asociaciones altruistas o bancos de sangre se encargan del resto" style="width: 80px;">
+                                        <p style="text-align: justify;">Las asociaciones altruistas o bancos de sangre se ocuparán de procesar tu donación o solicitud, asegurándose de que llegue a quienes más lo necesitan de manera eficiente y segura.</p>
+                                    </div>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Fin del Proceso de Donación -->
+
+        <!-- Contacto 
+        <div class="container-fluid contact bg-light py-5">
+            <div class="container py-5">
+                <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px;">
+                    <img src="img/logos/DoSys_largo_fondoTransparente.png" alt="DoSys Logo" class="img-fluid mb-4">
+                    <h2 class="mt-3">Solicitud de donación</h2>
+                </div>
+                <div class="text-center mb-4 wow fadeInUp" data-wow-delay="0.2s">
+                    <button class="btn btn-option mb-3" onclick="showForm('medicamentos')"><i class="fas fa-tablets"></i> Medicamentos</button>
+                    <button class="btn btn-option mb-3" onclick="showForm('sangre')"><i class="fa fa-tint"></i> Sangre</button>
+                    <button class="btn btn-option mb-3" onclick="showForm('asistencia')"><i class="fas fa-syringe"></i> Elementos de Asistencia</button>
+                </div>
+                <div id="form-container" class="row g-5">
+                    
+                </div>
+            </div>
+        </div> -->
+
+
+        <!-- PIE DE PÁGINA NO TOCAR -->       
+        <!-- Footer Start -->
+        <div class="container-fluid bg-dark text-light footer py-5 wow fadeIn" data-wow-delay="0.2s">
+            <div class="container py-5">
+                <div class="row g-5">
+                    <!-- About Section -->
+                    <div class="col-xl-3 col-lg-3 col-md-6">
+                        <div class="footer-item">
+                            <a href="index.html" class="footer-logo p-0">
+                                <img src="img/logos/Dosys_largo_colorBlanco.png" alt="DoSys_Logo_Blanco">
+                            </a>
+                            <p class="text-white mb-4" style="text-align: justify;">DoSys es una herramienta universal que facilita y optimiza las donaciones altruistas, conectando a donadores, beneficiarios y organizaciones de salud en México.</p>
+                        </div>
+                    </div>
+                    <!-- Quick Links -->
+                    <div class="col-xl-3 col-lg-3 col-md-6">
+                        <div class="footer-item">
+                            <h4 class="text-white mb-4">Enlaces Rápidos</h4>
+                            <a href="#"><i class="fas fa-angle-right me-2"></i> Inicio</a>
+                            <a href="#"><i class="fas fa-angle-right me-2"></i> Donaciones</a>
+                            <a href="#"><i class="fas fa-angle-right me-2"></i> Novedades</a>
+                            <a href="#"><i class="fas fa-angle-right me-2"></i> Red de Apoyo</a>
+                            <a href="#"><i class="fas fa-angle-right me-2"></i> Conócenos</a>
+                        </div>
+                    </div>
+                    <!-- Legal Information -->
+                    <div class="col-xl-3 col-lg-3 col-md-6">
+                        <div class="footer-item">
+                            <h4 class="text-white mb-4">Información Legal</h4>
+                            <a href="#"><i class="fas fa-angle-right me-2"></i> Términos y Condiciones</a>
+                            <a href="#"><i class="fas fa-angle-right me-2"></i> Política de Privacidad</a>
+                            <a href="#"><i class="fas fa-angle-right me-2"></i> Aviso Legal</a>
+                        </div>
+                    </div>
+                    <!-- Recognitions and Sponsorships -->
+                    <div class="col-xl-3 col-lg-3 col-md-6">
+                        <div class="footer-item">
+                            <h4 class="text-white mb-4">Reconocimientos y Patrocinios</h4>
+                            <p class="text-white mb-4">Nuestro agradecimiento a todas las organizaciones que apoyan esta iniciativa.</p>
+                            <!-- Add logos or names of sponsors and recognitions here -->
+                        </div>
+                    </div>
+                </div>
+                        
+                <!-- Social Media & Address -->
+                <div class="pt-5" style="border-top: 1px solid rgba(255, 255, 255, 0.08);">
+                    <div class="row g-0">
+                        <div class="col-12">
+                            <div class="row g-4">
+                                <div class="col-lg-4 col-xl-4">
+                                    <div class="d-flex">
+                                        <div class="btn-xl-square bg-primary text-white rounded p-4 me-4">
+                                            <i class="fas fa-map-marker-alt fa-2x"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-white">Dirección</h4>
+                                            <p class="mb-0">Carretera Villahermosa-Frontera Km. 3.5, Indeco, Villahermosa, Tabasco, México.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 col-xl-4">
+                                    <div class="d-flex">
+                                        <div class="btn-xl-square bg-primary text-white rounded p-4 me-4">
+                                            <i class="fab fa-whatsapp fa-2x"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-white">WhatsApp</h4>
+                                            <p class="mb-0">Asesor: 99-33-59-09-31</p>
+                                            <p class="mb-0">Lider de Equipo: 99-31-54-67-94</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-4 col-xl-4">
+                                    <div class="d-flex">
+                                        <div class="btn-xl-square bg-primary text-white rounded p-4 me-4">
+                                            <i class="fas fa-envelope fa-2x"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-white">Correo</h4>
+                                            <p class="mb-0">info@dosys.mx</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
+
+        
+        <!-- JavaScript Libraries -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="lib/wow/wow.min.js"></script>
+        <script src="lib/easing/easing.min.js"></script>
+        <script src="lib/waypoints/waypoints.min.js"></script>
+        <script src="lib/counterup/counterup.min.js"></script>
+        <script src="lib/lightbox/js/lightbox.min.js"></script>
+        <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+        
+
+        <!-- Template Javascript -->
+        <script src="js/main.js"></script>
+        <script src="js/condiciones-formularios.js"></script>
+    </body>
+
+</html>
