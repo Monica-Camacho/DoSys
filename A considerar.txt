@@ -1,0 +1,57 @@
+1. Quiénes Somos
+Esta página será el núcleo de la identidad de tu empresa. Aquí puedes incluir:
+
+Descripción de la empresa: Un resumen breve pero impactante sobre qué hace tu empresa, su propósito y qué la hace única.
+
+Misión: Una declaración clara y concisa sobre el propósito de tu empresa.
+
+Visión: Una descripción inspiradora de hacia dónde se dirige la empresa en el futuro.
+
+Valores: Los principios fundamentales que guían tu empresa (por ejemplo, innovación, responsabilidad, calidad, etc.).
+
+Objetivo: Metas específicas que la empresa busca alcanzar a corto o largo plazo.
+
+Diseño sugerido: Usa un diseño limpio con iconos o imágenes que representen cada sección (misión, visión, valores). Puedes incluir un diseño visual atractivo, como tarjetas o acordeones, para que el usuario pueda expandir la información que le interese.
+
+2. Nuestro Equipo
+Esta página se enfocará en las personas detrás de la empresa. Aquí puedes incluir:
+
+Miembros clave: Fotos, nombres, cargos y una breve descripción de cada persona (su experiencia, rol en la empresa y algo personal si es apropiado).
+
+Estructura organizacional: Un organigrama simple que muestre cómo está organizado el equipo (opcional, si es relevante para tu empresa).
+
+Diseño sugerido: Usa un diseño de cuadrícula o carrusel para mostrar a los miembros del equipo. Incluye fotos profesionales y textos cortos para que sea visualmente atractivo y fácil de leer.
+
+3. Logros
+Esta página destacará los éxitos y reconocimientos de tu empresa. Aquí puedes incluir:
+
+Premios y reconocimientos: Lista de premios, certificaciones o distinciones que ha recibido la empresa.
+
+Casos de éxito: Breves descripciones de proyectos destacados o clientes importantes.
+
+Hitos importantes: Eventos clave en la historia de la empresa (por ejemplo, aniversarios, expansiones, etc.).
+
+Diseño sugerido: Usa una línea de tiempo para mostrar hitos importantes o tarjetas con iconos para premios y reconocimientos. Incluye imágenes o gráficos que refuercen la credibilidad de la empresa.
+
+
+
+
+
+
+
+
+
+
+Conócenos
+  ├── Quiénes Somos
+  │     ├── Descripción
+  │     ├── Misión
+  │     ├── Visión
+  │     ├── Valores
+  │     └── Objetivo
+  ├── Nuestro Equipo
+  │     └── Miembros clave
+  └── Logros
+        ├── Premios y reconocimientos
+        ├── Casos de éxito
+        └── Hitos importantes
