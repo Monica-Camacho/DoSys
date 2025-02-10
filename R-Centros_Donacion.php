@@ -89,7 +89,7 @@
                                 </a>
                                 <div class="dropdown-menu">
                                     <a href="R-Centros_Donacion.html" class="dropdown-item">Centros de Donación</a>
-                                    <a href="R-Empresas_Aliadas.html" class="dropdown-item">Empresas Aliadas</a>
+                                    <a href="R-Empresas_Aliadas.php" class="dropdown-item">Empresas Aliadas</a>
                                     <a href="R-Puntos_Contacto.html" class="dropdown-item">Puntos de Contacto</a>
                                 </div>
                             </div>
@@ -260,7 +260,7 @@
                                     // Verificar si el campo "maps" es "No especificado"
                                     if ($row["maps"] === "No especificado") {
                                         // Mostrar una imagen en lugar del iframe
-                                        echo '<img src="img/Red_apoyo/image.png" alt="Mapa no disponible" class="img-fluid" style="width: 100%; height: 30vh; object-fit: cover;">';
+                                        echo '<img src="img/Red_apoyo/NotMap.png" alt="Mapa no disponible" class="img-fluid" style="width: 100%; height: 30vh; object-fit: cover;">';
                                     } else {
                                         // Mostrar el iframe de Google Maps
                                         echo '<iframe 
