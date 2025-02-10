@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>DoSys - Centros Donación</title>
+    <title>DoSys - Estaciones de Enlace</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -69,7 +69,7 @@
                             </div>
                             <!-- Fin Boton Donaciones -->
 
-                            <!-- Boton desplegable novedades
+                            <!-- Boton desplegable novedades  -->
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link" data-bs-toggle="dropdown">
                                     <span class="dropdown-toggle">Novedades</span>
@@ -80,7 +80,7 @@
                                     <a href="N-estadísticas.html" class="dropdown-item">Estadísticas</a>
                                 </div>
                             </div>
-                            <Fin Boton Novedades -->
+                            <!-- Fin Boton Novedades -->
 
                             <!-- Boton desplegable Red de Apoyo  -->
                             <div class="nav-item dropdown">
@@ -88,7 +88,7 @@
                                     <span class="dropdown-toggle">Red de Apoyo</span>
                                 </a>
                                 <div class="dropdown-menu">
-                                    <a href="R-Centros_Donacion.php" class="dropdown-item">Centros de Donación</a>
+                                    <a href="R-Centros_Donacion.html" class="dropdown-item">Centros de Donación</a>
                                     <a href="R-Empresas_Aliadas.php" class="dropdown-item">Empresas Aliadas</a>
                                     <a href="R-Estaciones_Enlace.php" class="dropdown-item">Estaciones de Enlace</a>
                                 </div>
@@ -101,9 +101,8 @@
                                     <span class="dropdown-toggle">Conócenos</span>
                                 </a>
                                 <div class="dropdown-menu">
-                                    <a href="C-Sobre_Nosotros.html" class="dropdown-item">Sobre Nosotros</a>
-                                    <a href="C-Nuestro_Equipo.html" class="dropdown-item">Nuestro Equipo</a>
-                                    <a href="C-Logros.html" class="dropdown-item">Logros</a>
+                                    <a href="C-quienes_somos.html" class="dropdown-item">Quiénes somos</a>
+                                    <a href="C-historia.html" class="dropdown-item">Historia</a>
                                 </div>
                             </div>
                             <!-- Fin Boton Conócenos -->
@@ -124,7 +123,7 @@
         <!-- Header Start -->
         <div class="container-fluid bg-breadcrumb" style="padding: 50px 0;">
             <div class="container text-center" style="max-width: 1000px;">
-                <h4 class="text-white display-4 mb-3">Centros de Donación</h4>
+                <h4 class="text-white display-4 mb-3">Ubicación de los Módulos Físicos</h4>
             </div>
         </div>
         <!-- Header End -->
@@ -136,7 +135,8 @@
                         <div class="col-12">
                             <div style="text-align: justify;">
                                 <p class="lead">
-                                    Es un lugar donde se recolectan, almacenan y distribuyen recursos, como sangre, plasma, medicamentos y dispositivos de asistencia. Su objetivo es facilitar la conexión entre quienes desean donar y quienes necesitan estos recursos, asegurando que cada donación sea segura, voluntaria y benéfica. Gestionados por hospitales, bancos de sangre o asociaciones altruistas, estos centros operan bajo rigurosos estándares de calidad para salvar vidas y mejorar la salud de la comunidad.</p>
+                                    Los módulos físicos de DoSys están ubicados en puntos estratégicos como hospitales, centros comerciales y escuelas. Estos módulos cuentan con el sistema de DoSys preinstalado, lo que permite a los usuarios acceder a sus servicios incluso si no disponen de datos móviles, señal, batería en sus dispositivos o un equipo para ingresar a la aplicación web. Simplemente, al acercarse a uno de estos módulos, cualquier persona puede conectarse y utilizar DoSys sin restricciones.
+                                </p>
                             </div>
                         </div>
                     </div>

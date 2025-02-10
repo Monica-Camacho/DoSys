@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>DoSys - Empresas Aliadas</title>
+    <title>DoSys - Estaciones de Enlace</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -26,7 +26,7 @@
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/R-Empresas.css">
+    <link rel="stylesheet" href="css/R-Centros.css">
 </head>
 <body>
 
@@ -69,7 +69,7 @@
                             </div>
                             <!-- Fin Boton Donaciones -->
 
-                            <!-- Boton desplegable novedades
+                            <!-- Boton desplegable novedades  -->
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link" data-bs-toggle="dropdown">
                                     <span class="dropdown-toggle">Novedades</span>
@@ -80,7 +80,7 @@
                                     <a href="N-estadísticas.html" class="dropdown-item">Estadísticas</a>
                                 </div>
                             </div>
-                            <Fin Boton Novedades -->
+                            <!-- Fin Boton Novedades -->
 
                             <!-- Boton desplegable Red de Apoyo  -->
                             <div class="nav-item dropdown">
@@ -88,7 +88,7 @@
                                     <span class="dropdown-toggle">Red de Apoyo</span>
                                 </a>
                                 <div class="dropdown-menu">
-                                    <a href="R-Centros_Donacion.php" class="dropdown-item">Centros de Donación</a>
+                                    <a href="R-Centros_Donacion.html" class="dropdown-item">Centros de Donación</a>
                                     <a href="R-Empresas_Aliadas.php" class="dropdown-item">Empresas Aliadas</a>
                                     <a href="R-Estaciones_Enlace.php" class="dropdown-item">Estaciones de Enlace</a>
                                 </div>
@@ -101,9 +101,8 @@
                                     <span class="dropdown-toggle">Conócenos</span>
                                 </a>
                                 <div class="dropdown-menu">
-                                    <a href="C-Sobre_Nosotros.html" class="dropdown-item">Sobre Nosotros</a>
-                                    <a href="C-Nuestro_Equipo.html" class="dropdown-item">Nuestro Equipo</a>
-                                    <a href="C-Logros.html" class="dropdown-item">Logros</a>
+                                    <a href="C-quienes_somos.html" class="dropdown-item">Quiénes somos</a>
+                                    <a href="C-historia.html" class="dropdown-item">Historia</a>
                                 </div>
                             </div>
                             <!-- Fin Boton Conócenos -->
@@ -120,141 +119,157 @@
         </div>
         <!-- Navbar & Hero End -->
 
-    <!-- Header Start -->
-    <div class="container-fluid bg-breadcrumb" style="padding: 50px 0;">
-        <div class="container text-center" style="max-width: 1000px;">
-            <h4 class="text-white display-4 mb-3">Empresas Aliadas</h4>
-        </div>
-    </div>
-    <!-- Header End -->
 
-    <!-- Sección Descripción con fondo blanco -->
-    <section class="container-fluid py-4">
-        <div class="container py-4">
-            <div class="row g-4">
-                <div class="col-12">
-                    <div style="text-align: justify;">
-                        <p class="lead">
-                        Son organizaciones que, aunque no gestionan directamente donaciones de sangre, medicamentos o dispositivos de asistencia, contribuyen significativamente al propósito de DoSys. Su apoyo se refleja en beneficios exclusivos para los usuarios, como descuentos en farmacias, transporte subsidiado, consultas médicas a bajo costo, difusión de campañas, asesoría legal y más. A través de su colaboración, facilitan y motivan la participación en la donación, mejorando el acceso a recursos esenciales para quienes los necesitan.
-                        </p>
-                    </div>
-                </div>
+        <!-- Header Start -->
+        <div class="container-fluid bg-breadcrumb" style="padding: 50px 0;">
+            <div class="container text-center" style="max-width: 1000px;">
+                <h4 class="text-white display-4 mb-3">Ubicación de los Módulos Físicos</h4>
             </div>
         </div>
-    </section>
+        <!-- Header End -->
 
-            <?php
-        // Incluir el archivo de conexión
-        include 'conexion_local.php';
-
-        // Realizar la consulta a la tabla "empresas"
-        $query = "SELECT * FROM empresas";
-        $result = $conexion->query($query);
-
-        // Verificar si hay resultados
-        if ($result->num_rows > 0) {
-            $empresas = $result->fetch_all(MYSQLI_ASSOC);
-        } else {
-            $empresas = [];
-        }
-
-        // Cerrar la conexión (opcional, se cierra automáticamente al final del script)
-        $conexion->close();
-        ?>
-
-        <!-- Service Start -->
-        <div class="container-fluid service py-3">
-            <div class="container py-3">
-                <div class="row g-4 justify-content-center">
-
-                    <?php foreach ($empresas as $empresa): ?>
-                        <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.2s">
-                            <div class="service-item">
-                                <div class="service-img">
-                                    <!-- Construir la ruta de la imagen dinámicamente -->
-                                    <?php
-                                    $ruta_imagen = "img/Red_Apoyo/Empresas_Aliadas/" . $empresa['imagen'] . ".png";
-                                    ?>
-                                    <!-- Mostrar la imagen de la empresa -->
-                                    <img src="<?php echo $ruta_imagen; ?>" class="img-fluid rounded-top w-100" alt="<?php echo $empresa['nombre_empresa']; ?>">
-                                    <div class="service-icon p-3">
-                                        <?php
-                                    // Asignar el icono según el valor de "tipo_apoyo_id" 
-                                    switch ($empresa['tipo_apoyo_id']) {
-                                        case 1: // Beneficios y Descuentos
-                                            echo '<i class="fa fa-tag fa-2x"></i>'; // Icono de etiqueta de descuento
-                                            break;
-                                        case 2: // Apoyo Logístico y Operacional
-                                            echo '<i class="fa fa-truck fa-2x"></i>'; // Icono de camión/logística
-                                            break;
-                                        case 3: // Servicios de Salud
-                                            echo '<i class="fa fa-heartbeat fa-2x"></i>'; // Icono de salud/latidos del corazón
-                                            break;
-                                        case 4: // Difusión y Educación
-                                            echo '<i class="fa fa-book fa-2x"></i>'; // Icono de libro para educación
-                                            break;
-                                        case 5: // Apoyo Tecnológico y Administrativo
-                                            echo '<i class="fa fa-laptop fa-2x"></i>'; // Icono de computadora para tecnología
-                                            break;
-                                        case 6: // Oportunidades Laborales y Sociales
-                                            echo '<i class="fa fa-briefcase fa-2x"></i>'; // Icono de maletín para empleo
-                                            break;
-                                        default:
-                                            echo '<i class="fa fa-question-circle fa-2x"></i>'; // Icono por defecto
-                                            break;
-                                    }
-
-                                        ?>
-                                    </div>
-                                </div>
-                                <div class="service-content p-4">
-                                    <div class="service-content-inner">
-                                        <!-- Mostrar el nombre de la empresa -->
-                                        <a href="#" class="d-inline-block h4 mb-4"><?php echo $empresa['nombre_empresa']; ?></a>
-                                        <!-- Mostrar la descripción de la empresa -->
-                                        <p class="mb-4"><?php echo $empresa['descripcion']; ?></p>
-                                        <!-- <a class="btn btn-primary rounded-pill py-2 px-4" href="#">Read More</a> -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-
-                </div>
-            </div>
-        </div>
-        <!-- Service End -->
-
-            <!-- Sección Contactanos con gris blanco -->
-            <section class="container-fluid bg-light py-4">
+            <!-- Sección Descripción con fondo blanco -->
+            <section class="container-fluid py-4">
                 <div class="container py-4">
-                    <div class="text-center mx-auto pb-4" style="max-width: 800px;">
-                        <h1 class="mt-3">¿Te interesa saber más?</1>
-                    </div>
                     <div class="row g-4">
                         <div class="col-12">
-                            <div style="text-align: center;">
+                            <div style="text-align: justify;">
                                 <p class="lead">
-                                    Si deseas conocer más sobre DoSys, colaborar con nosotros o tienes alguna pregunta, no dudes en contactarnos.
+                                    Los módulos físicos de DoSys están ubicados en puntos estratégicos como hospitales, centros comerciales y escuelas. Estos módulos cuentan con el sistema de DoSys preinstalado, lo que permite a los usuarios acceder a sus servicios incluso si no disponen de datos móviles, señal, batería en sus dispositivos o un equipo para ingresar a la aplicación web. Simplemente, al acercarse a uno de estos módulos, cualquier persona puede conectarse y utilizar DoSys sin restricciones.
                                 </p>
-                                <p class="lead">
-                                    ¡Estamos siempre abiertos a nuevas ideas y oportunidades!
-                                </p>
-                            </div>
-                            <div class="text-center mt-4">
-                                <a href="mailto:contacto@dosys.mx" class="btn btn-primary btn-lg mb-2">
-                                    Correo electrónico: contacto@dosys.mx
-                                </a>
-                                <a href="https://wa.me/529933590931" class="btn btn-success btn-lg mb-2">
-                                    WhatsApp: +52 993 359 0931
-                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
+
+            <?php
+require 'conexion_local.php'; // Conexión a la base de datos
+
+// Definir el número de registros por página
+$registros_por_pagina = 6; // Puedes ajustar este valor
+
+// Obtener el número de página actual (si no está definido, será la página 1)
+$pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+
+// Obtener los parámetros de búsqueda y filtros
+$busqueda = isset($_GET['busqueda']) ? $_GET['busqueda'] : '';
+$municipio = isset($_GET['municipio']) ? $_GET['municipio'] : '';
+$estado = isset($_GET['estado']) ? $_GET['estado'] : '';
+
+// Calcular el OFFSET
+$offset = ($pagina_actual - 1) * $registros_por_pagina;
+
+// Construir la consulta SQL base
+$sql = "SELECT * FROM modulos_fisicos WHERE 1=1";
+
+// Aplicar filtros y búsqueda
+if (!empty($busqueda)) {
+    $sql .= " AND (nombre_lugar LIKE '%$busqueda%' OR direccion LIKE '%$busqueda%' OR municipio LIKE '%$busqueda%' OR estado LIKE '%$busqueda%')";
+}
+if (!empty($municipio)) {
+    $sql .= " AND municipio = '$municipio'";
+}
+if (!empty($estado)) {
+    $sql .= " AND estado = '$estado'";
+}
+
+// Agregar paginación
+$sql .= " LIMIT $registros_por_pagina OFFSET $offset";
+
+// Ejecutar la consulta
+$resultado = $conexion->query($sql);
+
+// Consulta para obtener el total de registros (para la paginación)
+$sql_total = "SELECT COUNT(*) as total FROM modulos_fisicos WHERE 1=1";
+if (!empty($busqueda)) {
+    $sql_total .= " AND (nombre_lugar LIKE '%$busqueda%' OR direccion LIKE '%$busqueda%' OR municipio LIKE '%$busqueda%' OR estado LIKE '%$busqueda%')";
+}
+if (!empty($municipio)) {
+    $sql_total .= " AND municipio = '$municipio'";
+}
+if (!empty($estado)) {
+    $sql_total .= " AND estado = '$estado'";
+}
+
+$resultado_total = $conexion->query($sql_total);
+$total_registros = $resultado_total->fetch_assoc()['total'];
+
+// Calcular el número total de páginas
+$total_paginas = ceil($total_registros / $registros_por_pagina);
+?>
+
+<!-- Formulario de Búsqueda y Filtros -->
+<div class="container-fluid py-3">
+    <div class="container">
+        <form action="" method="GET" class="mb-4">
+            <div class="row g-3">
+                <!-- Barra de Búsqueda -->
+                <div class="col-md-4">
+                    <input type="text" name="busqueda" class="form-control" placeholder="Buscar por nombre, dirección, municipio o estado" value="<?php echo htmlspecialchars($busqueda); ?>">
+                </div>
+                <!-- Filtro por Municipio -->
+                <div class="col-md-4">
+                    <input type="text" name="municipio" class="form-control" placeholder="Filtrar por municipio" value="<?php echo htmlspecialchars($municipio); ?>">
+                </div>
+                <!-- Filtro por Estado -->
+                <div class="col-md-4">
+                    <input type="text" name="estado" class="form-control" placeholder="Filtrar por estado" value="<?php echo htmlspecialchars($estado); ?>">
+                </div>
+                <!-- Botón de Búsqueda -->
+                <div class="col-md-12 text-center mt-3">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                    <a href="?" class="btn btn-secondary">Limpiar Filtros</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Blog Start -->
+<div class="container-fluid blog py-3">
+    <div class="container py-3">
+        <div class="row g-4 justify-content-center">
+            <?php
+            if ($resultado->num_rows > 0) {
+                while ($row = $resultado->fetch_assoc()) {
+                    echo '<div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.6s">
+                            <div class="blog-item">
+                                <div>';
+                    if ($row["maps"] === "No especificado") {
+                        echo '<img src="img/Red_apoyo/NotMap.png" alt="Mapa no disponible" class="img-fluid" style="width: 100%; height: 30vh; object-fit: cover;">';
+                    } else {
+                        echo '<iframe src="' . htmlspecialchars($row["maps"]) . '" width="100%" height="250" style="border:0; height: 30vh;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>';
+                    }
+                    echo '</div>
+                                <div class="blog-content p-4">
+                                    <a href="#" class="h4 d-inline-block mb-3 d-flex align-items-center">
+                                        <span>' . htmlspecialchars($row["nombre_lugar"]) . '</span>
+                                    </a>
+                                    <p class="mb-3 text-justify">
+                                        <strong>Dirección:</strong><br>
+                                        ' . htmlspecialchars($row["direccion"]) . ', ' . htmlspecialchars($row["municipio"]) . ', ' . htmlspecialchars($row["estado"]) . '<br><br>
+                                        <strong>Indicaciones:</strong><br>
+                                        ' . htmlspecialchars($row["indicaciones"]) . '<br><br>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>';
+                }
+            } else {
+                echo '<div class="col-12 text-center"><p>No se encontraron módulos físicos.</p></div>';
+            }
+            ?>
+        </div>
+    </div>
+</div>
+<!-- Blog End -->
+
+
+    
     <!-- PIE DE PÁGINA NO TOCAR -->       
+    
     <!-- Footer Start -->
     <div class="container-fluid bg-dark text-light footer py-5 wow fadeIn" data-wow-delay="0.2s">
         <div class="container py-5">
@@ -347,9 +362,11 @@
     </div>
     <!-- Footer End -->
 
+
     <!-- Back to Top -->
     <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
 
+    
     <!-- JavaScript Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -359,6 +376,7 @@
     <script src="lib/counterup/counterup.min.js"></script>
     <script src="lib/lightbox/js/lightbox.min.js"></script>
     <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
