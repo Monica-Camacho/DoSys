@@ -7,7 +7,7 @@ $base_datos = "dosys"; // Nombre de tu base de datos
 $conexion = new mysqli($servidor, $usuario, $clave, $base_datos);
 
 if ($conexion->connect_error) {
-    die("Conexión fallida: " . $conexion->connect_error);
+    die("Error al conectar a la base de datos. Por favor, contacta al administrador.");
 }
 ?>
 

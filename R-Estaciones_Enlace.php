@@ -26,7 +26,7 @@
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/R-Centros.css">
+    <link rel="stylesheet" href="css/R-Estaciones.css">
 </head>
 <body>
 
