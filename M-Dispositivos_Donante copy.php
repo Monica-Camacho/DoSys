@@ -67,53 +67,55 @@
 // Incluir la conexión a la base de datos
 include('conexion_local.php'); // Asegúrate de que la ruta sea correcta
 
-// Definir el valor de tipo_id (lo puedes cambiar fácilmente más adelante)
-$tipo_id = 1; // Cambia este valor según lo necesites
-
-// Consulta SQL con la condición de tipo_id en puntos_donacion
+// Consulta SQL
 $sql = "SELECT sd.id, cd.nombre AS catalogo_donacion, sd.cantidad, sd.unidad_medida, pd.nombre AS puntos_donacion
         FROM solicitud_donacion sd
         JOIN catalogo_donacion cd ON sd.catalogo_donacion_id = cd.id
         JOIN puntos_donacion pd ON sd.puntos_donacion_id = pd.id
-        WHERE sd.estado = 'activa' AND pd.tipo_id = $tipo_id"; // Filtrado por tipo_id
+        WHERE sd.estado = 'activa'";
 
 // Ejecutar la consulta
 $resultado = $conexion->query($sql);
 
-// Comprobar si hay resultados
-if ($resultado->num_rows > 0) {
-    echo "<div class='table-container'>
-            <table class='table table-bordered'>
-                <thead>
-                    <tr>
-                        <th>Artículo Solicitado</th>
-                        <th>Cantidad</th>
-                        <th>Unidad de Medida</th>
-                        <th>Punto de Donación</th>
-                    </tr>
-                </thead>
-                <tbody>";
-    
-    // Mostrar las filas de la tabla
-    while ($donacion = $resultado->fetch_assoc()) {
-        echo "<tr>
-                <td>{$donacion['catalogo_donacion']}</td>
-                <td>{$donacion['cantidad']}</td>
-                <td>{$donacion['unidad_medida']}</td>
-                <td>{$donacion['puntos_donacion']}</td>
-              </tr>";
-    }
+?>
 
-    echo "</tbody>
-        </table>
-    </div>";
-} else {
-    echo "<p>No hay solicitudes de donación activas en este momento.</p>";
-}
+<!-- Aquí comienza la parte del HTML -->
+<div class="table-container">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Artículo Solicitado</th>
+                <th>Cantidad</th>
+                <th>Unidad de Medida</th>
+                <th>Punto de Donación</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            // Comprobar si hay resultados
+            if ($resultado->num_rows > 0) {
+                // Mostrar las filas de la tabla
+                while ($donacion = $resultado->fetch_assoc()) {
+                    echo "<tr>
+                            <td>{$donacion['catalogo_donacion']}</td>
+                            <td>{$donacion['cantidad']}</td>
+                            <td>{$donacion['unidad_medida']}</td>
+                            <td>{$donacion['puntos_donacion']}</td>
+                          </tr>";
+                }
+            } else {
+                echo "<tr><td colspan='4'>No hay solicitudes de donación activas.</td></tr>";
+            }
+            ?>
+        </tbody>
+    </table>
+</div>
 
+<?php
 // Cerrar la conexión
 $conexion->close();
 ?>
+
 
 
     </div>
