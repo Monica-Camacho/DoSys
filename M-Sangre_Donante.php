@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>DoSys - Mapa y Formulario</title>
+    <title>DoSys - Donar Sangre</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -38,22 +38,19 @@
     </div>
     <!-- Spinner End -->
 
-    <!-- Header Start -->
-    <div class="container-fluid bg-breadcrumb" style="padding: 15px 0;">
-        <div class="container text-center" style="max-width: 1000px;">
-        </div>
-    </div>
-    <!-- Header End -->
-
     <!-- Mapa y Formulario -->
     <div class="map-form-container">
         <div id="map-container">
             <div id="map"></div>
         </div>
         <div class="sidebar">
-            <a href="index.html" class="navbar-brand p-0">
-                <img src="img/logos/DoSys_largo_fondoTransparente.png" alt="DoSys_Logo">
+        <!-- Contenedor centrado con logo y botón -->
+        <div class="d-flex justify-content-center align-items-center gap-3 mb-3">
+            <a href="Donaciones.html" class="navbar-brand p-0">
+                <img src="img/logos/DoSys_largo_fondoTransparente.png" alt="DoSys_Logo" style="max-height: 80px;">
             </a>
+            <a href="Donaciones.html" class="btn btn-primary btn-lg py-2 px-4">Regresar</a>
+        </div>
 
             <h2 class="text-center">Solicitudes de Donación</h2>
 
@@ -70,56 +67,61 @@
                 </div>
             </div>
 
-            <table class="table table-bordered">
+            <?php
+// Incluir la conexión a la base de datos
+include('conexion_local.php'); // Asegúrate de que la ruta sea correcta
+
+// Definir el valor de tipo_id (lo puedes cambiar fácilmente más adelante)
+$tipo_id = 1; // Cambia este valor según lo necesites
+
+// Consulta SQL con la condición de tipo_id en puntos_donacion
+$sql = "SELECT sd.id, cd.nombre AS catalogo_donacion, sd.cantidad, sd.unidad_medida, pd.nombre AS puntos_donacion
+        FROM solicitud_donacion sd
+        JOIN catalogo_donacion cd ON sd.catalogo_donacion_id = cd.id
+        JOIN puntos_donacion pd ON sd.puntos_donacion_id = pd.id
+        WHERE sd.estado = 'activa' AND pd.tipo_id = $tipo_id"; // Filtrado por tipo_id
+
+// Ejecutar la consulta
+$resultado = $conexion->query($sql);
+
+// Comprobar si hay resultados
+if ($resultado->num_rows > 0) {
+    echo "<div class='table-container'>
+            <table class='table table-bordered'>
                 <thead>
                     <tr>
                         <th>Artículo Solicitado</th>
                         <th>Cantidad</th>
                         <th>Unidad de Medida</th>
-                        <th>Estado</th>
-                        <th>Municipio</th>
+                        <th>Punto de Donación</th>
                     </tr>
                 </thead>
-                <tbody id="donacion-table-body">
-                    <tr data-bs-toggle="modal" data-bs-target="#donacionModal" data-articulo="Sangre O+" data-cantidad="3" data-unidad="bolsas" data-estado="Ciudad de México" data-municipio="Cuauhtémoc">
-                        <td>Sangre O+</td>
-                        <td>3</td>
-                        <td>bolsas</td>
-                        <td>Ciudad de México</td>
-                        <td>Cuauhtémoc</td>
-                    </tr>
-                    <tr data-bs-toggle="modal" data-bs-target="#donacionModal" data-articulo="Plasma AB-" data-cantidad="2" data-unidad="bolsas" data-estado="Jalisco" data-municipio="Guadalajara">
-                        <td>Plasma AB-</td>
-                        <td>2</td>
-                        <td>bolsas</td>
-                        <td>Jalisco</td>
-                        <td>Guadalajara</td>
-                    </tr>
-                    <tr data-bs-toggle="modal" data-bs-target="#donacionModal" data-articulo="Medicamento para la presión" data-cantidad="10" data-unidad="cajas" data-estado="Nuevo León" data-municipio="Monterrey">
-                        <td>Medicamento para la presión</td>
-                        <td>10</td>
-                        <td>cajas</td>
-                        <td>Nuevo León</td>
-                        <td>Monterrey</td>
-                    </tr>
-                    <tr data-bs-toggle="modal" data-bs-target="#donacionModal" data-articulo="Silla de ruedas" data-cantidad="1" data-unidad="unidad" data-estado="Estado de México" data-municipio="Toluca">
-                        <td>Silla de ruedas</td>
-                        <td>1</td>
-                        <td>unidad</td>
-                        <td>Estado de México</td>
-                        <td>Toluca</td>
-                    </tr>
-                    <tr data-bs-toggle="modal" data-bs-target="#donacionModal" data-articulo="Sangre O+" data-cantidad="3" data-unidad="bolsas" data-estado="Ciudad de México" data-municipio="Cuauhtémoc">
-                        <td>Sangre O+</td>
-                        <td>3</td>
-                        <td>bolsas</td>
-                        <td>Ciudad de México</td>
-                        <td>Cuauhtémoc</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                <tbody>";
+    
+    // Mostrar las filas de la tabla
+    while ($donacion = $resultado->fetch_assoc()) {
+        echo "<tr>
+                <td>{$donacion['catalogo_donacion']}</td>
+                <td>{$donacion['cantidad']}</td>
+                <td>{$donacion['unidad_medida']}</td>
+                <td>{$donacion['puntos_donacion']}</td>
+              </tr>";
+    }
+
+    echo "</tbody>
+        </table>
+    </div>";
+} else {
+    echo "<p>No hay solicitudes de donación activas en este momento.</p>";
+}
+
+// Cerrar la conexión
+$conexion->close();
+?>
+
+
     </div>
+</div>
 
     <!-- Modal -->
     <div class="modal fade" id="donacionModal" tabindex="-1" aria-labelledby="donacionModalLabel" aria-hidden="true">

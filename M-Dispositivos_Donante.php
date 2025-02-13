@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>DoSys - Mapa y Formulario</title>
+    <title>DoSys - Donar Dispositivos</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -44,9 +44,13 @@
             <div id="map"></div>
         </div>
         <div class="sidebar">
+        <!-- Contenedor centrado con logo y botón -->
+        <div class="d-flex justify-content-center align-items-center gap-3 mb-3">
             <a href="Donaciones.html" class="navbar-brand p-0">
-                <img src="img/logos/DoSys_largo_fondoTransparente.png" alt="DoSys_Logo">
+                <img src="img/logos/DoSys_largo_fondoTransparente.png" alt="DoSys_Logo" style="max-height: 80px;">
             </a>
+            <a href="Donaciones.html" class="btn btn-primary btn-lg py-2 px-4">Regresar</a>
+        </div>
 
             <h2 class="text-center">Solicitudes de Donación</h2>
 
@@ -68,7 +72,7 @@
 include('conexion_local.php'); // Asegúrate de que la ruta sea correcta
 
 // Definir el valor de tipo_id (lo puedes cambiar fácilmente más adelante)
-$tipo_id = 1; // Cambia este valor según lo necesites
+$tipo_id = 3; // Cambia este valor según lo necesites
 
 // Consulta SQL con la condición de tipo_id en puntos_donacion
 $sql = "SELECT sd.id, cd.nombre AS catalogo_donacion, sd.cantidad, sd.unidad_medida, pd.nombre AS puntos_donacion
@@ -193,7 +197,7 @@ $conexion->close();
             }
 
             // Obtener los puntos de donación con tipo_id = 1
-            obtenerPuntosDonacion(1);
+            obtenerPuntosDonacion(3);
         }
 
         // Función para obtener los puntos de donación

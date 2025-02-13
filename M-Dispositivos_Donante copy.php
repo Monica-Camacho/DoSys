@@ -44,9 +44,14 @@
             <div id="map"></div>
         </div>
         <div class="sidebar">
+        <!-- Contenedor centrado con logo y botón -->
+        <div class="d-flex flex-wrap flex-md-nowrap justify-content-center align-items-center gap-3 mb-3 text-center">
             <a href="Donaciones.html" class="navbar-brand p-0">
-                <img src="img/logos/DoSys_largo_fondoTransparente.png" alt="DoSys_Logo">
+                <img src="img/logos/DoSys_largo_fondoTransparente.png" alt="DoSys_Logo" class="img-fluid" style="max-height: 80px;">
             </a>
+            <a href="Donaciones.html" class="btn btn-primary btn-lg py-2 px-4">Regresar</a>
+        </div>
+
 
             <h2 class="text-center">Solicitudes de Donación</h2>
 

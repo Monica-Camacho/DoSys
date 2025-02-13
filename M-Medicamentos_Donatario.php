@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>DoSys - Mapa y Formulario</title>
+    <title>DoSys - Solicitar Medicamentos</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -51,10 +51,14 @@
             <div id="map"></div>
         </div>
         <div class="sidebar">
-            <!-- Logo de DoSys -->
-            <a href="index.html" class="navbar-brand p-0">
-                <img src="img/logos/DoSys_largo_fondoTransparente.png" alt="DoSys_Logo">
+        <!-- Contenedor centrado con logo y botón -->
+        <div class="d-flex justify-content-center align-items-center gap-3 mb-3">
+            <a href="Donaciones.html" class="navbar-brand p-0">
+                <img src="img/logos/DoSys_largo_fondoTransparente.png" alt="DoSys_Logo" style="max-height: 80px;">
             </a>
+            <a href="Donaciones.html" class="btn btn-primary btn-lg py-2 px-4">Regresar</a>
+        </div>
+
 
             <!-- Formulario -->
             <form id="formulario">
@@ -210,7 +214,7 @@
             }
 
             // Obtener los puntos de donación con tipo_id = 1
-            obtenerPuntosDonacion(1);
+            obtenerPuntosDonacion(2);
         }
 
         // Función para obtener los puntos de donación
