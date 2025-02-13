@@ -38,13 +38,6 @@
     </div>
     <!-- Spinner End -->
 
-    <!-- Header Start -->
-    <div class="container-fluid bg-breadcrumb" style="padding: 15px 0;">
-        <div class="container text-center" style="max-width: 1000px;">
-        </div>
-    </div>
-    <!-- Header End -->
-
     <!-- Mapa y Formulario -->
     <div class="map-form-container">
         <div id="map-container">
@@ -52,7 +45,7 @@
         </div>
         <div class="sidebar">
             <!-- Logo de DoSys -->
-            <a href="index.html" class="navbar-brand p-0">
+            <a href="Donaciones.html" class="navbar-brand p-0">
                 <img src="img/logos/DoSys_largo_fondoTransparente.png" alt="DoSys_Logo">
             </a>
 

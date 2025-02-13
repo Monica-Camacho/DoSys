@@ -1,124 +1,151 @@
+/* Fondo del breadcrumb */
 .bg-breadcrumb {
-    background:#16243D !important; /* Color azul especificado */
-    background-image: none !important; /* Elimina cualquier imagen */
-    padding: 50px 0; /* Espaciado para mejor apariencia */
+    background: #16243D !important;
+    background-image: none !important;
+    padding: 50px 0;
 }
+
 .breadcrumb a {
     color: white;
     text-decoration: none;
 }
+
 .breadcrumb a:hover {
     text-decoration: underline;
 }
 
-/* Estilos para el fondo de la pantalla */
+/* Fondo del cuerpo de la página */
 body {
-    background-color: #16243D; /* Color de fondo oscuro para el cuerpo de la página */
+    background-color: #16243D;
 }
 
-/* Estilos para el contenedor del mapa y el formulario */
+/* Contenedor principal de mapa y formulario */
 .map-form-container {
-    display: flex; /* Usa flexbox para alinear los elementos */
-    flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
-    gap: 15px; /* Espacio entre el mapa y el formulario */
-    padding: 20px; /* Espaciado interno */
-    max-width: 1300px; /* Ancho máximo del contenedor */
-    margin: 0 auto; /* Centra el contenedor en la página */
-    background-color: #cfe02f; /* Fondo rojo para el contenedor.
-    border-radius: 15px; /* Bordes redondeados */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 20px;
+    max-width: 1300px;
+    margin: 0 auto;
+    background-color: #cfe02f;
+    border-radius: 15px;
 }
 
-/* Estilos para el contenedor del mapa */
+/* Contenedor del mapa */
 #map-container {
-    flex: 1; /* Ocupa el espacio disponible */
-    min-width: 300px; /* Ancho mínimo para evitar que se haga demasiado pequeño */
-    border-radius: 15px; /* Bordes redondeados */
+    flex: 1;
+    min-width: 300px;
+    border-radius: 15px;
 }
 
 /* Estilos para el mapa */
 #map {
-    width: 100%; /* Ancho completo del contenedor */
-    height: 550px; /* Altura fija */
-    border-radius: 10px; /* Bordes redondeados */
+    width: 100%;
+    height: 50vh; /* Altura relativa */
+    min-height: 300px;
+    max-height: 600px;
+    border-radius: 10px;
 }
 
-/* Estilos para la barra lateral (formulario) */
-.sidebar {
-    flex: 1; /* Ocupa el espacio disponible */
-    min-width: 300px; /* Ancho mínimo */
-    background: white; /* Fondo blanco */
-    border-radius: 15px; /* Bordes redondeados */
-    padding: 20px; /* Espaciado interno */
-    border: 2px solid #5a2a82; /* Borde morado */
-}
-
-/* Estilos para la imagen del logo en la barra lateral */
-.sidebar img {
-    display: block; /* Hace que la imagen sea un bloque */
-    margin: 0 auto 20px auto; /* Centra la imagen y agrega margen inferior */
-    max-width: 300px; /* Ancho máximo de la imagen */
-}
-
-/* Estilos para el contenedor del formulario */
-.form-container {
-    border: 1px solid #ddd; /* Borde gris claro */
-    padding: 20px; /* Espaciado interno */
-    border-radius: 10px; /* Bordes redondeados */
-    background-color: #f9f9f9; /* Fondo gris claro */
-}
-
-/* Estilos para los campos de entrada del formulario */
-.form-container input {
-    margin: 10px 0; /* Margen superior e inferior */
-    padding: 12px; /* Espaciado interno */
-    font-size: 16px; /* Tamaño de la fuente */
-    border-radius: 8px; /* Bordes redondeados */
-    border: 1px solid #ccc; /* Borde gris */
-    width: 100%; /* Ancho completo */
-}
-
-/* Estilos para el botón del formulario */
-.form-container button {
-    margin-top: 15px; /* Margen superior */
-    padding: 12px; /* Espaciado interno */
-    font-size: 16px; /* Tamaño de la fuente */
-    color: #fff; /* Texto blanco */
-    background: rgb(27, 53, 197); /* Fondo morado */
-    border: none; /* Sin borde */
-    border-radius: 8px; /* Bordes redondeados */
-    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-    width: 100%; /* Ancho completo */
-}
-
-/* Estilos para el botón del formulario al pasar el mouse */
-.form-container button:hover {
-    background: #16243D; /* Cambia el color de fondo al pasar el mouse */
-}
-
-/* Estilos para pantallas pequeñas (menos de 768px) */
-@media (max-width: 768px) {
-    .map-form-container {
-        flex-direction: column; /* Cambia la dirección de flexbox a columna */
-    }
-
+/* Estilos para pantallas grandes */
+@media (min-width: 1024px) {
     #map {
-        height: 400px; /* Reduce la altura del mapa */
+        height: 580px; /* Altura ajustada en pantallas grandes */
     }
 }
 
-button {
-    margin-top: 20px; /* Adjust the value to fit your needs */
+/* Contenedor de la barra lateral (formulario) */
+.sidebar {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    border: 2px solid #5a2a82;
 }
 
-h4 {
-    margin-top: 20px;
-    margin-bottom: 10px;
-}
-
-.seccion {
-    display: none;
-}
-
-.seccion.activa {
+/* Imagen dentro del formulario */
+.sidebar img {
     display: block;
+    margin: 0 auto 20px;
+    max-width: 300px;
 }
+
+/* Contenedor del formulario */
+.form-container {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+/* Estilos para los campos de entrada */
+.form-container input {
+    margin: 10px 0;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+}
+
+/* Botón del formulario */
+.form-container button {
+    margin-top: 15px;
+    padding: 12px;
+    font-size: 16px;
+    color: #fff;
+    background: rgb(27, 53, 197);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.form-container button:hover {
+    background: #16243D;
+}
+
+/* Contenedor de la tabla para hacerla responsiva */
+.table-container {
+    width: 100%;
+    overflow-x: auto; /* Barra de desplazamiento horizontal */
+}
+
+/* Estilos generales de la tabla */
+table {
+    width: 100%;
+    min-width: 600px; /* Asegura un ancho mínimo para la tabla */
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+    word-wrap: break-word; /* Asegura que el texto largo se ajuste dentro de las celdas */
+    white-space: nowrap; /* Evita que el texto se desborde en una sola línea */
+}
+
+/* Media Queries para Responsividad */
+@media (max-width: 1024px) {
+    .map-form-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    #map {
+        height: 40vh;
+    }
+
+    th, td {
+        font-size: 14px;
+    }
+}
+

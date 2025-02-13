@@ -38,20 +38,13 @@
     </div>
     <!-- Spinner End -->
 
-    <!-- Header Start -->
-    <div class="container-fluid bg-breadcrumb" style="padding: 15px 0;">
-        <div class="container text-center" style="max-width: 1000px;">
-        </div>
-    </div>
-    <!-- Header End -->
-
     <!-- Mapa y Formulario -->
     <div class="map-form-container">
         <div id="map-container">
             <div id="map"></div>
         </div>
         <div class="sidebar">
-            <a href="index.html" class="navbar-brand p-0">
+            <a href="Donaciones.html" class="navbar-brand p-0">
                 <img src="img/logos/DoSys_largo_fondoTransparente.png" alt="DoSys_Logo">
             </a>
 
@@ -70,6 +63,7 @@
                 </div>
             </div>
 
+        <div class="table-container">
             <table class="table table-bordered">
                 <thead>
                     <tr>
@@ -120,6 +114,7 @@
             </table>
         </div>
     </div>
+</div>
 
     <!-- Modal -->
     <div class="modal fade" id="donacionModal" tabindex="-1" aria-labelledby="donacionModalLabel" aria-hidden="true">
