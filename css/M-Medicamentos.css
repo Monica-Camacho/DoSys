@@ -1,0 +1,124 @@
+.bg-breadcrumb {
+    background:#16243D !important; /* Color azul especificado */
+    background-image: none !important; /* Elimina cualquier imagen */
+    padding: 50px 0; /* Espaciado para mejor apariencia */
+}
+.breadcrumb a {
+    color: white;
+    text-decoration: none;
+}
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+/* Estilos para el fondo de la pantalla */
+body {
+    background-color: #16243D; /* Color de fondo oscuro para el cuerpo de la página */
+}
+
+/* Estilos para el contenedor del mapa y el formulario */
+.map-form-container {
+    display: flex; /* Usa flexbox para alinear los elementos */
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+    gap: 15px; /* Espacio entre el mapa y el formulario */
+    padding: 20px; /* Espaciado interno */
+    max-width: 1300px; /* Ancho máximo del contenedor */
+    margin: 0 auto; /* Centra el contenedor en la página */
+    background-color: #1beedc; /* Fondo rojo para el contenedor.
+    border-radius: 15px; /* Bordes redondeados */
+}
+
+/* Estilos para el contenedor del mapa */
+#map-container {
+    flex: 1; /* Ocupa el espacio disponible */
+    min-width: 300px; /* Ancho mínimo para evitar que se haga demasiado pequeño */
+    border-radius: 15px; /* Bordes redondeados */
+}
+
+/* Estilos para el mapa */
+#map {
+    width: 100%; /* Ancho completo del contenedor */
+    height: 550px; /* Altura fija */
+    border-radius: 10px; /* Bordes redondeados */
+}
+
+/* Estilos para la barra lateral (formulario) */
+.sidebar {
+    flex: 1; /* Ocupa el espacio disponible */
+    min-width: 300px; /* Ancho mínimo */
+    background: white; /* Fondo blanco */
+    border-radius: 15px; /* Bordes redondeados */
+    padding: 20px; /* Espaciado interno */
+    border: 2px solid #5a2a82; /* Borde morado */
+}
+
+/* Estilos para la imagen del logo en la barra lateral */
+.sidebar img {
+    display: block; /* Hace que la imagen sea un bloque */
+    margin: 0 auto 20px auto; /* Centra la imagen y agrega margen inferior */
+    max-width: 300px; /* Ancho máximo de la imagen */
+}
+
+/* Estilos para el contenedor del formulario */
+.form-container {
+    border: 1px solid #ddd; /* Borde gris claro */
+    padding: 20px; /* Espaciado interno */
+    border-radius: 10px; /* Bordes redondeados */
+    background-color: #f9f9f9; /* Fondo gris claro */
+}
+
+/* Estilos para los campos de entrada del formulario */
+.form-container input {
+    margin: 10px 0; /* Margen superior e inferior */
+    padding: 12px; /* Espaciado interno */
+    font-size: 16px; /* Tamaño de la fuente */
+    border-radius: 8px; /* Bordes redondeados */
+    border: 1px solid #ccc; /* Borde gris */
+    width: 100%; /* Ancho completo */
+}
+
+/* Estilos para el botón del formulario */
+.form-container button {
+    margin-top: 15px; /* Margen superior */
+    padding: 12px; /* Espaciado interno */
+    font-size: 16px; /* Tamaño de la fuente */
+    color: #fff; /* Texto blanco */
+    background: rgb(27, 53, 197); /* Fondo morado */
+    border: none; /* Sin borde */
+    border-radius: 8px; /* Bordes redondeados */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    width: 100%; /* Ancho completo */
+}
+
+/* Estilos para el botón del formulario al pasar el mouse */
+.form-container button:hover {
+    background: #16243D; /* Cambia el color de fondo al pasar el mouse */
+}
+
+/* Estilos para pantallas pequeñas (menos de 768px) */
+@media (max-width: 768px) {
+    .map-form-container {
+        flex-direction: column; /* Cambia la dirección de flexbox a columna */
+    }
+
+    #map {
+        height: 400px; /* Reduce la altura del mapa */
+    }
+}
+
+button {
+    margin-top: 20px; /* Adjust the value to fit your needs */
+}
+
+h4 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.seccion {
+    display: none;
+}
+
+.seccion.activa {
+    display: block;
+}

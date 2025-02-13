@@ -1,0 +1,68 @@
+/* Diseño general del título en pantallas grandes */ 
+#bloodDonationCarousel .carousel-caption {
+    padding: 20px; /* Añade espacio interno */
+    max-width: 80%; /* Limita el ancho del contenido */
+    text-align: center;
+}
+
+#bloodDonationCarousel .carousel-caption h1 {
+    font-size: 6rem; /* Tamaño grande para pantallas normales */
+    font-weight: bold;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+/* Ajuste de los botones */
+#bloodDonationCarousel .carousel-caption .btn {
+    padding: 15px 35px; /* Botones más grandes */
+    font-size: 1.5rem; /* Texto más grande */
+    border-radius: 10px; /* Bordes más redondeados */
+}
+
+/* Ajustes para pantallas medianas (tabletas) */
+@media (max-width: 992px) {
+    #bloodDonationCarousel .carousel-caption {
+        max-width: 90%; /* Un poco más ancho en tablets */
+        padding: 15px;
+    }
+    #bloodDonationCarousel .carousel-caption h1 {
+        font-size: 5rem;
+    }
+    #bloodDonationCarousel .carousel-caption .btn {
+        padding: 14px 30px;
+        font-size: 1.4rem;
+    }
+}
+
+/* Ajustes para pantallas pequeñas (móviles en horizontal) */
+@media (max-width: 768px) {
+    #bloodDonationCarousel .carousel-caption {
+        max-width: 95%;
+        padding: 10px;
+    }
+    #bloodDonationCarousel .carousel-caption h1 {
+        font-size: 4rem;
+        margin-bottom: 0.5rem;
+    }
+    #bloodDonationCarousel .carousel-caption .btn {
+        padding: 12px 28px;
+        font-size: 1.2rem;
+    }
+}
+
+/* Ajustes para pantallas muy pequeñas (móviles en vertical) */
+@media (max-width: 576px) {
+    #bloodDonationCarousel .carousel-caption {
+        max-width: 100%; /* Usa todo el ancho pero con espaciado */
+        padding: 10px;
+        bottom: 30px; /* Baja el contenido para mejor visibilidad */
+    }
+    #bloodDonationCarousel .carousel-caption h1 {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+    }
+    #bloodDonationCarousel .carousel-caption .btn {
+        padding: 10px 24px;
+        font-size: 1.1rem;
+    }
+}
