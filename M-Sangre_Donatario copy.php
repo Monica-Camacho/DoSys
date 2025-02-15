@@ -10,7 +10,7 @@
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@100..1000&family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
 
     <!-- Icon Font Stylesheet -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
@@ -28,8 +28,7 @@
     <link href="css/style.css" rel="stylesheet">
     <link href="css/M-Sangre.css" rel="stylesheet">
 </head>
-<body id="1">
-
+<body>
 
     <!-- Spinner Start -->
     <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
@@ -198,9 +197,151 @@
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
 
-    <!-- Scripts Separados -->
-    <script src="js/mapa.js"></script>
-    <script src="js/formulario-seccion.js"></script>
+    <!-- Script del Mapa -->
+    <script>
+        let map; // Variable global para el mapa
+        let marcadores = []; // Array para almacenar los marcadores
+
+        function initMap() {
+            // Crear el mapa
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 12,
+                center: { lat: 19.432608, lng: -99.133209 } // Centro inicial (CDMX)
+            });
+
+            // Obtener la ubicación del usuario
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const userLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    map.setCenter(userLocation);
+
+                    // Marcador de la ubicación del usuario
+                    new google.maps.Marker({
+                        position: userLocation,
+                        map: map,
+                        title: "Tu ubicación",
+                        icon: {
+                            url: "https://maps.google.com/mapfiles/kml/shapes/man.png",
+                            scaledSize: new google.maps.Size(40, 40)
+                        }
+                    });
+                }, function() {
+                    alert("No se pudo obtener tu ubicación.");
+                });
+            } else {
+                alert("La geolocalización no está soportada por tu navegador.");
+            }
+
+            // Obtener los puntos de donación con tipo_id = 1
+            obtenerPuntosDonacion(1);
+        }
+
+        // Función para obtener los puntos de donación
+        function obtenerPuntosDonacion(tipo_id) {
+    fetch(`obtener_puntos.php?tipo=${tipo_id}`) // Envía el tipo_id como parámetro
+        .then(response => response.json())
+        .then(data => {
+            if (data.length > 0) {
+                // Mostrar marcadores en el mapa
+                data.forEach(punto => {
+                    // Crear el contenido del infoWindow
+                    const contenidoInfoWindow = `
+                        <div style="font-family: Arial, sans-serif; padding: 10px;">
+                            <h3 style="margin: 0; font-size: 16px;">${punto.nombre}</h3>
+                            <p style="margin: 5px 0; font-size: 14px;"><strong>Estado:</strong> ${punto.estado}</p>
+                            <p style="margin: 5px 0; font-size: 14px;"><strong>Municipio:</strong> ${punto.municipio}</p>
+                        </div>
+                    `;
+
+                    // Crear el infoWindow
+                    const infoWindow = new google.maps.InfoWindow({
+                        content: contenidoInfoWindow
+                    });
+
+                    // Crear el marcador
+                    const marcador = new google.maps.Marker({
+                        position: { lat: parseFloat(punto.latitud), lng: parseFloat(punto.longitud) },
+                        map: map,
+                        title: punto.nombre,
+                        icon: {
+                            url: 'img/icon/sangre.png', // Ruta de la imagen personalizada
+                            scaledSize: new google.maps.Size(40, 40) // Tamaño del ícono
+                        }
+                    });
+
+                    // Mostrar el infoWindow al hacer clic en el marcador
+                    marcador.addListener('click', () => {
+                        // Cerrar cualquier infoWindow abierto previamente
+                        if (infoWindow) {
+                            infoWindow.close();
+                        }
+                        // Abrir el infoWindow en el marcador actual
+                        infoWindow.open(map, marcador);
+                    });
+
+                    marcadores.push(marcador); // Guardar el marcador en el array
+                });
+            } else {
+                console.log(`No hay puntos de donación con tipo_id = ${tipo_id}.`);
+            }
+        })
+        .catch(error => console.error('Error al obtener los puntos:', error));
+}
+
+
+
+function mostrarSeccion(seccion) {
+    // Ocultar todas las secciones
+    const secciones = document.querySelectorAll('.seccion');
+    secciones.forEach(sec => {
+        sec.style.display = 'none'; // Ocultar todas las secciones
+    });
+
+    // Mostrar la sección seleccionada
+    const seccionActiva = document.getElementById('seccion' + seccion);
+    if (seccionActiva) {
+        seccionActiva.style.display = 'block'; // Mostrar la sección activa
+    }
+}
+
+// Mostrar la primera sección al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+    mostrarSeccion(1);
+});
+
+document.getElementById('formulario').addEventListener('submit', function (e) {
+    e.preventDefault(); // Evita que el formulario se envíe de inmediato
+
+    // Aquí puedes agregar lógica para enviar los datos del formulario (por ejemplo, con fetch)
+    // Ejemplo de envío de datos con fetch:
+    /*
+    const formData = new FormData(this);
+    fetch('tu_endpoint_aqui', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Respuesta del servidor:', data);
+    })
+    .catch(error => {
+        console.error('Error al enviar la solicitud:', error);
+    });
+    */
+
+    // Muestra el modal de confirmación
+    const modalConfirmacion = new bootstrap.Modal(document.getElementById('modalConfirmacion'));
+    modalConfirmacion.show();
+
+    // Recargar la página después de que el modal se cierre
+    document.getElementById('modalConfirmacion').addEventListener('hidden.bs.modal', function () {
+        window.location.reload(); // Recarga la página
+    });
+});
+    </script>
 
     <script async defer 
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyASN5vvit35yMwGrde7tn4dUgsSVElbpzU&callback=initMap">

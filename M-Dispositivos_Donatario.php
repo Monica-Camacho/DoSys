@@ -28,7 +28,7 @@
     <link href="css/style.css" rel="stylesheet">
     <link href="css/M-Dispositivos.css" rel="stylesheet">
 </head>
-<body>
+<body id="3">
 
     <!-- Spinner Start -->
     <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
@@ -151,8 +151,32 @@
                 </div>
             </form>
 
+            <!-- Modal para Confirmación de Solicitud -->
+            <div class="modal fade" id="modalConfirmacion" tabindex="-1" aria-labelledby="modalConfirmacionLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white"> <!-- Cambio de color en el encabezado -->
+                            <h5 class="modal-title" id="modalConfirmacionLabel">Solicitud Registrada</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body text-center"> <!-- Texto centrado -->
+                            <div class="mb-3"> <!-- Icono de confirmación -->
+                                <i class="fas fa-check-circle fa-4x text-success"></i> <!-- Icono de FontAwesome -->
+                            </div>
+                            <h4 class="text-primary">¡Gracias por tu solicitud!</h4>
+                            <p class="lead">Tu solicitud ha sido registrada exitosamente y está en proceso de revisión.</p>
+                            <p>Te notificaremos cuando haya actualizaciones.</p>
+                        </div>
+                        <div class="modal-footer justify-content-center"> <!-- Pie de modal centrado -->
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>            
+
         </div>
     </div>
+
 
     <!-- JavaScript Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -167,122 +191,9 @@
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
 
-    <!-- Script del Mapa -->
-    <script>
-        let map; // Variable global para el mapa
-        let marcadores = []; // Array para almacenar los marcadores
-
-        function initMap() {
-            // Crear el mapa
-            map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 12,
-                center: { lat: 19.432608, lng: -99.133209 } // Centro inicial (CDMX)
-            });
-
-            // Obtener la ubicación del usuario
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    const userLocation = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    };
-                    map.setCenter(userLocation);
-
-                    // Marcador de la ubicación del usuario
-                    new google.maps.Marker({
-                        position: userLocation,
-                        map: map,
-                        title: "Tu ubicación",
-                        icon: {
-                            url: "https://maps.google.com/mapfiles/kml/shapes/man.png",
-                            scaledSize: new google.maps.Size(40, 40)
-                        }
-                    });
-                }, function() {
-                    alert("No se pudo obtener tu ubicación.");
-                });
-            } else {
-                alert("La geolocalización no está soportada por tu navegador.");
-            }
-
-            // Obtener los puntos de donación con tipo_id = 1
-            obtenerPuntosDonacion(3);
-        }
-
-        // Función para obtener los puntos de donación
-        function obtenerPuntosDonacion(tipo_id) {
-    fetch(`obtener_puntos.php?tipo=${tipo_id}`) // Envía el tipo_id como parámetro
-        .then(response => response.json())
-        .then(data => {
-            if (data.length > 0) {
-                // Mostrar marcadores en el mapa
-                data.forEach(punto => {
-                    // Crear el contenido del infoWindow
-                    const contenidoInfoWindow = `
-                        <div style="font-family: Arial, sans-serif; padding: 10px;">
-                            <h3 style="margin: 0; font-size: 16px;">${punto.nombre}</h3>
-                            <p style="margin: 5px 0; font-size: 14px;"><strong>Estado:</strong> ${punto.estado}</p>
-                            <p style="margin: 5px 0; font-size: 14px;"><strong>Municipio:</strong> ${punto.municipio}</p>
-                        </div>
-                    `;
-
-                    // Crear el infoWindow
-                    const infoWindow = new google.maps.InfoWindow({
-                        content: contenidoInfoWindow
-                    });
-
-                    // Crear el marcador
-                    const marcador = new google.maps.Marker({
-                        position: { lat: parseFloat(punto.latitud), lng: parseFloat(punto.longitud) },
-                        map: map,
-                        title: punto.nombre,
-                        icon: {
-                            url: 'img/icon/silla.png', // Ruta de la imagen personalizada
-                            scaledSize: new google.maps.Size(40, 40) // Tamaño del ícono
-                        }
-                    });
-
-                    // Mostrar el infoWindow al hacer clic en el marcador
-                    marcador.addListener('click', () => {
-                        // Cerrar cualquier infoWindow abierto previamente
-                        if (infoWindow) {
-                            infoWindow.close();
-                        }
-                        // Abrir el infoWindow en el marcador actual
-                        infoWindow.open(map, marcador);
-                    });
-
-                    marcadores.push(marcador); // Guardar el marcador en el array
-                });
-            } else {
-                console.log(`No hay puntos de donación con tipo_id = ${tipo_id}.`);
-            }
-        })
-        .catch(error => console.error('Error al obtener los puntos:', error));
-}
-
-
-
-function mostrarSeccion(seccion) {
-    // Ocultar todas las secciones
-    const secciones = document.querySelectorAll('.seccion');
-    secciones.forEach(sec => {
-        sec.style.display = 'none'; // Ocultar todas las secciones
-    });
-
-    // Mostrar la sección seleccionada
-    const seccionActiva = document.getElementById('seccion' + seccion);
-    if (seccionActiva) {
-        seccionActiva.style.display = 'block'; // Mostrar la sección activa
-    }
-}
-
-// Mostrar la primera sección al cargar la página
-document.addEventListener('DOMContentLoaded', () => {
-    mostrarSeccion(1);
-});
-
-    </script>
+    <!-- Scripts Separados -->
+    <script src="js/mapa.js"></script>
+    <script src="js/formulario-seccion.js"></script>
 
     <script async defer 
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyASN5vvit35yMwGrde7tn4dUgsSVElbpzU&callback=initMap">
