@@ -123,8 +123,8 @@
         </div>
         <!-- Header End -->
 
-            <!-- Sección Descripción con fondo blanco -->
-            <section class="container-fluid py-4">
+            <!-- Sección Descripción con fondo gris -->
+            <section class="container-fluid bg-light py-4">
                 <div class="container py-4">
                     <div class="text-center mx-auto pb-4" style="max-width: 800px;">
                         <h1>Descripción</h1>
@@ -139,6 +139,79 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Sección INFOMATRIX con fondo blanco -->
+            <section class="container-fluid py-4">
+                <!-- Contenedor principal -->
+                <div class="container py-4">
+
+                    <!-- Título ocupando todo el ancho -->
+                    <div class="text-center pb-4">
+                        <h1>XIX Edición del Concurso Iberoamericano de Proyectos Estudiantiles de Ciencia y Tecnología - Sede Regional Tabasco 2025 (Febrero 2025 - UJAT)</h1>
+                    </div>
+                    
+                    <!-- Contenedor dividido en dos columnas -->
+                    <div class="row d-flex align-items-center">
+
+                        <!-- Sección de texto -->
+                        <div class="col-lg-6 col-12">
+
+                            <!-- Logro -->
+                            <div class="mb-4">
+                                <p class="h4"><i class="fas fa-trophy me-2"></i><strong>Logro: </strong> Reconocimiento de Plata en el área de "Desarrollo de Software y Videojuegos", con pase al nacional.</p>
+                            </div>
+
+                            <!-- Participantes -->
+                            <div class="mb-4">
+                                <p class="h5"><i class="fas fa-users me-2"></i><strong>Participantes:</strong></p>
+                                <ul class="list-unstyled ms-4">
+                                    <li>Mónica Camacho</li>
+                                    <li>Freddy Sánchez</li>
+                                    <li>Gabriel Zárate</li>
+                                </ul>
+                                <p class="h6"><i class="fas fa-star me-2"></i><strong>Mención Especial:</strong> Sergio Jiménez.</p>
+                            </div>
+
+                            <!-- Comentario del equipo -->
+                            <div class="mb-4">
+                                <p class="h5"><i class="fas fa-comment me-2"></i><strong>Comentario del equipo:</strong></p>
+                                <blockquote class="blockquote bg-light p-3 rounded">
+                                    <p class="mb-0">
+                                        <i class="fas fa-quote-left me-2"></i>
+                                        Este reconocimiento marca el inicio de una nueva etapa para DoSys, demostrando que nuestro esfuerzo y dedicación están dando frutos. Estamos emocionados por lo que viene y comprometidos a seguir innovando.
+                                        <i class="fas fa-quote-right ms-2"></i>
+                                    </p>
+                                </blockquote>
+                            </div>
+
+                            <!-- Enlace de evidencia -->
+                            <div class="mb-4">
+                                <a href="https://www.facebook.com/TecNMCampusVhsa/posts/880038037641972" class="btn btn-primary" target="_blank">
+                                    <i class="fas fa-external-link-alt me-2"></i>Enlace de interés
+                                </a>
+                            </div>
+
+                        </div>
+                        
+                        <!-- Carrusel -->
+                        <div class="col-lg-6 col-12 d-flex align-items-center justify-content-center mt-4 mt-lg-0">
+                            <div id="carouselExampleIndicators5" class="carousel slide" data-bs-ride="carousel" style="max-width: 500px; max-height: 500px; overflow: hidden; border-radius: 10px;">
+                                <div class="carousel-indicators"></div>
+                                <div class="carousel-inner" style="width: 500px; height: 500px; border-radius: 10px;"></div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators5" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Anterior</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators5" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Siguiente</span>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>            
 
             <!-- Sección 5to foro con fondo gris -->
             <section class="container-fluid bg-light py-4">
@@ -620,6 +693,7 @@
         createCarousel("carouselExampleIndicators2", 11, "img/Conocenos/2024_Junio/imagen_", ".jpg");
         createCarousel("carouselExampleIndicators3", 7, "img/Conocenos/2024_Septiembre/imagen_", ".jpg");
         createCarousel("carouselExampleIndicators4", 4, "img/Conocenos/2024_Noviembre/imagen_", ".jpg");
+        createCarousel("carouselExampleIndicators5", 7, "img/Conocenos/2025_Febrero/imagen_", ".jpg");
     });
 </script>
 
