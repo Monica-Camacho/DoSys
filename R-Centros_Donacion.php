@@ -52,22 +52,17 @@
                     <div class="collapse navbar-collapse" id="navbarCollapse">
                         <div class="navbar-nav mx-0 mx-lg-auto">
                             
-                            <!-- Boton inicio -->
-                            <a href="index.html" class="nav-item nav-link active">Inicio</a>
-                            <!-- Fin Boton inicio-->
-
-                            <!-- Boton desplegable Donaciones  -->
-                            <div class="nav-item dropdown">
-                                <a href="#" class="nav-link" data-bs-toggle="dropdown">
-                                    <span class="dropdown-toggle">Donaciones</span>
-                                </a>
-                                <div class="dropdown-menu">
-                                    <a href="D-donar_acercaDe.html" class="dropdown-item">Acerca De</a>
-                                    <a href="D-donar.html" class="dropdown-item">Quiero Donar</a>
-
-                                </div>
+                        <!-- Botones del menú -->
+                        <a href="index.html" class="nav-item nav-link active">Inicio</a>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link" data-bs-toggle="dropdown">
+                                <span class="dropdown-toggle">Donaciones</span>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="Donaciones.html" class="dropdown-item">Donar</a>
+                                <a href="Mapa.php" class="dropdown-item">Mapa</a>
                             </div>
-                            <!-- Fin Boton Donaciones -->
+                        </div>
 
                             <!-- Boton desplegable novedades
                             <div class="nav-item dropdown">
