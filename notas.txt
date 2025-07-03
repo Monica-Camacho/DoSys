@@ -1,0 +1,62 @@
+1. Páginas Públicas Principales
+index.html: Página de inicio.
+
+avisos.html: Página para mostrar solicitudes de donación urgentes.
+
+mapa.php: Mapa interactivo con puntos de donación.
+
+estadisticas.html: Página para mostrar datos y logros del proyecto.
+
+mantenimiento.html: Página para secciones en construcción.
+
+2. Proceso de Registro y Autenticación
+r_seleccionar_tipo.html: Página para que el usuario elija qué tipo de cuenta crear (Persona, Empresa, Organización).
+
+r_persona.html: Formulario de registro para personas (donantes/donatarios).
+
+r_empresa.html: Formulario de registro para empresas.
+
+r_organizacion.html: Formulario de registro para ONGs.
+
+login.php: Página con el formulario para iniciar sesión.
+
+logout.php: Script para cerrar la sesión del usuario.
+
+register_process.php: (Backend) Script PHP que recibirá los datos de los 3 formularios de registro, validará la información y la guardará en la base de datos.
+
+login_process.php: (Backend) Script PHP que verificará las credenciales del usuario y gestionará el inicio de sesión.
+
+3. Páginas de Contenido (Sección "Conócenos")
+C-Sobre_Nosotros.html: Información sobre la misión y visión de DoSys.
+
+C-Nuestro_Equipo.html: Presentación del equipo.
+
+C-Logros.html: Página para destacar hitos y el impacto del proyecto.
+
+aliados.html: Página para mostrar las empresas que colaboran.
+
+4. Formularios de Donación y Solicitud (Acciones Principales)
+M-Sangre_Donante.php
+
+M-Sangre_Donatario.php
+
+M-Medicamentos_Donante.php
+
+M-Medicamentos_Donatario.php
+
+M-Dispositivos_Donante.php
+
+M-Dispositivos_Donatario.php
+
+5. Panel de Usuario (Dashboard - Nombres sugeridos)
+Estas son las páginas que un usuario vería después de iniciar sesión.
+
+dashboard.php: Página principal del panel de usuario.
+
+perfil.php: Página para ver y editar la información del perfil.
+
+historial.php: Historial de donaciones y solicitudes.
+
+crear_aviso.php: Formulario para crear un nuevo aviso de donación.
+
+configuracion.php: Para cambiar contraseña y otros ajustes.
