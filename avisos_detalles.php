@@ -4,7 +4,7 @@
     <head>
         <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
         <meta charset="utf-8">
-        <title>DoSys - Iniciar Sesión</title>
+        <title>DoSys - Detalles del Aviso</title>
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
         <meta content="" name="keywords">
         <meta content="" name="description">
@@ -95,7 +95,7 @@
                     <div class="navbar-nav mx-0 mx-lg-auto">
                         <!-- Botones del menú -->
                         <a href="index.html" class="nav-item nav-link">Inicio</a>
-                        <a href="avisos.html" class="nav-item nav-link">Avisos de Donación</a>
+                        <a href="avisos.html" class="nav-item nav-link active">Avisos de Donación</a>
                         <a href="mapa.php" class="nav-item nav-link">Mapa</a>
                         <a href="estadisticas.html" class="nav-item nav-link">Estadísticas</a>
                         <!-- Más botones del menú -->
@@ -112,7 +112,7 @@
                         </div>
                     </div>
                     <div class="d-flex align-items-center ms-lg-4">
-                        <a href="login.php" class="btn btn-primary rounded-pill py-2 px-4 me-2 text-nowrap active">Iniciar Sesión</a>
+                        <a href="login.php" class="btn btn-primary rounded-pill py-2 px-4 me-2 text-nowrap">Iniciar Sesión</a>
                         <a href="r_seleccionar_tipo.html" class="btn btn-outline-primary rounded-pill py-2 px-4">Regístrate</a>
                    </div>
                 </div>
@@ -121,55 +121,58 @@
     </div>
     <!-- Navbar & Hero End -->
 
-    <!-- Login Form Start -->
+    <!-- Notice Details Start -->
     <div class="container-fluid py-5 bg-light">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-6">
-                    <div class="card border-0 shadow-lg">
+            <div class="row g-5">
+                <!-- Main Content -->
+                <div class="col-lg-7">
+                    <div class="card border-0 shadow-sm">
                         <div class="card-body p-4 p-md-5">
-                            <div class="text-center mb-4">
-                                <i class="fa fa-sign-in-alt fa-3x text-primary mb-3"></i>
-                                <h2 class="card-title mb-2">Iniciar Sesión</h2>
-                                <p class="text-muted">Bienvenido de nuevo. Ingresa a tu cuenta.</p>
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h2 class="card-title mb-1">Solicitud Urgente de Sangre O+</h2>
+                                    <p class="card-text text-muted"><i class="fas fa-map-marker-alt me-2"></i>Villahermosa, Tabasco</p>
+                                </div>
+                                <span class="badge bg-danger p-2 fs-6"><i class="fas fa-tint me-2"></i>Sangre</span>
                             </div>
-                            <form action="login_process.php" method="POST">
-                                
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Correo Electrónico</label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
-                                </div>
+                            <hr>
+                            <h5 class="mb-3">Descripción de la Necesidad</h5>
+                            <p>Se solicita con urgencia la donación de 8 unidades de sangre tipo O positivo para un paciente que será sometido a una cirugía cardíaca de alto riesgo. La intervención es crucial y está programada para los próximos días, por lo que el tiempo es un factor crítico.</p>
+                            <p>Los donantes deben cumplir con los requisitos básicos de salud, tener entre 18 y 65 años y no haber donado en los últimos 3 meses. Su colaboración puede marcar la diferencia entre la vida y la muerte. Agradecemos de antemano su generosidad y apoyo en este momento tan delicado.</p>
+                        </div>
+                    </div>
+                </div>
 
-                                <div class="mb-3">
-                                    <label for="password" class="form-label">Contraseña</label>
-                                    <input type="password" class="form-control" id="password" name="password" required>
-                                </div>
-
-                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                                        <label class="form-check-label" for="remember">
-                                            Recordarme
-                                        </label>
-                                    </div>
-                                    <a href="forgot_password.php">¿Olvidaste tu contraseña?</a>
-                                </div>
-
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary btn-lg">Ingresar</button>
-                                </div>
-                                
-                                <div class="text-center mt-4">
-                                    <p class="text-muted">¿No tienes una cuenta? <a href="r_seleccionar_tipo.html">Regístrate aquí</a></p>
-                                </div>
-                            </form>
+                <!-- Sidebar -->
+                <div class="col-lg-5">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4">
+                            <h5 class="mb-3">Progreso de la Donación</h5>
+                            <p class="text-muted small mb-1">2 de 8 unidades recolectadas</p>
+                            <div class="progress mb-3" style="height: 10px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="d-grid">
+                                <button class="btn btn-primary btn-lg">Donar Ahora</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Map Card -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h5 class="mb-3">Ubicación de Referencia</h5>
+                            <div class="ratio" style="--bs-aspect-ratio: 100%;">
+                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d122261.9443651356!2d-93.00839966953124!3d17.987553400000004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85edd7e883d3483d%3A0x49f50858587b69b5!2sVillahermosa%2C%20Tab.!5e0!3m2!1ses-419!2smx!4v1720027732441!5m2!1ses-419!2smx" style="border:0; width: 100%; height: 100%;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Login Form End -->
+    <!-- Notice Details End -->
         
     <!-- Footer Start -->
     <div class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.2s">
