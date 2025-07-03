@@ -4,7 +4,7 @@
     <head>
         <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
         <meta charset="utf-8">
-        <title>DoSys - Avisos de Donación</title>
+        <title>DoSys - Seleccionar Tipo de Solicitud</title>
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
         <meta content="" name="keywords">
         <meta content="" name="description">
@@ -32,6 +32,50 @@
 
         <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
+        <link href="css/Donaciones.css" rel="stylesheet">
+
+        <style>
+            .carousel-caption {
+                top: 0;
+                bottom: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+            }
+            
+            /* Responsive adjustments ONLY for mobile devices */
+            @media (max-width: 768px) {
+                .carousel-item {
+                    height: 85vh; /* Give a consistent, good-looking height on mobile */
+                }
+                .carousel-item .carousel-image-container,
+                .carousel-item .carousel-image {
+                    height: 100%;
+                    object-fit: cover; /* Ensure image covers the slide area without distortion */
+                }
+
+                .carousel-caption h1 {
+                    font-size: 2.5rem; /* Smaller title on mobile */
+                }
+                .carousel-caption p {
+                    font-size: 1rem; /* Smaller paragraph on mobile */
+                    margin-bottom: 1.5rem !important;
+                }
+                .carousel-caption .d-flex.gap-4 {
+                    flex-direction: column; /* Stack buttons vertically on mobile */
+                    gap: 0.75rem !important; /* Reduce gap between stacked buttons */
+                    align-items: center;
+                }
+                 .carousel-caption .btn {
+                    font-size: 0.9rem;
+                    padding: 0.7rem 1.5rem;
+                    width: 80%;
+                    max-width: 280px;
+                }
+            }
+        </style>
 
     </head>
 
@@ -121,121 +165,72 @@
     </div>
     <!-- Navbar & Hero End -->
 
-    <!-- Notices Start -->
-    <div class="container-fluid py-5 bg-light">
-        <div class="container">
-            <div class="d-lg-flex justify-content-between align-items-center mb-5">
-                <div class="text-center text-lg-start">
-                    <h1 class="display-5">Avisos de Donación</h1>
-                    <p class="fs-5 text-muted mb-0">Explora las solicitudes activas y encuentra una causa a la que puedas apoyar.</p>
-                </div>
-                <div class="text-center mt-4 mt-lg-0">
-                    <a href="segmentos.html" class="btn btn-success rounded-pill py-2 px-4"><i class="fas fa-plus me-2"></i>Solicitar Donación</a>
+    <!-- Carousel Start -->
+    <div id="donationCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <!-- Slide 1: Sangre -->
+            <div class="carousel-item active">
+                <div class="carousel-image-container h-100">
+                    <img src="img/fondos/sangre.png" class="d-block w-100 carousel-image img-fluid" alt="Donación de sangre">
+                    <div class="carousel-caption">
+                        <div class="px-3">
+                            <h1 class="text-light display-3 mb-4">Sangre</h1>
+                            <p class="fs-5 fw-medium text-white mb-4 pb-2">Tu donación puede salvar vidas. Ayuda a quienes más lo necesitan.</p>
+                            <div class="d-flex gap-4 justify-content-center">
+                                <a href="M-Sangre_Donante.php" class="btn btn-primary btn-lg rounded-pill px-4">Ser Donante</a>
+                                <a href="M-Sangre_Donatario.php" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Donante</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Advanced Filters -->
-            <div class="row mb-5">
-                <div class="col-12">
-                    <form class="row g-3 align-items-center bg-white p-3 rounded shadow-sm">
-                        <div class="col-lg-5 col-md-12">
-                            <input type="text" class="form-control" placeholder="Buscar por palabra clave...">
+            <!-- Slide 2: Medicamentos -->
+            <div class="carousel-item">
+                <div class="carousel-image-container h-100">
+                    <img src="img/fondos/medicinas.png" class="d-block w-100 carousel-image img-fluid" alt="Donación de medicamentos">
+                    <div class="carousel-caption">
+                         <div class="px-3">
+                            <h1 class="text-light display-3 mb-4">Medicamentos</h1>
+                            <p class="fs-5 fw-medium text-white mb-4 pb-2">Dona medicamentos que ya no necesites y ayuda a un tratamiento.</p>
+                            <div class="d-flex gap-4 justify-content-center">
+                                <a href="M-Medicamentos_Donante.php" class="btn btn-primary btn-lg rounded-pill px-4">Donar Medicamentos</a>
+                                <a href="M-Medicamentos_Donatario.php" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Medicamentos</a>
+                            </div>
                         </div>
-                        <div class="col-lg-3 col-md-6">
-                            <select class="form-select">
-                                <option selected>Tipo de donación...</option>
-                                <option value="all">Todos</option>
-                                <option value="sangre">Sangre</option>
-                                <option value="medicamentos">Medicamentos</option>
-                                <option value="dispositivos">Dispositivos</option>
-                            </select>
-                        </div>
-                        <div class="col-lg-3 col-md-6">
-                             <select class="form-select">
-                                <option selected>Ubicación...</option>
-                                <option value="centro">Centro</option>
-                                <option value="cardenas">Cárdenas</option>
-                                <option value="comalcalco">Comalcalco</option>
-                                <option value="paraiso">Paraíso</option>
-                            </select>
-                        </div>
-                        <div class="col-lg-1 col-md-12 text-end">
-                            <button type="submit" class="btn btn-primary w-100">Buscar</button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
 
-            <div class="row g-4">
-                <!-- Notice Card 1: Sangre -->
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s" data-category="sangre">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body d-flex flex-column p-4">
-                            <div class="position-absolute top-0 end-0 p-3">
-                                <i class="fas fa-tint fa-2x text-danger"></i>
-                            </div>
-                            <h5 class="card-title mt-5">Solicitud de Sangre O+</h5>
-                            <p class="card-text text-muted small mb-3"><i class="fas fa-map-marker-alt me-2"></i>Villahermosa, Tabasco</p>
-                            <p class="card-text">Se necesitan donantes para una transfusión. Tu donación es vital para ayudar a quien lo necesita.</p>
-                            <div class="mt-auto pt-3">
-                                <div class="progress mb-2" style="height: 10px;">
-                                    <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <p class="text-muted small">2 de 8 unidades recolectadas</p>
-                                <a href="avisos_detalles.php" class="btn btn-primary rounded-pill w-100">Ver Detalles</a>
+            <!-- Slide 3: Dispositivos -->
+            <div class="carousel-item">
+                <div class="carousel-image-container h-100">
+                    <img src="img/fondos/dispositivos.png" class="d-block w-100 carousel-image img-fluid" alt="Donación de dispositivos">
+                    <div class="carousel-caption">
+                         <div class="px-3">
+                            <h1 class="text-light display-3 mb-4">Dispositivos de Asistencia</h1>
+                            <p class="fs-5 fw-medium text-white mb-4 pb-2">Mejora la calidad de vida de alguien donando un dispositivo médico.</p>
+                            <div class="d-flex gap-4 justify-content-center">
+                                <a href="M-Dispositivos_Donante.php" class="btn btn-primary btn-lg rounded-pill px-4">Donar Dispositivo</a>
+                                <a href="M-Dispositivos_Donatario.php" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Dispositivo</a>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Notice Card 2: Medicamentos -->
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s" data-category="medicamentos">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body d-flex flex-column p-4">
-                             <div class="position-absolute top-0 end-0 p-3">
-                                <i class="fas fa-pills fa-2x text-primary"></i>
-                            </div>
-                            <h5 class="card-title mt-5">Solicitud de Insulina</h5>
-                            <p class="card-text text-muted small mb-3"><i class="fas fa-map-marker-alt me-2"></i>Comalcalco, Tabasco</p>
-                            <p class="card-text">Se requiere donación de insulina glargina para un tratamiento médico. Cualquier cantidad es de gran ayuda.</p>
-                             <div class="mt-auto pt-3">
-                                <div class="progress mb-2" style="height: 10px;">
-                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <p class="text-muted small">3 de 5 cajas obtenidas</p>
-                                <a href="avisos_detalles.php" class="btn btn-primary rounded-pill w-100">Ver Detalles</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Notice Card 3: Dispositivos -->
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s" data-category="dispositivos">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body d-flex flex-column p-4">
-                            <div class="position-absolute top-0 end-0 p-3">
-                                <i class="fas fa-wheelchair fa-2x text-warning"></i>
-                            </div>
-                            <h5 class="card-title mt-5">Solicitud de Silla de Ruedas</h5>
-                            <p class="card-text text-muted small mb-3"><i class="fas fa-map-marker-alt me-2"></i>Cárdenas, Tabasco</p>
-                            <p class="card-text">Se necesita una silla de ruedas en buen estado para mejorar la movilidad y calidad de vida de una persona.</p>
-                             <div class="mt-auto pt-3">
-                                <div class="progress mb-2" style="height: 10px;">
-                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <p class="text-muted small">0 de 1 silla obtenida</p>
-                                <a href="avisos_detalles.php" class="btn btn-primary rounded-pill w-100">Ver Detalles</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Add more notice cards as needed -->
-
             </div>
         </div>
+
+        <!-- Controles del Carrusel -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#donationCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#donationCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Siguiente</span>
+        </button>
     </div>
-    <!-- Notices End -->
+    <!-- Carousel End -->
         
     <!-- Footer Start -->
     <div class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.2s">
