@@ -36,17 +36,21 @@ C-Logros.html: Página para destacar hitos y el impacto del proyecto.
 aliados.html: Página para mostrar las empresas que colaboran.
 
 4. Formularios de Donación y Solicitud (Acciones Principales)
-M-Sangre_Donante.php
+Formularios de Donación:
 
-M-Sangre_Donatario.php
+donar_sangre.php
 
-M-Medicamentos_Donante.php
+donar_medicamentos.php
 
-M-Medicamentos_Donatario.php
+donar_dispositivos.php
 
-M-Dispositivos_Donante.php
+Formularios de Solicitud (Donatario):
 
-M-Dispositivos_Donatario.php
+solicitar_sangre.php
+
+solicitar_medicamentos.php
+
+solicitar_dispositivos.php
 
 5. Panel de Usuario (Dashboard - Nombres sugeridos)
 Estas son las páginas que un usuario vería después de iniciar sesión.
@@ -60,3 +64,133 @@ historial.php: Historial de donaciones y solicitudes.
 crear_aviso.php: Formulario para crear un nuevo aviso de donación.
 
 configuracion.php: Para cambiar contraseña y otros ajustes.
+
+
+
+
+
+¡Excelente pregunta! Una vez que un usuario inicia sesión, entra a su espacio personal dentro de DoSys. Este espacio, o "Panel de Control", debe ser intuitivo, útil y adaptado al tipo de usuario.
+
+Basándome en la estructura que ya tienes en tus archivos, especialmente en `notas.txt`, así es como debería verse la experiencia para un usuario que ha iniciado sesión:
+
+### El Panel de Control Principal (`dashboard.php`)
+
+Al iniciar sesión, el usuario debería ser redirigido a una página principal de su perfil. Esta página sería el `dashboard.php` que tienes planeado. Este panel debe mostrar la información más relevante de un vistazo y dar acceso a todas las demás secciones.
+
+Aquí te presento una propuesta visual y funcional, dividida por tipo de usuario:
+
+---
+
+### **1. Para el Usuario "Persona" (Donante/Donatario)**
+
+Este es el usuario más común. Su panel debe centrarse en la acción de donar y solicitar.
+
+**Propuesta de Panel de Control para Personas:**
+
+* **Menú de Navegación Lateral (o superior):**
+    * **Inicio / Resumen:** La vista principal.
+    * **Mi Perfil (`perfil.php`):** Para ver y editar su información.
+    * **Mis Solicitudes:** Ver el estado de las solicitudes que ha creado.
+    * **Mis Donaciones:** Historial de las donaciones que ha realizado.
+    * **Crear Aviso (`crear_aviso.php`):** Un botón destacado para iniciar una nueva solicitud de donación.
+    * **Configuración (`configuracion.php`):** Para cambiar contraseña, notificaciones, etc.
+    * **Cerrar Sesión (`logout.php`):** Para salir de forma segura.
+
+* **Vista Principal del Panel (`dashboard.php`):**
+    * **Saludo de Bienvenida:** "Hola, [Nombre del Usuario]".
+    * **Resumen de Actividad:**
+        * **Solicitudes Activas:** Un cuadro que muestre sus solicitudes actuales y el progreso (ej. "2 de 5 donantes de sangre encontrados").
+        * **Última Donación Realizada:** Información sobre su donación más reciente.
+    * **Acciones Rápidas:**
+        * Un botón grande y claro para "**Crear Nueva Solicitud**".
+        * Un botón para "**Ver Avisos Urgentes**" que lo lleve a `avisos.html`.
+    * **Beneficios y Reconocimientos:** Un espacio para mostrar las recompensas o beneficios que ha obtenido de las empresas aliadas por sus donaciones.
+
+---
+
+### **2. Para el Usuario "Empresa"**
+
+El panel para empresas debe centrarse en cómo su colaboración está impactando a la comunidad y en la gestión de los beneficios que ofrecen.
+
+**Propuesta de Panel de Control para Empresas:**
+
+* **Menú de Navegación:**
+    * **Inicio / Resumen:** Vista principal.
+    * **Perfil de la Empresa (`perfil.php`):** Editar información de la empresa, logo, descripción.
+    * **Gestionar Beneficios:** Un formulario para crear o actualizar las promociones que ofrecen a los donantes.
+    * **Estadísticas de Impacto:** Gráficas que muestren cuántos donantes han utilizado sus beneficios.
+    * **Configuración (`configuracion.php`):** Gestionar la cuenta.
+    * **Cerrar Sesión (`logout.php`)**.
+
+* **Vista Principal del Panel (`dashboard.php`):**
+    * **Resumen del Impacto:**
+        * "Gracias a tu apoyo, **[XX]** donantes han recibido beneficios este mes".
+        * Total de donaciones incentivadas gracias a su participación.
+    * **Acciones Rápidas:**
+        * Botón para "**Añadir Nuevo Beneficio**".
+        * Botón para "**Ver Donantes Beneficiados**".
+
+---
+
+### **3. Para el Usuario "Organización Altruista"**
+
+Este panel es para ONGs y otras organizaciones que gestionan múltiples solicitudes y beneficiarios.
+
+**Propuesta de Panel de Control para Organizaciones:**
+
+* **Menú de Navegación:**
+    * **Inicio / Resumen:** Vista principal.
+    * **Perfil de la Organización (`perfil.php`):** Editar datos de la organización.
+    * **Gestionar Solicitudes:** Una tabla con todas las solicitudes creadas por la organización, con opciones para ver, editar o marcar como completadas.
+    * **Crear Aviso de Donación (`crear_aviso.php`):** Formulario para crear una nueva solicitud para sus beneficiarios.
+    * **Historial de Donaciones Recibidas (`historial.php`):** Un registro de todo lo que han recibido a través de la plataforma.
+    * **Configuración (`configuracion.php`):** Gestionar la cuenta de la organización.
+    * **Cerrar Sesión (`logout.php`)**.
+
+* **Vista Principal del Panel (`dashboard.php`):**
+    * **Resumen General:**
+        * Número de **solicitudes activas**.
+        * Total de **donaciones recibidas** este mes.
+        * **Beneficiarios ayudados** a través de la plataforma.
+    * **Acciones Rápidas:**
+        * Botón para "**Crear Nueva Solicitud Urgente**".
+        * Acceso directo para "**Ver Solicitudes Pendientes**".
+
+La clave es que cada panel se sienta personalizado y funcional para el rol que cada usuario desempeña en el ecosistema de **DoSys**. Esto mejora la experiencia y fomenta el uso continuo de la plataforma.
+
+
+
+1. Panel de Persona
+persona_dashboard.php
+
+persona_perfil.php
+
+persona_historial.php
+
+persona_crear_aviso.php
+
+persona_configuracion.php
+
+2. Panel de Empresa
+empresa_dashboard.php
+
+empresa_perfil.php
+
+empresa_beneficios.php
+
+empresa_reportes.php
+
+empresa_configuracion.php
+
+3. Panel de Organización
+organizacion_dashboard.php
+
+organizacion_perfil.php
+
+organizacion_solicitudes.php
+
+organizacion_crear_aviso.php
+
+organizacion_historial.php
+
+organizacion_configuracion.php
