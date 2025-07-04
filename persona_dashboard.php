@@ -106,9 +106,8 @@
                     </div>
                     <!-- Menú de Usuario Desplegable -->
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown" role="button" aria-expanded="false">
-                            <i class="fas fa-user-circle fa-lg"></i>
-                            <span>Usuario de DoSys</span>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle fa-lg me-2"></i> Usuario de DoSys
                         </a>
                         <div class="dropdown-menu dropdown-menu-end m-0">
                             <a href="persona_dashboard.php" class="dropdown-item">Mi Panel</a>
@@ -161,32 +160,139 @@
                     </div>
 
                     <!-- Sección de Solicitudes Activas -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4 class="card-title mb-0">Mis Solicitudes Activas</h4>
+                            </div>
+                            <!-- Filtros para Solicitudes -->
+                            <form class="row g-2 mb-4">
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" placeholder="Buscar por palabra clave...">
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select">
+                                        <option selected>Tipo...</option>
+                                        <option value="sangre">Sangre</option>
+                                        <option value="medicamentos">Medicamentos</option>
+                                        <option value="dispositivos">Dispositivos</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                                </div>
+                            </form>
+                            
+                            <!-- Lista de Solicitudes -->
+                            <div id="lista-solicitudes">
+                                <!-- Ejemplo de solicitud de Sangre -->
+                                <div class="d-flex align-items-center border-bottom pb-3 mb-3">
+                                    <div class="flex-shrink-0 text-center" style="width: 50px;">
+                                        <i class="fas fa-tint fa-2x text-danger"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <div class="d-flex justify-content-between">
+                                            <h5 class="mb-1">Solicitud de Sangre O+</h5>
+                                            <small class="text-muted">Hace 2 días</small>
+                                        </div>
+                                        <p class="mb-1 text-muted">Progreso: 2 de 8 unidades.</p>
+                                        <div class="progress" style="height: 10px;">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Ejemplo de solicitud de Medicamentos -->
+                                <div class="d-flex align-items-center border-bottom pb-3 mb-3">
+                                    <div class="flex-shrink-0 text-center" style="width: 50px;">
+                                        <i class="fas fa-pills fa-2x text-primary"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <div class="d-flex justify-content-between">
+                                            <h5 class="mb-1">Solicitud de Paracetamol</h5>
+                                            <small class="text-muted">Hace 5 días</small>
+                                        </div>
+                                        <p class="mb-1 text-muted">Progreso: 5 de 10 cajas.</p>
+                                        <div class="progress" style="height: 10px;">
+                                            <div class="progress-bar bg-warning" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                 <!-- Ejemplo de solicitud de Dispositivos -->
+                                 <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 text-center" style="width: 50px;">
+                                        <i class="fas fa-wheelchair fa-2x text-warning"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <div class="d-flex justify-content-between">
+                                            <h5 class="mb-1">Se necesita silla de ruedas</h5>
+                                            <small class="text-muted">Hace 1 semana</small>
+                                        </div>
+                                        <p class="mb-1 text-muted">Progreso: 0 de 1.</p>
+                                        <div class="progress" style="height: 10px;">
+                                            <div class="progress-bar bg-danger" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sección de Donaciones Realizadas -->
                     <div class="card border-0 shadow-sm">
                         <div class="card-body p-4">
-                            <h4 class="card-title mb-4">Mis Solicitudes Activas</h4>
+                            <h4 class="card-title mb-4">Mis Donaciones Realizadas</h4>
                             
-                            <!-- Ejemplo de una solicitud activa -->
-                            <div class="d-flex align-items-center border-bottom pb-3 mb-3">
-                                <div class="flex-shrink-0">
-                                    <i class="fas fa-tint fa-3x text-danger"></i>
+                            <!-- Filtros para Donaciones -->
+                             <form class="row g-2 mb-4">
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" placeholder="Buscar por hospital o producto...">
                                 </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <div class="d-flex justify-content-between">
-                                        <h5 class="mb-1">Solicitud de Sangre O+</h5>
-                                        <small class="text-muted">Hace 2 días</small>
-                                    </div>
-                                    <p class="mb-1 text-muted">Progreso: 2 de 8 unidades recolectadas.</p>
-                                    <div class="progress" style="height: 10px;">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
+                                <div class="col-md-4">
+                                    <select class="form-select">
+                                        <option selected>Tipo...</option>
+                                        <option value="sangre">Sangre</option>
+                                        <option value="medicamentos">Medicamentos</option>
+                                        <option value="dispositivos">Dispositivos</option>
+                                    </select>
                                 </div>
-                            </div>
-                            
-                            <!-- Mensaje cuando no hay solicitudes -->
-                            <div class="alert alert-info" role="alert">
-                                No tienes más solicitudes activas en este momento.
-                            </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                                </div>
+                            </form>
 
+                            <!-- Lista de Donaciones -->
+                            <div id="lista-donaciones">
+                                <!-- Ejemplo de donación 1 -->
+                                <div class="d-flex align-items-center border-bottom pb-3 mb-3">
+                                    <div class="flex-shrink-0 text-center" style="width: 50px;">
+                                        <i class="fas fa-hand-holding-heart fa-2x text-success"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h5 class="mb-1">Donación de Sangre (O+)</h5>
+                                        <p class="mb-0 text-muted">
+                                            <i class="fas fa-hospital me-2"></i>Para: Hospital Rovirosa<br>
+                                            <i class="fas fa-map-marker-alt me-2"></i>Ubicación: Villahermosa, Tab.<br>
+                                            <i class="fas fa-calendar-alt me-2"></i>Fecha: 20 de Junio, 2024
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Ejemplo de donación 2 -->
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 text-center" style="width: 50px;">
+                                        <i class="fas fa-hand-holding-heart fa-2x text-success"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h5 class="mb-1">Donación de Medicamentos</h5>
+                                         <p class="mb-0 text-muted">
+                                            <i class="fas fa-map-marker-alt me-2"></i>Lugar: Centro de Acopio DoSys<br>
+                                            <i class="fas fa-calendar-alt me-2"></i>Fecha: 15 de Mayo, 2024
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -298,3 +404,4 @@
 </body>
 
 </html>
+
