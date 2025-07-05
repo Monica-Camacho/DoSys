@@ -141,7 +141,7 @@
                 <!-- Profile Picture Column -->
                 <div class="col-lg-4">
                     <div class="card border-0 shadow-sm text-center p-4 h-100">
-                        <img src="https://via.placeholder.com/150" class="img-fluid rounded-circle mx-auto mb-3" alt="Logo de la Empresa" style="width: 150px; height: 150px; object-fit: cover;">
+                        <img src="img/Red_Apoyo/Empresas_Aliadas/Kakawol.png" class="img-fluid rounded-circle mx-auto mb-3" alt="Logo de la Empresa" style="width: 150px; height: 150px; object-fit: cover;">
                         <h4 class="mb-1">Nombre de la Empresa</h4>
                         <p class="text-muted">Empresa Aliada</p>
                         <button class="btn btn-primary btn-sm mt-2">Cambiar Logo</button>
