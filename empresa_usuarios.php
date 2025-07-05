@@ -4,7 +4,7 @@
 <head>
     <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
     <meta charset="utf-8">
-    <title>DoSys - Gestionar Beneficios</title>
+    <title>DoSys - Gestionar Usuarios</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     
     <!-- Favicon -->
@@ -112,7 +112,7 @@
                         <div class="dropdown-menu dropdown-menu-end m-0">
                             <a href="empresa_dashboard.php" class="dropdown-item">Panel de Empresa</a>
                             <a href="empresa_perfil.php" class="dropdown-item">Perfil de la Empresa</a>
-                            <a href="empresa_beneficios.php" class="dropdown-item ">Beneficios</a>
+                            <a href="empresa_beneficios.php" class="dropdown-item">Beneficios</a>
                             <a href="empresa_usuarios.php" class="dropdown-item">Usuarios</a>
                             <a href="empresa_reportes.php" class="dropdown-item">Reportes</a>
                             <a href="empresa_configuracion.php" class="dropdown-item">Configuración</a>
@@ -130,51 +130,53 @@
     <div class="container-fluid bg-light py-5">
         <div class="container">
             <div>
-                <h1 class='display-5 mb-0'>Gestionar Beneficios</h1>
-                <p class="fs-5 text-muted mb-0">Crea, edita y administra las promociones para los donantes.</p>
+                <h1 class='display-5 mb-0'>Gestionar Usuarios</h1>
+                <p class="fs-5 text-muted mb-0">Administra los usuarios y sus roles dentro de tu empresa.</p>
             </div>
         </div>
     </div>
     <!-- Header End -->
 
-    <!-- Benefits Management Content Start -->
+    <!-- User Management Content Start -->
     <div class="container-fluid py-5">
         <div class="container">
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-4">
                     <!-- Header with Add Button -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="card-title mb-0">Listado de Beneficios</h5>
-                        <a href="#" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Añadir Nuevo Beneficio</a>
+                        <h5 class="card-title mb-0">Listado de Usuarios</h5>
+                        <a href="empresa_crear_usuario.php" class="btn btn-primary"><i class="fas fa-user-plus me-2"></i>Añadir Nuevo Usuario</a>
                     </div>
 
                     <!-- Filters -->
                     <form class="row g-2 mb-4">
                         <div class="col-md-6">
-                            <input type="text" class="form-control" placeholder="Buscar por título o código...">
+                            <input type="text" class="form-control" placeholder="Buscar por nombre o correo...">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <select class="form-select">
+                                <option selected>Rol...</option>
+                                <option value="creador">Creador</option>
+                                <option value="visualizador">Visualizador</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                             <select class="form-select">
                                 <option selected>Estado...</option>
                                 <option value="activo">Activo</option>
                                 <option value="inactivo">Inactivo</option>
-                                <option value="expirado">Expirado</option>
                             </select>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-secondary w-100">Filtrar</button>
                         </div>
                     </form>
 
-                    <!-- Benefits Table -->
+                    <!-- Users Table -->
                     <div class="table-responsive">
                         <table class="table table-hover align-middle">
                             <thead class="table-light">
                                 <tr>
-                                    <th scope="col">Título del Beneficio</th>
-                                    <th scope="col">Código</th>
-                                    <th scope="col">Inicio de Vigencia</th>
-                                    <th scope="col">Fin de Vigencia</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Correo Electrónico</th>
+                                    <th scope="col" class="text-center">Rol</th>
                                     <th scope="col" class="text-center">Estado</th>
                                     <th scope="col" class="text-center">Acciones</th>
                                 </tr>
@@ -182,11 +184,10 @@
                             <tbody>
                                 <!-- Example Row 1 -->
                                 <tr>
-                                    <td><strong>Café gratis para donantes</strong></td>
-                                    <td><span class="badge bg-light text-dark">DONACAFE24</span></td>
-                                    <td>01/07/2024</td>
-                                    <td>31/07/2024</td>
-                                    <td class="text-center"><span class="badge bg-success">Activo</span></td>
+                                    <td><strong>Carlos Sánchez</strong></td>
+                                    <td>carlos.sanchez@empresa.com</td>
+                                    <td class="text-center"><span class="badge bg-success">Creador</span></td>
+                                    <td class="text-center"><span class="badge bg-primary">Activo</span></td>
                                     <td class="text-center">
                                         <button class="btn btn-sm btn-warning me-1" title="Editar"><i class="fas fa-pencil-alt"></i></button>
                                         <button class="btn btn-sm btn-danger" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
@@ -194,11 +195,10 @@
                                 </tr>
                                 <!-- Example Row 2 -->
                                 <tr>
-                                    <td><strong>15% de descuento en toda la tienda</strong></td>
-                                    <td><span class="badge bg-light text-dark">SANGREVIDA15</span></td>
-                                    <td>01/06/2024</td>
-                                    <td>30/06/2024</td>
-                                    <td class="text-center"><span class="badge bg-danger">Expirado</span></td>
+                                    <td><strong>Laura Méndez</strong></td>
+                                    <td>laura.mendez@empresa.com</td>
+                                    <td class="text-center"><span class="badge bg-info">Visualizador</span></td>
+                                    <td class="text-center"><span class="badge bg-primary">Activo</span></td>
                                     <td class="text-center">
                                         <button class="btn btn-sm btn-warning me-1" title="Editar"><i class="fas fa-pencil-alt"></i></button>
                                         <button class="btn btn-sm btn-danger" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
@@ -206,11 +206,10 @@
                                 </tr>
                                 <!-- Example Row 3 -->
                                 <tr>
-                                    <td><strong>2x1 en entradas de cine</strong></td>
-                                    <td><span class="badge bg-light text-dark">DONACINE</span></td>
-                                    <td>15/07/2024</td>
-                                    <td>15/08/2024</td>
-                                    <td class="text-center"><span class="badge bg-success">Activo</span></td>
+                                    <td><strong>Pedro Infante</strong></td>
+                                    <td>pedro.infante@empresa.com</td>
+                                    <td class="text-center"><span class="badge bg-info">Visualizador</span></td>
+                                    <td class="text-center"><span class="badge bg-secondary">Inactivo</span></td>
                                     <td class="text-center">
                                         <button class="btn btn-sm btn-warning me-1" title="Editar"><i class="fas fa-pencil-alt"></i></button>
                                         <button class="btn btn-sm btn-danger" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
@@ -218,11 +217,10 @@
                                 </tr>
                                 <!-- Example Row 4 -->
                                 <tr>
-                                    <td><strong>Postre gratis en tu consumo</strong></td>
-                                    <td><span class="badge bg-light text-dark">DULCEAPOYO</span></td>
-                                    <td>01/05/2024</td>
-                                    <td>31/05/2024</td>
-                                    <td class="text-center"><span class="badge bg-secondary">Inactivo</span></td>
+                                    <td><strong>Ana Juarez</strong></td>
+                                    <td>ana.juarez@empresa.com</td>
+                                    <td class="text-center"><span class="badge bg-success">Creador</span></td>
+                                    <td class="text-center"><span class="badge bg-primary">Activo</span></td>
                                     <td class="text-center">
                                         <button class="btn btn-sm btn-warning me-1" title="Editar"><i class="fas fa-pencil-alt"></i></button>
                                         <button class="btn btn-sm btn-danger" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
@@ -235,7 +233,7 @@
             </div>
         </div>
     </div>
-    <!-- Benefits Management Content End -->
+    <!-- User Management Content End -->
         
     <!-- Footer Start -->
     <div class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.2s">
