@@ -165,10 +165,6 @@ persona_dashboard.php
 
 persona_perfil.php
 
-persona_historial.php
-
-persona_crear_aviso.php
-
 persona_configuracion.php
 
 2. Panel de Empresa
