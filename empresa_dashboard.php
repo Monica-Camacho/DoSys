@@ -87,11 +87,22 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav mx-auto">
-                        <!-- Menú de navegación para Empresas (Admin) -->
-                        <a href="empresa_dashboard.php" class="nav-item nav-link active">Inicio</a>
-                        <a href="empresa_beneficios.php" class="nav-item nav-link">Beneficios</a>
-                        <a href="empresa_usuarios.php" class="nav-item nav-link">Usuarios</a>
-                        <a href="empresa_reportes.php" class="nav-item nav-link">Reportes</a>
+                        <!-- Menú de navegación principal (público) -->
+                        <a href="index.html" class="nav-item nav-link">Inicio</a>
+                        <a href="avisos.html" class="nav-item nav-link">Avisos de Donación</a>
+                        <a href="mapa.php" class="nav-item nav-link">Mapa</a>
+                        <a href="estadisticas.html" class="nav-item nav-link">Estadísticas</a>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link" data-bs-toggle="dropdown">
+                                <span class="dropdown-toggle">Conócenos</span>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="C-Sobre_Nosotros.html" class="dropdown-item">Sobre Nosotros</a>
+                                <a href="C-Nuestro_Equipo.html" class="dropdown-item">Nuestro Equipo</a>
+                                <a href="C-Logros.html" class="dropdown-item">Logros</a>
+                                <a href="R-Empresas_Aliadas.php" class="dropdown-item">Empresas Aliadas</a>
+                            </div>
+                        </div>
                     </div>
                     <!-- Menú de Usuario Desplegable -->
                     <div class="nav-item dropdown">
@@ -99,7 +110,11 @@
                             <i class="fas fa-building me-2"></i> Nombre Empresa
                         </a>
                         <div class="dropdown-menu dropdown-menu-end m-0">
+                            <a href="empresa_dashboard.php" class="dropdown-item active">Panel de Empresa</a>
                             <a href="empresa_perfil.php" class="dropdown-item">Perfil de la Empresa</a>
+                            <a href="empresa_beneficios.php" class="dropdown-item">Beneficios</a>
+                            <a href="empresa_usuarios.php" class="dropdown-item">Usuarios</a>
+                            <a href="empresa_reportes.php" class="dropdown-item">Reportes</a>
                             <a href="empresa_configuracion.php" class="dropdown-item">Configuración</a>
                             <hr class="dropdown-divider">
                             <a href="logout.php" class="dropdown-item text-danger">Cerrar Sesión</a>
@@ -311,3 +326,4 @@
 </body>
 
 </html>
+
