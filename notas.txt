@@ -233,3 +233,48 @@ empresa_beneficios.php: Verá la misma página, pero en modo de solo lectura. Lo
 empresa_configuracion.php: Para gestionar su propia contraseña.
 
 (Acceso Denegado a todo lo demás)
+
+
+Vistas para el Panel de Organización (Rol Administrador)
+1. Vistas Principales y de Gestión
+organizacion_dashboard.php:
+
+Propósito: Página de inicio. Mostrará los datos más urgentes: un contador de "Solicitudes por Validar" y otro de "Donantes por Aprobar". Incluirá accesos directos a las secciones más importantes.
+
+organizacion_solicitudes.php:
+
+Propósito: El centro de operaciones para gestionar las peticiones de ayuda. Tendrá pestañas para filtrar las solicitudes por su estado:
+
+Por Validar: Lista de solicitudes enviadas por usuarios que la organización debe revisar y aprobar.
+
+Activas: Solicitudes ya aprobadas y visibles públicamente.
+
+Historial: Solicitudes completadas o cerradas.
+
+organizacion_donantes.php:
+
+Propósito: Página para administrar a los donantes que se han comprometido a ayudar. Tendrá pestañas para:
+
+Pendientes de Aprobación: Donantes que han expresado su intención de donar y esperan el visto bueno de la organización.
+
+Aprobados (En Proceso): Donantes que ya fueron aprobados y de quienes se espera la entrega de la donación.
+
+Completados: Historial de donaciones recibidas.
+
+2. Vistas de Perfil y Configuración
+organizacion_perfil.php:
+
+Propósito: Para que el administrador edite la información pública de la organización (nombre, CLUNI, misión, dirección, logo, etc.).
+
+organizacion_configuracion.php:
+
+Propósito: Para la configuración de la cuenta principal, incluyendo la "Zona de Peligro" para desactivar o eliminar la cuenta de la organización.
+
+3. Vistas para la Gestión de Usuarios (Voluntarios/Personal)
+organizacion_usuarios.php:
+
+Propósito: Tabla para que el administrador gestione las cuentas de su equipo (voluntarios o personal). Podrá ver su rol, estado y realizar acciones.
+
+organizacion_crear_usuario.php:
+
+Propósito: El formulario que usará el administrador para registrar un nuevo miembro de su equipo en la plataforma, asignándole un rol (Gestor de Casos o Visualizador).
