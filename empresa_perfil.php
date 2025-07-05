@@ -198,6 +198,10 @@
                                                 <label for="direccion_empresa" class="form-label">Dirección Fiscal</label>
                                                 <textarea class="form-control" id="direccion_empresa" rows="2" disabled>Av. Principal 456, Col. Industrial, Villahermosa, Tabasco.</textarea>
                                             </div>
+                                             <div class="col-12">
+                                                <label for="ubicacion_comercial" class="form-label">Ubicación Comercial (Sucursal Principal)</label>
+                                                <textarea class="form-control" id="ubicacion_comercial" rows="2" disabled>Plaza Las Américas, Local 25, Villahermosa, Tabasco.</textarea>
+                                            </div>
                                             <div class="col-12">
                                                 <label for="descripcion_empresa" class="form-label">Descripción de la Empresa</label>
                                                 <textarea class="form-control" id="descripcion_empresa" rows="3" disabled>Somos una empresa comprometida con el apoyo a la comunidad.</textarea>
