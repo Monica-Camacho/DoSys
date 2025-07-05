@@ -110,7 +110,7 @@
                             <i class="fas fa-building me-2"></i> Nombre Empresa
                         </a>
                         <div class="dropdown-menu dropdown-menu-end m-0">
-                            <a href="empresa_dashboard.php" class="dropdown-item active">Panel de Empresa</a>
+                            <a href="empresa_dashboard.php" class="dropdown-item">Panel de Empresa</a>
                             <a href="empresa_perfil.php" class="dropdown-item">Perfil de la Empresa</a>
                             <a href="empresa_beneficios.php" class="dropdown-item">Beneficios</a>
                             <a href="empresa_usuarios.php" class="dropdown-item">Usuarios</a>
