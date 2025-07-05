@@ -115,7 +115,7 @@
                             <a href="empresa_beneficios.php" class="dropdown-item">Beneficios</a>
                             <a href="empresa_usuarios.php" class="dropdown-item">Usuarios</a>
                             <a href="empresa_reportes.php" class="dropdown-item">Reportes</a>
-                            <a href="empresa_configuracion.php" class="dropdown-item active">Configuración</a>
+                            <a href="empresa_configuracion.php" class="dropdown-item">Configuración</a>
                             <hr class="dropdown-divider">
                             <a href="logout.php" class="dropdown-item text-danger">Cerrar Sesión</a>
                         </div>
