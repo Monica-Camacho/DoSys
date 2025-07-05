@@ -190,3 +190,46 @@ organizacion_crear_aviso.php
 organizacion_historial.php
 
 organizacion_configuracion.php
+
+
+
+Vistas para el Rol de Administrador
+El Administrador tendrá acceso a todas las funcionalidades.
+
+empresa_dashboard.php: La página de inicio. Mostrará un resumen del impacto (beneficios canjeados), un listado rápido de usuarios y accesos directos a las funciones principales.
+
+empresa_perfil.php: La que acabamos de diseñar. Aquí el admin edita los datos de la empresa, ubicación y representante.
+
+empresa_beneficios.php: Para crear, ver, editar y eliminar los beneficios o promociones que la empresa ofrece a los donantes.
+
+empresa_usuarios.php: (Nueva Vista Clave) Una tabla para ver a todos los usuarios afiliados a la empresa, su rol y su estado. Desde aquí, el admin podrá añadir nuevos usuarios o editar los existentes.
+
+empresa_crear_usuario.php: (Nuevo Formulario) El formulario que usará el admin para registrar a un nuevo empleado en la plataforma, asignándole un rol (Creador o Visualizador).
+
+empresa_reportes.php: Para ver estadísticas detalladas sobre el uso de los beneficios.
+
+empresa_configuracion.php: Para las opciones de seguridad de la cuenta de administrador.
+
+Vistas para el Rol de Sub-usuario (Creador de Promociones)
+Este usuario tendrá un panel más simple.
+
+empresa_dashboard.php: Verá un resumen enfocado en las promociones.
+
+empresa_beneficios.php: Tendrá acceso completo a esta página para crear y editar promociones.
+
+empresa_reportes.php: Podrá ver el rendimiento de las promociones.
+
+empresa_configuracion.php: Para gestionar su propia contraseña.
+
+(Acceso Denegado a empresa_perfil.php y empresa_usuarios.php)
+
+Vistas para el Rol de Sub-usuario (Visualizador)
+Este es el rol más restringido.
+
+empresa_dashboard.php: Verá una lista simple de las promociones activas.
+
+empresa_beneficios.php: Verá la misma página, pero en modo de solo lectura. Los botones para crear o editar estarán ocultos o desactivados.
+
+empresa_configuracion.php: Para gestionar su propia contraseña.
+
+(Acceso Denegado a todo lo demás)
