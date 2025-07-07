@@ -127,8 +127,7 @@
     <div class="container-fluid bg-light py-5">
         <div class="container">
             <div>
-                <!-- El título cambiará según la categoría elegida en segmentos.html -->
-                <h1 class='display-5 mb-0'>Solicitud de Medicamentos</h1>
+                <h1 class='display-5 mb-0'>Crear Solicitud</h1>
                 <p class="fs-5 text-muted mb-0">Completa la siguiente información para validar tu caso.</p>
             </div>
         </div>
@@ -158,33 +157,49 @@
                                         <option>Crítico</option>
                                     </select>
                                 </div>
-                                <!-- DYNAMIC FIELDS FOR MEDICINE -->
-                                <div class="col-md-6">
-                                    <label for="medicamento" class="form-label">Medicamento Solicitado</label>
-                                    <input type="text" class="form-control" id="medicamento" placeholder="Nombre del medicamento">
+                                
+                                <!-- Dynamic Fields Container -->
+                                <div class="col-12">
+                                    <!-- Fields for Sangre (hidden by default) -->
+                                    <div id="campos-sangre" class="row g-3 d-none">
+                                        <div class="col-md-6">
+                                            <label for="tipoSangre" class="form-label">Tipo de Sangre</label>
+                                            <select id="tipoSangre" class="form-select">
+                                                <option>O+</option><option>O-</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="cantidadDonadores" class="form-label">Cantidad de Donadores</label>
+                                            <input type="number" class="form-control" id="cantidadDonadores" placeholder="Ej: 5">
+                                        </div>
+                                    </div>
+                                    <!-- Fields for Medicamentos (hidden by default) -->
+                                    <div id="campos-medicamentos" class="row g-3 d-none">
+                                        <div class="col-md-6">
+                                            <label for="medicamento" class="form-label">Medicamento Solicitado</label>
+                                            <input type="text" class="form-control" id="medicamento" placeholder="Nombre del medicamento">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="cantidad" class="form-label">Cantidad Requerida</label>
+                                            <input type="text" class="form-control" id="cantidad" placeholder="Ej: 2 cajas, 1 paquete">
+                                        </div>
+                                        <div class="col-12">
+                                            <label for="receta" class="form-label">Receta Médica (Indispensable)</label>
+                                            <input type="file" class="form-control" id="receta">
+                                        </div>
+                                    </div>
+                                    <!-- Fields for Dispositivos (hidden by default) -->
+                                    <div id="campos-dispositivos" class="row g-3 d-none">
+                                        <div class="col-md-6">
+                                            <label for="tipoDispositivo" class="form-label">Tipo de Dispositivo</label>
+                                            <input type="text" class="form-control" id="tipoDispositivo" placeholder="Ej: Silla de ruedas, muletas">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="caracteristicasDispositivo" class="form-label">Características Específicas</label>
+                                            <input type="text" class="form-control" id="caracteristicasDispositivo" placeholder="Ej: Pediátrica, plegable">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="cantidad" class="form-label">Cantidad Requerida</label>
-                                    <input type="text" class="form-control" id="cantidad" placeholder="Ej: 2 cajas, 1 paquete">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="receta" class="form-label">Receta Médica (Indispensable)</label>
-                                    <input type="file" class="form-control" id="receta">
-                                </div>
-                                <!-- END DYNAMIC FIELDS FOR MEDICINE -->
-
-                                <!-- DYNAMIC FIELDS FOR BLOOD (Commented out)
-                                <div class="col-md-6">
-                                    <label for="tipoSangre" class="form-label">Tipo de Sangre</label>
-                                    <select id="tipoSangre" class="form-select">
-                                        <option>O+</option> <option>O-</option> <option>A+</option> <option>A-</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="cantidadDonadores" class="form-label">Cantidad de Donadores</label>
-                                    <input type="number" class="form-control" id="cantidadDonadores" placeholder="Ej: 5">
-                                </div>
-                                -->
                             </div>
                         </div>
                     </div>
@@ -212,13 +227,13 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Sexo al nacer</label>
-                                    <div class="d-flex">
+                                    <div class="d-flex pt-2">
                                         <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="genero" id="masculino">
+                                            <input class="form-check-input" type="radio" name="sexo" id="masculino">
                                             <label class="form-check-label" for="masculino">Masculino</label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="genero" id="femenino">
+                                            <input class="form-check-input" type="radio" name="sexo" id="femenino">
                                             <label class="form-check-label" for="femenino">Femenino</label>
                                         </div>
                                     </div>
@@ -256,7 +271,7 @@
 
                 <!-- Side Column (Map and Summary) -->
                 <div class="col-lg-5">
-                    <div class="card border-0 shadow-sm">
+                    <div class="card border-0 shadow-sm" style="top: 10px">
                         <div class="card-body p-4">
                             <h5 class="card-title mb-4">4. Punto de Entrega y Validación</h5>
                             <p class="text-muted">Selecciona en el mapa el hospital o centro de acopio donde se recibirá la donación. Este centro validará tu solicitud.</p>
@@ -353,6 +368,37 @@
     
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+
+    <!-- Dynamic Form Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Obtener el parámetro 'categoria' de la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoria = urlParams.get('categoria');
+
+            // 2. Seleccionar los contenedores de los campos
+            const camposSangre = document.getElementById('campos-sangre');
+            const camposMedicamentos = document.getElementById('campos-medicamentos');
+            const camposDispositivos = document.getElementById('campos-dispositivos');
+            const tituloPagina = document.querySelector('.display-5'); // El H1 del encabezado
+
+            // 3. Mostrar solo el grupo que corresponde a la categoría
+            if (categoria === 'sangre') {
+                camposSangre.classList.remove('d-none');
+                tituloPagina.textContent = 'Solicitud de Sangre';
+            } else if (categoria === 'medicamentos') {
+                camposMedicamentos.classList.remove('d-none');
+                tituloPagina.textContent = 'Solicitud de Medicamentos';
+            } else if (categoria === 'dispositivos') {
+                camposDispositivos.classList.remove('d-none');
+                tituloPagina.textContent = 'Solicitud de Dispositivos';
+            } else {
+                // Opcional: si no hay categoría, mostrar un mensaje o redirigir a segmentos.html
+                tituloPagina.textContent = 'Crear Solicitud';
+                // Podrías mostrar un mensaje pidiendo que seleccionen una categoría primero.
+            }
+        });
+    </script>
     
 </body>
 
