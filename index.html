@@ -32,7 +32,49 @@
 
         <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
-            <link href="css/Donaciones.css" rel="stylesheet">
+
+                <style>
+            .carousel-caption {
+                top: 0;
+                bottom: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+            }
+            
+            /* Responsive adjustments ONLY for mobile devices */
+            @media (max-width: 768px) {
+                .carousel-item {
+                    height: 85vh; /* Give a consistent, good-looking height on mobile */
+                }
+                .carousel-item .carousel-image-container,
+                .carousel-item .carousel-image {
+                    height: 100%;
+                    object-fit: cover; /* Ensure image covers the slide area without distortion */
+                }
+
+                .carousel-caption h1 {
+                    font-size: 2.5rem; /* Smaller title on mobile */
+                }
+                .carousel-caption p {
+                    font-size: 1rem; /* Smaller paragraph on mobile */
+                    margin-bottom: 1.5rem !important;
+                }
+                .carousel-caption .d-flex.gap-4 {
+                    flex-direction: column; /* Stack buttons vertically on mobile */
+                    gap: 0.75rem !important; /* Reduce gap between stacked buttons */
+                    align-items: center;
+                }
+                 .carousel-caption .btn {
+                    font-size: 0.9rem;
+                    padding: 0.7rem 1.5rem;
+                    width: 80%;
+                    max-width: 280px;
+                }
+            }
+        </style>
 
     </head>
 
@@ -122,46 +164,55 @@
     </div>
     <!-- Navbar & Hero End -->
 
-        <!-- Carousel Start -->
-    <div id="bloodDonationCarousel" class="carousel slide" data-bs-ride="carousel">
+    <!-- Carousel Start -->
+    <div id="donationCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
-            <!-- Primera Imagen del Carrusel -->
+            <!-- Slide 1: Sangre -->
             <div class="carousel-item active">
-                <div class="carousel-image-container">
-                    <img src="img/fondos/sangre.png" class="d-block w-100 carousel-image img-fluid" alt="Donación de sangre 1">
-                    <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
-                        <h1 class="text-light mb-5">Sangre</h1> <!-- Eliminé la clase display-1 -->
-                        <div class="d-flex gap-4">
-                            <button class="btn btn-primary btn-lg" onclick="window.location.href = 'M-Sangre_Donante.php';">Donar</button>
-                            <button class="btn btn-success btn-lg" onclick="window.location.href = 'M-Sangre_Donatario.php';">Solicitar</button>
+                <div class="carousel-image-container h-100">
+                    <img src="img/fondos/sangre.png" class="d-block w-100 carousel-image img-fluid" alt="Donación de sangre">
+                    <div class="carousel-caption">
+                        <div class="px-3">
+                            <h1 class="text-light display-3 mb-4">Sangre</h1>
+                            <p class="fs-5 fw-medium text-white mb-4 pb-2">Tu donación puede salvar vidas. Ayuda a quienes más lo necesitan.</p>
+                            <div class="d-flex gap-4 justify-content-center">
+                                <a href="M-Sangre_Donante.php" class="btn btn-primary btn-lg rounded-pill px-4">Ser Donante</a>
+                                <a href="M-Sangre_Donatario.php" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Donante</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Segunda Imagen del Carrusel -->
+            <!-- Slide 2: Medicamentos -->
             <div class="carousel-item">
-                <div class="carousel-image-container">
-                    <img src="img/fondos/medicinas.png" class="d-block w-100 carousel-image img-fluid" alt="Donación de sangre 2">
-                    <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
-                        <h1 class="text-light mb-5">Medicamentos</h1> <!-- Eliminé la clase display-1 -->
-                        <div class="d-flex gap-4">
-                            <button class="btn btn-primary btn-lg" onclick="window.location.href = 'M-Medicamentos_Donante.php';">Donar</button>
-                            <button class="btn btn-success btn-lg" onclick="window.location.href = 'M-Medicamentos_Donatario.php';">Solicitar</button>
+                <div class="carousel-image-container h-100">
+                    <img src="img/fondos/medicinas.png" class="d-block w-100 carousel-image img-fluid" alt="Donación de medicamentos">
+                    <div class="carousel-caption">
+                         <div class="px-3">
+                            <h1 class="text-light display-3 mb-4">Medicamentos</h1>
+                            <p class="fs-5 fw-medium text-white mb-4 pb-2">Dona medicamentos que ya no necesites y ayuda a un tratamiento.</p>
+                            <div class="d-flex gap-4 justify-content-center">
+                                <a href="M-Medicamentos_Donante.php" class="btn btn-primary btn-lg rounded-pill px-4">Donar Medicamentos</a>
+                                <a href="M-Medicamentos_Donatario.php" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Medicamentos</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Tercera Imagen del Carrusel -->
+            <!-- Slide 3: Dispositivos -->
             <div class="carousel-item">
-                <div class="carousel-image-container">
-                    <img src="img/fondos/dispositivos.png" class="d-block w-100 carousel-image img-fluid" alt="Donación de sangre 3">
-                    <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
-                        <h1 class="text-light mb-5">Dispositivos Asistencia</h1> <!-- Eliminé la clase display-1 -->
-                        <div class="d-flex gap-4">
-                            <button class="btn btn-primary btn-lg" onclick="window.location.href = 'M-Dispositivos_Donante.php';">Donar</button>
-                            <button class="btn btn-success btn-lg" onclick="window.location.href = 'M-Dispositivos_Donatario.php';">Solicitar</button>
+                <div class="carousel-image-container h-100">
+                    <img src="img/fondos/dispositivos.png" class="d-block w-100 carousel-image img-fluid" alt="Donación de dispositivos">
+                    <div class="carousel-caption">
+                         <div class="px-3">
+                            <h1 class="text-light display-3 mb-4">Dispositivos de Asistencia</h1>
+                            <p class="fs-5 fw-medium text-white mb-4 pb-2">Mejora la calidad de vida de alguien donando un dispositivo médico.</p>
+                            <div class="d-flex gap-4 justify-content-center">
+                                <a href="M-Dispositivos_Donante.php" class="btn btn-primary btn-lg rounded-pill px-4">Donar Dispositivo</a>
+                                <a href="M-Dispositivos_Donatario.php" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Dispositivo</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -169,11 +220,11 @@
         </div>
 
         <!-- Controles del Carrusel -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#bloodDonationCarousel" data-bs-slide="prev">
+        <button class="carousel-control-prev" type="button" data-bs-target="#donationCarousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Anterior</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#bloodDonationCarousel" data-bs-slide="next">
+        <button class="carousel-control-next" type="button" data-bs-target="#donationCarousel" data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Siguiente</span>
         </button>
