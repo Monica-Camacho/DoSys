@@ -4,7 +4,7 @@
 <head>
     <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
     <meta charset="utf-8">
-    <title>DoSys - Gestionar Solicitudes</title>
+    <title>DoSys - Gestionar Donantes</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     
     <!-- Favicon -->
@@ -112,7 +112,7 @@
                         <div class="dropdown-menu dropdown-menu-end m-0">
                             <a href="organizacion_dashboard.php" class="dropdown-item">Panel de Organización</a>
                             <a href="organizacion_solicitudes.php" class="dropdown-item">Solicitudes</a>
-                            <a href="organizacion_donantes.php" class="dropdown-item">Donantes</a>
+                            <a href="organizacion_donantes.php" class="dropdown-item active">Donantes</a>
                             <a href="organizacion_usuarios.php" class="dropdown-item">Voluntarios</a>
                             <a href="organizacion_perfil.php" class="dropdown-item">Perfil de la Organización</a>
                             <a href="organizacion_configuracion.php" class="dropdown-item">Configuración</a>
@@ -130,72 +130,92 @@
     <div class="container-fluid bg-light py-5">
         <div class="container">
             <div>
-                <h1 class='display-5 mb-0'>Gestionar Solicitudes</h1>
-                <p class="fs-5 text-muted mb-0">Valida, aprueba y da seguimiento a las solicitudes de ayuda.</p>
+                <h1 class='display-5 mb-0'>Gestionar Donantes</h1>
+                <p class="fs-5 text-muted mb-0">Aprueba y da seguimiento a los donantes comprometidos con tus causas.</p>
             </div>
         </div>
     </div>
     <!-- Header End -->
 
-    <!-- Requests Management Content Start -->
+    <!-- Donors Management Content Start -->
     <div class="container-fluid py-5">
         <div class="container">
             <!-- Nav Tabs -->
-            <ul class="nav nav-pills nav-fill mb-4" id="requestsTabs" role="tablist">
+            <ul class="nav nav-pills nav-fill mb-4" id="donorsTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active position-relative" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="true">
-                        Por Validar
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">4</span>
+                    <button class="nav-link active position-relative" id="pending-donors-tab" data-bs-toggle="tab" data-bs-target="#pending-donors" type="button" role="tab" aria-controls="pending-donors" aria-selected="true">
+                        Pendientes de Aprobación
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">7</span>
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="active-tab" data-bs-toggle="tab" data-bs-target="#active" type="button" role="tab" aria-controls="active" aria-selected="false">
-                        Activas
+                    <button class="nav-link" id="in-progress-tab" data-bs-toggle="tab" data-bs-target="#in-progress" type="button" role="tab" aria-controls="in-progress" aria-selected="false">
+                        En Proceso
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab" aria-controls="history" aria-selected="false">
-                        Historial
+                    <button class="nav-link" id="completed-donors-tab" data-bs-toggle="tab" data-bs-target="#completed-donors" type="button" role="tab" aria-controls="completed-donors" aria-selected="false">
+                        Completados
                     </button>
                 </li>
             </ul>
 
             <!-- Tab Content -->
-            <div class="tab-content" id="requestsTabsContent">
-                <!-- Pending Validation Tab -->
-                <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
+            <div class="tab-content" id="donorsTabsContent">
+                <!-- Pending Approval Tab -->
+                <div class="tab-pane fade show active" id="pending-donors" role="tabpanel" aria-labelledby="pending-donors-tab">
                     <div class="card border-0 shadow-sm">
                         <div class="card-body p-4">
-                            <h5 class="card-title mb-4">Solicitudes Pendientes de Validación</h5>
+                            <h5 class="card-title mb-4">Donantes Pendientes de Aprobación</h5>
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>Tipo</th>
-                                            <th>Solicitante</th>
-                                            <th>Fecha de Solicitud</th>
+                                            <th>Donante</th>
+                                            <th>Solicitud a la que apoya</th>
+                                            <th>Fecha de Compromiso</th>
                                             <th class="text-center">Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td><i class="fas fa-tint text-danger me-2"></i>Sangre</td>
+                                            <td>Maria López</td>
+                                            <td>Silla de Ruedas para Carlos S.</td>
+                                            <td>06/07/2025</td>
+                                            <td class="text-center">
+                                                <button class="btn btn-sm btn-success me-1" title="Aprobar Donante"><i class="fas fa-check"></i></button>
+                                                <button class="btn btn-sm btn-danger" title="Rechazar Donante"><i class="fas fa-times"></i></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- In Progress Tab -->
+                <div class="tab-pane fade" id="in-progress" role="tabpanel" aria-labelledby="in-progress-tab">
+                     <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h5 class="card-title mb-4">Donantes en Proceso</h5>
+                             <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Donante</th>
+                                            <th>Solicitud a la que apoya</th>
+                                            <th>Fecha de Aprobación</th>
+                                            <th class="text-center">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
                                             <td>Juan Pérez García</td>
-                                            <td>05/07/2025</td>
+                                            <td>Medicamentos para Ana G.</td>
+                                            <td>03/07/2025</td>
                                             <td class="text-center">
-                                                <button class="btn btn-sm btn-info me-1" title="Ver Detalles"><i class="fas fa-eye"></i></button>
-                                                <button class="btn btn-sm btn-success me-1" title="Aprobar"><i class="fas fa-check"></i></button>
-                                                <button class="btn btn-sm btn-danger" title="Rechazar"><i class="fas fa-times"></i></button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><i class="fas fa-pills text-primary me-2"></i>Medicamentos</td>
-                                            <td>Ana López</td>
-                                            <td>04/07/2025</td>
-                                            <td class="text-center">
-                                                <button class="btn btn-sm btn-info me-1" title="Ver Detalles"><i class="fas fa-eye"></i></button>
-                                                <button class="btn btn-sm btn-success me-1" title="Aprobar"><i class="fas fa-check"></i></button>
-                                                <button class="btn btn-sm btn-danger" title="Rechazar"><i class="fas fa-times"></i></button>
+                                                <button class="btn btn-sm btn-primary" title="Marcar como Recibido"><i class="fas fa-gift"></i></button>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -205,68 +225,25 @@
                     </div>
                 </div>
 
-                <!-- Active Tab -->
-                <div class="tab-pane fade" id="active" role="tabpanel" aria-labelledby="active-tab">
+                <!-- Completed Tab -->
+                <div class="tab-pane fade" id="completed-donors" role="tabpanel" aria-labelledby="completed-donors-tab">
                      <div class="card border-0 shadow-sm">
                         <div class="card-body p-4">
-                            <h5 class="card-title mb-4">Solicitudes Activas</h5>
+                            <h5 class="card-title mb-4">Historial de Donaciones Recibidas</h5>
                              <div class="table-responsive">
                                 <table class="table table-hover align-middle">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>Tipo</th>
-                                            <th>Solicitante</th>
-                                            <th>Progreso</th>
-                                            <th class="text-center">Acciones</th>
+                                            <th>Donante</th>
+                                            <th>Solicitud Apoyada</th>
+                                            <th>Fecha de Entrega</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td><i class="fas fa-wheelchair text-warning me-2"></i>Dispositivo</td>
-                                            <td>Carlos Sánchez</td>
-                                            <td>
-                                                <div class="progress" style="height: 20px;">
-                                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0/1</div>
-                                                </div>
-                                            </td>
-                                            <td class="text-center">
-                                                <a href="organizacion_donantes.php" class="btn btn-sm btn-primary" title="Ver Donantes"><i class="fas fa-users"></i></a>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- History Tab -->
-                <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
-                     <div class="card border-0 shadow-sm">
-                        <div class="card-body p-4">
-                            <h5 class="card-title mb-4">Historial de Solicitudes</h5>
-                             <div class="table-responsive">
-                                <table class="table table-hover align-middle">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Tipo</th>
-                                            <th>Solicitante</th>
-                                            <th>Fecha de Cierre</th>
-                                            <th class="text-center">Estado Final</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td><i class="fas fa-tint text-danger me-2"></i>Sangre</td>
                                             <td>Laura Méndez</td>
-                                            <td>25/06/2025</td>
-                                            <td class="text-center"><span class="badge bg-success">Completada</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td><i class="fas fa-pills text-primary me-2"></i>Medicamentos</td>
-                                            <td>Pedro Infante</td>
-                                            <td>15/06/2025</td>
-                                            <td class="text-center"><span class="badge bg-secondary">Cerrada</span></td>
+                                            <td>Sangre para Paciente X</td>
+                                            <td>20/06/2025</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -277,7 +254,7 @@
             </div>
         </div>
     </div>
-    <!-- Requests Management Content End -->
+    <!-- Donors Management Content End -->
         
     <!-- Footer Start -->
     <div class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.2s">
