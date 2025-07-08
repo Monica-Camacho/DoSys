@@ -226,7 +226,7 @@
     <!-- Script del Mapa -->
     <script>
         let map;
-        let todosLosPuntos = []; // Guardamos todos los puntos aquí para no llamar al backend cada vez
+        let todosLosPuntos = []; 
         let marcadoresActuales = []; 
 
         function initMap() {
@@ -235,14 +235,30 @@
                 center: { lat: 23.6345, lng: -102.5528 },
             });
 
-            // Obtener todos los puntos una sola vez al cargar el mapa
             fetch('obtener_puntos.php')
-                .then((response) => response.json())
-                .then((data) => {
-                    todosLosPuntos = data;
-                    mostrarPuntos(todosLosPuntos); // Mostrar todos los puntos inicialmente
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error del servidor: ' + response.status);
+                    }
+                    return response.json();
                 })
-                .catch((error) => {
+                .then(data => {
+                    // --- INICIO DE LA CORRECCIÓN ---
+                    // 1. Verificar si la respuesta contiene un error del backend
+                    if (data.error) {
+                        throw new Error('Error en los datos del backend: ' + data.error);
+                    }
+                    // 2. Verificar si la respuesta es un array antes de usar forEach
+                    if (!Array.isArray(data)) {
+                        console.error("La respuesta del backend no es una lista (array):", data);
+                        throw new Error("Formato de datos inesperado del servidor.");
+                    }
+                    // --- FIN DE LA CORRECCIÓN ---
+
+                    todosLosPuntos = data;
+                    mostrarPuntos(todosLosPuntos); 
+                })
+                .catch(error => {
                     console.error("Error inicial al obtener los puntos:", error);
                     document.getElementById("map").innerHTML = '<div class="alert alert-danger">No se pudieron cargar los puntos.</div>';
                 });
@@ -255,7 +271,7 @@
             if (document.getElementById('filterDispositivos').checked) filtrosActivos.push(3);
 
             if (filtrosActivos.length === 0) {
-                mostrarPuntos(todosLosPuntos); // Si no hay filtros, mostrar todos
+                mostrarPuntos(todosLosPuntos); 
             } else {
                 const puntosFiltrados = todosLosPuntos.filter(punto => filtrosActivos.includes(parseInt(punto.tipo_id)));
                 mostrarPuntos(puntosFiltrados);
@@ -264,7 +280,10 @@
 
         function mostrarPuntos(puntos) {
             limpiarMarcadores();
-            puntos.forEach(punto => agregarMarcador(punto));
+            // Verificamos de nuevo que 'puntos' sea un array antes de recorrerlo
+            if (Array.isArray(puntos)) {
+                puntos.forEach(punto => agregarMarcador(punto));
+            }
         }
 
         function limpiarMarcadores() {

@@ -2,58 +2,59 @@
 // Encabezado para indicar que la respuesta es JSON
 header('Content-Type: application/json; charset=utf-8');
 
-// Incluir el archivo de conexión
-// Asegúrate que la ruta sea correcta desde obtener_puntos.php
-include 'conexion_dosys.php';
+// Incluir el archivo de conexión que estás usando
+// Asegúrate que el nombre del archivo es correcto.
+include 'conexion_local.php'; 
 
-$puntos = []; // Array para almacenar los resultados
+// Array para almacenar los resultados
+$puntos = []; 
 
 // Verificar si la conexión se estableció correctamente
 if (!isset($conexion) || $conexion->connect_error) {
-    error_log("Error de conexión a BD en obtener_puntos.php: " . ($conexion->connect_error ?? 'No se pudo conectar'));
-    // Devolver un JSON que indique el error
-    echo json_encode(['error' => 'Error al conectar con la base de datos.', 'data' => []]);
+    http_response_code(500);
+    echo json_encode(['error' => 'Error al conectar con la base de datos.']);
     exit();
 }
 
-// Consulta SQL para obtener los datos necesarios de la tabla ubicaciones
-// Seleccionamos las columnas que usa el JavaScript de Mapa.php
-// Filtramos para obtener solo los que tienen coordenadas válidas
-$sql = "SELECT
-            Nombre AS nombre,      -- Renombramos a minúscula para coincidir con el JS
-            Estado AS estado,      -- Renombramos a minúscula
-            Municipio AS municipio,  -- Renombramos a minúscula
-            Latitud AS latitud,    -- Renombramos a minúscula
-            Longitud AS longitud   -- Renombramos a minúscula
-        FROM
-            ubicaciones           -- Consultando tu tabla 'ubicaciones'
-        WHERE
-            Latitud IS NOT NULL AND Longitud IS NOT NULL";
+// --- LÓGICA DE FILTRADO ---
+
+// Consulta SQL base
+$sql = "SELECT id, nombre, estado, municipio, direccion, maps, latitud, longitud, tipo_id FROM puntos_donacion WHERE latitud IS NOT NULL AND longitud IS NOT NULL";
+
+// Verificar si se pasó una categoría en la URL
+if (isset($_GET['categoria']) && !empty($_GET['categoria'])) {
+    
+    $categoria = $_GET['categoria'];
+    $tipo_id = 0;
+
+    // Mapeo de categorías a IDs
+    if ($categoria == 'sangre') $tipo_id = 1; 
+    elseif ($categoria == 'medicamentos') $tipo_id = 2;
+    elseif ($categoria == 'dispositivos') $tipo_id = 3;
+    
+    if ($tipo_id > 0) {
+        // Añadir el filtro directamente a la consulta
+        $sql .= " AND tipo_id = " . intval($tipo_id); // intval para seguridad
+    }
+}
 
 $resultado = $conexion->query($sql);
 
 if ($resultado) {
-    // Si la consulta fue exitosa, recorremos los resultados
     while ($fila = $resultado->fetch_assoc()) {
-        // Asegurarnos que latitud y longitud sean números flotantes
-        $fila['latitud'] = (float) $fila['latitud'];
-        $fila['longitud'] = (float) $fila['longitud'];
-        $puntos[] = $fila; // Agregamos la fila al array de puntos
+        $puntos[] = $fila; 
     }
-    $resultado->free(); // Liberar memoria del resultado
+    $resultado->free(); 
 } else {
-    // Si hubo un error en la consulta SQL
-    error_log("Error en la consulta SQL en obtener_puntos.php: " . $conexion->error);
-    // Devolvemos un JSON que indique el error
-     echo json_encode(['error' => 'Error al consultar las ubicaciones: ' . $conexion->error, 'data' => []]);
-     $conexion->close();
-     exit();
+    http_response_code(500);
+    echo json_encode(['error' => 'Error al ejecutar la consulta: ' . $conexion->error]);
+    $conexion->close();
+    exit();
 }
 
-$conexion->close(); // Cerrar la conexión a la base de datos
+$conexion->close();
 
 // Devolver el array de puntos codificado como JSON
-// Usamos JSON_NUMERIC_CHECK para intentar convertir números en strings a números reales en JSON
-echo json_encode($puntos, JSON_NUMERIC_CHECK);
+echo json_encode($puntos);
 
 ?>
