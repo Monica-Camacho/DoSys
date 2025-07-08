@@ -278,3 +278,36 @@ Propósito: Tabla para que el administrador gestione las cuentas de su equipo (v
 organizacion_crear_usuario.php:
 
 Propósito: El formulario que usará el administrador para registrar un nuevo miembro de su equipo en la plataforma, asignándole un rol (Gestor de Casos o Visualizador).
+
+
+
+
+📍 Geolocalización del Usuario:
+
+¿Qué hace? Pide permiso al usuario para acceder a su ubicación y centra automáticamente el mapa en su posición actual, mostrando los centros de donación más cercanos a él.
+
+Beneficio: Mejora drásticamente la experiencia de usuario, ya que le muestra información relevante de inmediato sin necesidad de buscar manualmente.
+
+🔍 Búsqueda de Direcciones y Lugares:
+
+¿Qué hace? Agrega una barra de búsqueda en el mapa (como en Google Maps) donde el usuario puede escribir una dirección, una colonia o un punto de interés. El mapa se moverá a esa ubicación.
+
+Beneficio: Permite a los usuarios que no quieren compartir su ubicación, o que están planeando una donación desde otro lugar, encontrar centros de acopio fácilmente.
+
+🚗 Cálculo de Rutas:
+
+¿Qué hace? Al hacer clic en un marcador, además de ver la información del lugar, el usuario tendrá un botón de "Cómo llegar". Al presionarlo, se dibujará la ruta desde su ubicación (o una dirección que ingrese) hasta el centro de donación.
+
+Beneficio: Facilita la logística para el donante, incentivando a que complete la donación al saber exactamente cómo y cuánto tiempo le tomará llegar.
+
+ℹ️ Ventanas de Información Mejoradas (InfoWindows):
+
+¿Qué hace? Enriquece la información que aparece al hacer clic en un marcador. Podríamos añadir datos como:
+
+Horarios de atención.
+
+Teléfono de contacto.
+
+Requisitos específicos (ej. "Se necesita sangre O+ con urgencia").
+
+Un enlace directo al perfil de la organización (si aplica).

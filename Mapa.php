@@ -230,40 +230,83 @@
         let marcadoresActuales = []; 
 
         function initMap() {
+            // Centro inicial por defecto (CDMX)
+            const initialPos = { lat: 19.4326, lng: -99.1332 };
+
             map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 5,
-                center: { lat: 23.6345, lng: -102.5528 },
+                zoom: 12, // Zoom inicial
+                center: initialPos,
             });
 
-            fetch('obtener_puntos.php')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Error del servidor: ' + response.status);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // --- INICIO DE LA CORRECCIÓN ---
-                    // 1. Verificar si la respuesta contiene un error del backend
-                    if (data.error) {
-                        throw new Error('Error en los datos del backend: ' + data.error);
-                    }
-                    // 2. Verificar si la respuesta es un array antes de usar forEach
-                    if (!Array.isArray(data)) {
-                        console.error("La respuesta del backend no es una lista (array):", data);
-                        throw new Error("Formato de datos inesperado del servidor.");
-                    }
-                    // --- FIN DE LA CORRECCIÓN ---
+            // Llamada a la nueva función de geolocalización
+            geolocalizarUsuario();
 
+            // Carga de puntos desde el backend (sin cambios)
+            fetch('obtener_puntos.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        throw new Error('Error en backend: ' + data.error);
+                    }
+                    if (!Array.isArray(data)) {
+                        throw new Error("Formato de datos inesperado.");
+                    }
                     todosLosPuntos = data;
-                    mostrarPuntos(todosLosPuntos); 
+                    mostrarPuntos(todosLosPuntos);
                 })
                 .catch(error => {
-                    console.error("Error inicial al obtener los puntos:", error);
-                    document.getElementById("map").innerHTML = '<div class="alert alert-danger">No se pudieron cargar los puntos.</div>';
+                    console.error("Error al obtener los puntos:", error);
                 });
         }
         
+        // ==========================================================
+        //         NUEVA FUNCIONALIDAD DE GEOLOCALIZACIÓN
+        // ==========================================================
+        function geolocalizarUsuario() {
+            console.log("Depuración: Intentando obtener ubicación...");
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const userPos = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        };
+                        console.log("Depuración: Ubicación encontrada:", userPos);
+
+                        // Centrar el mapa en la ubicación del usuario y acercarlo
+                        map.setCenter(userPos);
+                        map.setZoom(14); 
+
+                        // Añadir un marcador especial para la ubicación del usuario
+                        new google.maps.Marker({
+                            position: userPos,
+                            map: map,
+                            title: "¡Estás aquí!",
+                            icon: {
+                                path: google.maps.SymbolPath.CIRCLE,
+                                scale: 8,
+                                fillColor: "#06A3DA", // Color primario de tu tema
+                                fillOpacity: 1,
+                                strokeWeight: 2,
+                                strokeColor: "#ffffff",
+                            },
+                        });
+                    },
+                    () => {
+                        // El usuario denegó el permiso o hubo un error
+                        alert("No se pudo obtener tu ubicación. Mostrando mapa general.");
+                    }
+                );
+            } else {
+                // El navegador no soporta geolocalización
+                alert("Tu navegador no soporta geolocalización. Mostrando mapa general.");
+            }
+        }
+        // ==========================================================
+        //              FIN DE LA NUEVA FUNCIONALIDAD
+        // ==========================================================
+
         function aplicarFiltros() {
             const filtrosActivos = [];
             if (document.getElementById('filterSangre').checked) filtrosActivos.push(1);
@@ -280,7 +323,6 @@
 
         function mostrarPuntos(puntos) {
             limpiarMarcadores();
-            // Verificamos de nuevo que 'puntos' sea un array antes de recorrerlo
             if (Array.isArray(puntos)) {
                 puntos.forEach(punto => agregarMarcador(punto));
             }
@@ -306,9 +348,7 @@
                 <a href="${punto.maps}" target="_blank">Ver en Google Maps</a>
             </div>
             `;
-
             const infoWindow = new google.maps.InfoWindow({ content: contenidoInfoWindow });
-
             const marcador = new google.maps.Marker({
                 position: { lat: parseFloat(punto.latitud), lng: parseFloat(punto.longitud) },
                 map: map,
@@ -318,11 +358,9 @@
                     scaledSize: new google.maps.Size(40, 40),
                 }
             });
-
             marcador.addListener("click", () => {
                 infoWindow.open(map, marcador);
             });
-
             marcadoresActuales.push(marcador);
         }
     </script>
