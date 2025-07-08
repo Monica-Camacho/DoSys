@@ -282,12 +282,6 @@ Propósito: El formulario que usará el administrador para registrar un nuevo mi
 
 
 
-📍 Geolocalización del Usuario:
-
-¿Qué hace? Pide permiso al usuario para acceder a su ubicación y centra automáticamente el mapa en su posición actual, mostrando los centros de donación más cercanos a él.
-
-Beneficio: Mejora drásticamente la experiencia de usuario, ya que le muestra información relevante de inmediato sin necesidad de buscar manualmente.
-
 🔍 Búsqueda de Direcciones y Lugares:
 
 ¿Qué hace? Agrega una barra de búsqueda en el mapa (como en Google Maps) donde el usuario puede escribir una dirección, una colonia o un punto de interés. El mapa se moverá a esa ubicación.

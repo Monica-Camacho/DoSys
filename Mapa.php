@@ -27,7 +27,7 @@
 
     <style>
         #map {
-            height: 80vh; /* Aumentamos la altura para que ocupe más espacio vertical */
+            height: 80vh; 
             width: 100%;
             border-radius: .5rem;
             box-shadow: 0 0 15px rgba(0,0,0,.1);
@@ -143,28 +143,21 @@
                             <h6>Tipo de Centro</h6>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="1" id="filterSangre" onchange="aplicarFiltros()">
-                                <label class="form-check-label" for="filterSangre">
-                                    Bancos de Sangre
-                                </label>
+                                <label class="form-check-label" for="filterSangre">Bancos de Sangre</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="2" id="filterMedicamentos" onchange="aplicarFiltros()">
-                                <label class="form-check-label" for="filterMedicamentos">
-                                    Medicamentos
-                                </label>
+                                <label class="form-check-label" for="filterMedicamentos">Medicamentos</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="3" id="filterDispositivos" onchange="aplicarFiltros()">
-                                <label class="form-check-label" for="filterDispositivos">
-                                    Dispositivos
-                                </label>
+                                <label class="form-check-label" for="filterDispositivos">Dispositivos</label>
                             </div>
                             <hr>
                             <button class="btn btn-outline-secondary btn-sm w-100" onclick="limpiarTodosLosFiltros()">Limpiar Filtros</button>
                         </div>
                     </div>
                 </div>
-
                 <!-- Map Column -->
                 <div class="col-lg-9">
                     <div id="map"></div>
@@ -174,7 +167,7 @@
     </div>
     <!-- Map Content End -->
         
-    <!-- Footer Start -->
+    <!-- Footer -->
     <div class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.2s">
         <div class="container py-5">
             <div class="row g-5">
@@ -223,33 +216,30 @@
     <script src="lib/owlcarousel/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
 
-    <!-- Script del Mapa -->
+    <!-- Script del Mapa (con Iconos Dinámicos) -->
     <script>
         let map;
         let todosLosPuntos = []; 
         let marcadoresActuales = []; 
+        let userLocationMarker;
 
         function initMap() {
-            // Centro inicial por defecto (CDMX)
             const initialPos = { lat: 19.4326, lng: -99.1332 };
-
+            
             map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 12, // Zoom inicial
+                zoom: 12,
                 center: initialPos,
+                mapTypeControl: false,
+                streetViewControl: false
             });
-
-            // Llamada a la nueva función de geolocalización
+            
             geolocalizarUsuario();
 
-            // Carga de puntos desde el backend (sin cambios)
             fetch('obtener_puntos.php')
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
                         throw new Error('Error en backend: ' + data.error);
-                    }
-                    if (!Array.isArray(data)) {
-                        throw new Error("Formato de datos inesperado.");
                     }
                     todosLosPuntos = data;
                     mostrarPuntos(todosLosPuntos);
@@ -259,53 +249,62 @@
                 });
         }
         
-        // ==========================================================
-        //         NUEVA FUNCIONALIDAD DE GEOLOCALIZACIÓN
-        // ==========================================================
         function geolocalizarUsuario() {
-            console.log("Depuración: Intentando obtener ubicación...");
-
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        const userPos = {
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude,
-                        };
-                        console.log("Depuración: Ubicación encontrada:", userPos);
-
-                        // Centrar el mapa en la ubicación del usuario y acercarlo
-                        map.setCenter(userPos);
+                        const userLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
+                        map.setCenter(userLocation);
                         map.setZoom(14); 
-
-                        // Añadir un marcador especial para la ubicación del usuario
-                        new google.maps.Marker({
-                            position: userPos,
-                            map: map,
-                            title: "¡Estás aquí!",
-                            icon: {
-                                path: google.maps.SymbolPath.CIRCLE,
-                                scale: 8,
-                                fillColor: "#06A3DA", // Color primario de tu tema
-                                fillOpacity: 1,
-                                strokeWeight: 2,
-                                strokeColor: "#ffffff",
-                            },
+                        
+                        if (userLocationMarker) userLocationMarker.setMap(null);
+                        userLocationMarker = new google.maps.Marker({
+                            position: userLocation, map: map, title: "¡Estás aquí!",
+                            icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: "#06A3DA", fillOpacity: 1, strokeWeight: 2, strokeColor: "#ffffff" },
                         });
                     },
-                    () => {
-                        // El usuario denegó el permiso o hubo un error
-                        alert("No se pudo obtener tu ubicación. Mostrando mapa general.");
+                    () => { 
+                        console.log("Depuración: El usuario denegó el permiso de geolocalización.");
                     }
                 );
-            } else {
-                // El navegador no soporta geolocalización
-                alert("Tu navegador no soporta geolocalización. Mostrando mapa general.");
             }
         }
-        // ==========================================================
-        //              FIN DE LA NUEVA FUNCIONALIDAD
-        // ==========================================================
+        
+        function agregarMarcador(punto) {
+            // Mapeo de tipo_id a la ruta del icono correspondiente
+            const iconMap = {
+                '1': 'img/icon/sangre.png',       // Para Bancos de Sangre
+                '2': 'img/icon/medicamento.png', // Para Medicamentos
+                '3': 'img/icon/dispositivo.png'  // Para Dispositivos
+            };
+            
+            // Se elige el icono específico del tipo, o el de corazón por defecto
+            const iconPath = iconMap[punto.tipo_id] || 'img/icon/heart.png';
+
+            const contenidoInfoWindow = `
+                <div style="font-family: 'DM Sans', sans-serif; max-width: 250px;">
+                    <h6 style="margin: 0 0 5px; font-weight: bold;">${punto.nombre}</h6>
+                    <p style="margin: 0 0 12px; font-size: 14px;">${punto.direccion || 'Dirección no disponible'}</p>
+                    <a href="https://www.google.com/maps/search/?api=1&query=${punto.latitud},${punto.longitud}" target="_blank" class="btn btn-sm btn-outline-primary">Ver en Google Maps</a>
+                </div>
+            `;
+
+            const infoWindow = new google.maps.InfoWindow({ content: contenidoInfoWindow });
+            
+            const marcador = new google.maps.Marker({
+                position: { lat: parseFloat(punto.latitud), lng: parseFloat(punto.longitud) },
+                map: map,
+                title: punto.nombre,
+                // Se usa la ruta del icono que definimos arriba
+                icon: { 
+                    url: iconPath, 
+                    scaledSize: new google.maps.Size(40, 40) 
+                }
+            });
+
+            marcador.addListener("click", () => { infoWindow.open(map, marcador); });
+            marcadoresActuales.push(marcador);
+        }
 
         function aplicarFiltros() {
             const filtrosActivos = [];
@@ -313,19 +312,16 @@
             if (document.getElementById('filterMedicamentos').checked) filtrosActivos.push(2);
             if (document.getElementById('filterDispositivos').checked) filtrosActivos.push(3);
 
-            if (filtrosActivos.length === 0) {
-                mostrarPuntos(todosLosPuntos); 
-            } else {
-                const puntosFiltrados = todosLosPuntos.filter(punto => filtrosActivos.includes(parseInt(punto.tipo_id)));
-                mostrarPuntos(puntosFiltrados);
-            }
+            const puntosFiltrados = (filtrosActivos.length === 0)
+                ? todosLosPuntos
+                : todosLosPuntos.filter(punto => filtrosActivos.includes(parseInt(punto.tipo_id)));
+            
+            mostrarPuntos(puntosFiltrados);
         }
 
         function mostrarPuntos(puntos) {
             limpiarMarcadores();
-            if (Array.isArray(puntos)) {
-                puntos.forEach(punto => agregarMarcador(punto));
-            }
+            puntos.forEach(punto => agregarMarcador(punto));
         }
 
         function limpiarMarcadores() {
@@ -339,35 +335,10 @@
             document.getElementById('filterDispositivos').checked = false;
             aplicarFiltros();
         }
-
-        function agregarMarcador(punto) {
-            const contenidoInfoWindow = `
-            <div style="font-family: Arial, sans-serif; padding: 10px;">
-                <h3 style="margin: 0; font-size: 16px;">${punto.nombre}</h3>
-                <p style="margin: 5px 0; font-size: 14px;"><strong>Dirección:</strong> ${punto.direccion || 'No disponible'}</p>
-                <a href="${punto.maps}" target="_blank">Ver en Google Maps</a>
-            </div>
-            `;
-            const infoWindow = new google.maps.InfoWindow({ content: contenidoInfoWindow });
-            const marcador = new google.maps.Marker({
-                position: { lat: parseFloat(punto.latitud), lng: parseFloat(punto.longitud) },
-                map: map,
-                title: punto.nombre,
-                icon: {
-                    url: "img/icon/heart.png",
-                    scaledSize: new google.maps.Size(40, 40),
-                }
-            });
-            marcador.addListener("click", () => {
-                infoWindow.open(map, marcador);
-            });
-            marcadoresActuales.push(marcador);
-        }
     </script>
 
     <!-- Cargar la API de Google Maps -->
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWXq_cevVYbU88p2xYuVUMOWpHctcDlE8&callback=initMap"></script>
 
 </body>
-
 </html>
