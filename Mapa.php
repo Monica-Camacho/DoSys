@@ -1,275 +1,274 @@
+<?php
+// No necesitamos conexión a BD aquí si obtener_puntos.php la maneja.
+// No necesitamos sesión aquí ya que el header es público.
+?>
 <!DOCTYPE html>
 <html lang="es">
+  <head>
+  <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK" data-position="4"></script> <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Puntos Donación - DoSys</title> <meta
+      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+      name="viewport"
+    />
+    <link
+      rel="icon"
+      href="assets/img/logos/DoSys_chico.png"
+      type="image/x-icon"
+    />
+    <script src="assets/js/plugin/webfont/webfont.min.js"></script>
+    <script>
+      WebFont.load({
+        google: { families: ["Public Sans:300,400,500,600,700"] },
+        custom: {
+          families: [
+            "Font Awesome 5 Solid",
+            "Font Awesome 5 Regular",
+            "Font Awesome 5 Brands",
+            "simple-line-icons",
+          ],
+          urls: ["assets/css/fonts.min.css"],
+        },
+        active: function () {
+          sessionStorage.fonts = true;
+        },
+      });
+    </script>
 
-<head>
-    <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
-    <meta charset="utf-8">
-    <title>DoSys - Mapa de Puntos de Donación</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="img/logos/DoSys_chico.png">
-
-    <!-- Google Web Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
-
-    <!-- Icon Font Stylesheet -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
-
-    <!-- Libraries Stylesheet -->
-    <link rel="stylesheet" href="lib/animate/animate.min.css"/>
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-
-    <!-- Customized Bootstrap Stylesheet -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Template Stylesheet -->
-    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/css/plugins.min.css" />
+    <link rel="stylesheet" href="assets/css/kaiadmin.min.css" />
+    <link rel="stylesheet" href="assets/css/demo.css" />
 
     <style>
-        /* Estilo para asegurar que el mapa tenga una altura visible */
-        #map {
-            height: 70vh; /* 70% de la altura de la ventana */
-            width: 100%;
-            border-radius: .5rem;
-            box-shadow: 0 0 15px rgba(0,0,0,.1);
+        #map { height: 450px; width: 100%; border: 0;}
+
+        /* ***** INICIO: CSS AÑADIDO PARA ANCHO DEL NAVBAR ***** */
+        .wrapper > .main-header {
+            width: 100%; /* Fuerza el ancho al 100% del wrapper */
+            left: 0; /* Asegura que esté alineado a la izquierda */
+            right: 0; /* Asegura que se extienda a la derecha */
+            /* position: relative; */ /* Puede ser necesario descomentar si está fijo/absoluto */
         }
+        /* Opcional: Asegurar que el wrapper no esté limitado */
+        .wrapper {
+             max-width: none !important; /* Evitar limitaciones de ancho */
+        }
+         /* Opcional: Ajustar padding del panel si el header es fijo */
+         .main-panel {
+             /* padding-top: 75px; /* Ajusta este valor a la altura real del header */ */
+             /* width: 100% !important;  /* Ya lo tenías */ */
+         }
+         /* ***** FIN: CSS AÑADIDO ***** */
     </style>
-</head>
 
-<body>
+  </head>
+  <body>
+    <div class="wrapper">
 
-    <!-- Spinner Start -->
-    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-            <span class="sr-only">Cargando...</span>
-        </div>
-    </div>
-    <!-- Spinner End -->
+      <div class="main-header">
+          <div class="main-header-logo">
+              <div class="logo-header" data-background-color="dark">
+                   <a href="index.php" class="logo"> <img src="assets/img/logos/Dosys_largo_colorBlanco.png" alt="Logo Dosys" class="navbar-brand" height="35" />
+                   </a>
+                  <button class="topbar-toggler more"><i class="gg-more-vertical-alt"></i></button>
+              </div>
+          </div>
+          <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
+              <div class="container-fluid">
+                 <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
+                      <li class="nav-item">
+                           <a href="pre_registro.php" class="btn btn-primary btn-round">
+                               <i class="fas fa-user-plus me-1"></i> Pre-Regístrate
+                           </a>
+                           <a href="login.php" class="btn btn-secondary btn-round ms-2">
+                               <i class="fas fa-sign-in-alt me-1"></i> Iniciar Sesión
+                           </a>
+                      </li>
+                  </ul>
+              </div>
+          </nav>
+      </div>
+      <div class="main-panel" style="width: 100%;">
+          <div class="container">
+              <div class="page-inner">
+                  <div class="card">
 
-        <!-- Topbar Start -->
-        <div class="container-fluid topbar px-0 px-lg-4 bg-light py-2 d-none d-lg-block">
-            <div class="container">
-                <div class="row gx-0 align-items-center">
-                    <div class="col-lg-8 text-center text-lg-start mb-lg-0">
-                        <div class="d-flex flex-wrap">
-                            <div class="border-end border-primary pe-3">
-                                <a href="mapa.php" class="text-muted small"><i class="fas fa-map-marker-alt text-primary me-2"></i>Lugares de donación</a>
-                            </div>
-                            <div class="ps-3">
-                                <a href="mailto:contacto@dosys.mx" class="text-muted small"><i class="fas fa-envelope text-primary me-2"></i>contacto@dosys.mx</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 text-center text-lg-end">
-                        <div class="d-flex justify-content-end">
-                            <div class="d-flex border-end border-primary pe-3">
-                                <a class="btn p-0 text-primary me-3" href="https://www.instagram.com/dosys_official/" target="_blank"><i class="fab fa-instagram"></i></a>
-                                <a class="btn p-0 text-primary me-0" href="https://www.tiktok.com/@dosys.official" target="_blank"><i class="fab fa-tiktok"></i></a>
-                            </div>
-                            <div class="dropdown ms-3">
-                                <a href="#" class="dropdown-toggle text-dark" data-bs-toggle="dropdown"><small><i class="fas fa-globe-europe text-primary me-2"></i> Idioma</small></a>
-                                <div class="dropdown-menu rounded">
-                                    <a href="#" class="dropdown-item">Español</a>
-                                    <a href="mantenimiento.html" class="dropdown-item">Inglés</a>
-                                    <a href="mantenimiento.html" class="dropdown-item">Nahuatl</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Topbar End -->    
+                      <div class="card-header d-flex justify-content-between align-items-center">
+                          <div class="card-title mb-0">Puntos de Donación en tu zona</div>
+                          <div class="btn-group dropdown">
+                              <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                  Idioma
+                              </button>
+                              <ul class="dropdown-menu" role="menu">
+                                  <li>
+                                      <a class="dropdown-item" href="mapa.php">Español</a>
+                                      <a class="dropdown-item" href="Mantenimiento.php">Náhuatl</a>
+                                      <a class="dropdown-item" href="Ingles.php">Inglés</a>
+                                  </li>
+                              </ul>
+                          </div>
+                      </div>
 
-    <!-- Navbar Start -->
-    <div class="container-fluid nav-bar px-0 px-lg-4 py-lg-0">
-        <div class="container">
-            <nav class="navbar navbar-expand-lg navbar-light"> 
-                <a href="index.html" class="navbar-brand p-0">
-                    <img src="img/logos/DoSys_largo_fondoTransparente.png" alt="DoSys_Logo" class="img-fluid">
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                    <span class="fa fa-bars"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <div class="navbar-nav mx-auto">
-                        <a href="index.html" class="nav-item nav-link">Inicio</a>
-                        <a href="avisos.html" class="nav-item nav-link">Avisos de Donación</a>
-                        <a href="mapa.php" class="nav-item nav-link active">Mapa</a>
-                        <a href="estadisticas.html" class="nav-item nav-link">Estadísticas</a>
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link" data-bs-toggle="dropdown">
-                                <span class="dropdown-toggle">Conócenos</span>
-                            </a>
-                            <div class="dropdown-menu">
-                                <a href="C-Sobre_Nosotros.html" class="dropdown-item">Sobre Nosotros</a>
-                                <a href="C-Nuestro_Equipo.html" class="dropdown-item">Nuestro Equipo</a>
-                                <a href="C-Logros.html" class="dropdown-item">Logros</a>
-                                <a href="R-Empresas_Aliadas.php" class="dropdown-item">Empresas Aliadas</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center ms-lg-4">
-                        <a href="login.php" class="btn btn-primary rounded-pill py-2 px-4 me-2 text-nowrap">Iniciar Sesión</a>
-                        <a href="r_seleccionar_tipo.html" class="btn btn-outline-primary rounded-pill py-2 px-4">Regístrate</a>
-                   </div>
-                </div>
-            </nav>
-        </div>
-    </div>
-    <!-- Navbar End -->
+                      <div class="card-body">
+                          <div id="map"></div>
+                      </div>
+                  </div>
+              </div>
+          </div>
 
-    <!-- Header Start -->
-    <div class="container-fluid bg-light py-5">
-        <div class="container">
-            <div>
-                <h1 class='display-5 mb-0'>Mapa de Puntos de Donación</h1>
-                <p class="fs-5 text-muted mb-0">Encuentra hospitales, bancos de sangre y centros de acopio cerca de ti.</p>
-            </div>
-        </div>
-    </div>
-    <!-- Header End -->
+          <footer class="footer">
+              <div class="container-fluid d-flex justify-content-between">
+                  <div class="copyright"> 2024, Adaptado para Dosys-System por [Tu Nombre/Empresa] </div>
+                  <div></div>
+              </div>
+          </footer>
+      </div> </div> <script src="assets/js/core/jquery-3.7.1.min.js"></script>
+    <script src="assets/js/core/popper.min.js"></script>
+    <script src="assets/js/core/bootstrap.min.js"></script>
+    <script src="assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="assets/js/plugin/datatables/datatables.min.js"></script>
+    <script src="assets/js/plugin/sweetalert/sweetalert.min.js"></script>
+    <script src="assets/js/kaiadmin.min.js"></script>
 
-    <!-- Map Content Start -->
-    <div class="container-fluid py-5">
-        <div class="container">
-            <!-- Div donde se renderizará el mapa -->
-            <div id="map"></div>
-        </div>
-    </div>
-    <!-- Map Content End -->
-        
-    <!-- Footer Start -->
-    <div class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.2s">
-        <div class="container py-5">
-            <div class="row g-5">
-                <!-- Legal Information -->
-                <div class="col-xl-4 col-lg-4 col-md-6">
-                    <div class="footer-item">
-                        <h4 class="text-white mb-4">Información Legal</h4>
-                        <a class="btn-link" href="#"><i class="fas fa-angle-right me-2"></i> Términos y Condiciones</a>
-                        <a class="btn-link" href="#"><i class="fas fa-angle-right me-2"></i> Política de Privacidad</a>
-                        <a class="btn-link" href="#"><i class="fas fa-angle-right me-2"></i> Aviso Legal</a>
-                    </div>
-                </div>
-                <!-- Quick Links -->
-                <div class="col-xl-4 col-lg-4 col-md-6">
-                    <div class="footer-item">
-                        <h4 class="text-white mb-4">Enlaces Rápidos</h4>
-                        <a class="btn-link" href="index.html"><i class="fas fa-angle-right me-2"></i> Inicio</a>
-                        <a class="btn-link" href="avisos.html"><i class="fas fa-angle-right me-2"></i> Avisos de Donación</a>
-                        <a class="btn-link" href="mapa.php"><i class="fas fa-angle-right me-2"></i> Mapa</a>
-                        <a class="btn-link" href="C-Sobre_Nosotros.html"><i class="fas fa-angle-right me-2"></i> Sobre Nosotros</a>
-                        <a class="btn-link" href="C-Nuestro_Equipo.html"><i class="fas fa-angle-right me-2"></i> Nuestro Equipo</a>
-                    </div>
-                </div>
-                <!-- Contact -->
-                <div class="col-xl-4 col-lg-4 col-md-6">
-                    <div class="footer-item">
-                        <h4 class="text-white mb-4">Contáctanos</h4>
-                        <p class="mb-3">¿Tienes alguna duda o necesitas ayuda? No dudes en contactarnos a través de los siguientes medios:</p>
-                        <p class="mb-2"><i class="fas fa-envelope me-2 text-white"></i> <a href="mailto:contacto@dosys.mx" class="text-white">contacto@dosys.mx</a></p>
-                        <p class="mb-2"><i class="fab fa-whatsapp me-2 text-white"></i> Asesor: 99-33-59-09-31</p>
-                        <p class="mb-2"><i class="fab fa-whatsapp me-2 text-white"></i> Líder de Equipo: 99-31-54-67-94</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Copyright Section -->
-         <div class="container-fluid">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12 text-center text-white" style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding: 25px 0;">
-                        <p class="mb-2">Copyright © 2024 DoSys</p>
-                        <p class="small mb-0">El presente sitio web es operado por DoSys S. de R.L. de C.V. Todos los derechos reservados. El uso de esta plataforma está sujeto a nuestros Términos y Condiciones y Política de Privacidad.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Footer End -->
 
-    <!-- Back to Top -->
-    <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
+<!-- Script del Mapa -->
+<script>
+  let map; // Variable global para el mapa
+  let marcadores = []; // Array para almacenar los marcadores
 
-    
-    <!-- JavaScript Libraries -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/wow/wow.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/counterup/counterup.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-    
-    <!-- Template Javascript -->
-    <script src="js/main.js"></script>
+  function initMap() {
+    // Crear el mapa con zoom para ver todo México
+    map = new google.maps.Map(document.getElementById("map"), {
+      zoom: 5,  // Cambiado de 12 a 5 para ver todo el país
+      center: { lat: 23.6345, lng: -102.5528 }, // Centro geográfico de México
+    });
 
-    <!-- Google Maps API Script & Map Initialization -->
-    <script>
-        // Función que se ejecutará cuando la API de Google Maps se cargue
-        function initMap() {
-            // Coordenadas para centrar el mapa (ej. Villahermosa, Tabasco)
-            const centroMapa = { lat: 17.9869, lng: -92.9303 };
-
-            // Crear el objeto del mapa
-            const map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 13, // Nivel de zoom
-                center: centroMapa,
-            });
-
-            // Usar fetch para obtener los puntos desde el script PHP
-            // No se pasa categoría para obtener todos los puntos
-            fetch('obtener_puntos.php')
-                .then(response => response.json()) // Convertir la respuesta a JSON
-                .then(puntos => {
-                    // Iterar sobre cada punto de donación recibido
-                    puntos.forEach(punto => {
-                        // Crear el contenido para la ventana de información del marcador
-                        const contentString = 
-                            '<div id="content">' +
-                            '<h5 id="firstHeading" class="firstHeading">' + punto.nombre + '</h5>' +
-                            '<div id="bodyContent">' +
-                            '<p><b>Dirección:</b> ' + punto.direccion + '</p>' +
-                            '<p><b>Teléfono:</b> ' + (punto.telefono ? punto.telefono : 'No disponible') + '</p>' +
-                            "</div>" +
-                            "</div>";
-
-                        // Crear la ventana de información
-                        const infowindow = new google.maps.InfoWindow({
-                            content: contentString,
-                        });
-
-                        // Crear el marcador en el mapa
-                        const marker = new google.maps.Marker({
-                            position: { lat: parseFloat(punto.latitud), lng: parseFloat(punto.longitud) },
-                            map: map,
-                            title: punto.nombre,
-                        });
-
-                        // Añadir un evento de clic al marcador para abrir la ventana de información
-                        marker.addListener("click", () => {
-                            infowindow.open({
-                                anchor: marker,
-                                map,
-                            });
-                        });
-                    });
-                })
-                .catch(error => {
-                    // Mostrar un error en la consola si la carga de puntos falla
-                    console.error('Error al cargar los puntos de donación:', error);
-                });
+    // Obtener la ubicación del usuario (pero no cambiar el centro/zoom)
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          const userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          
+          // Solo agregar marcador de ubicación sin cambiar la vista
+          new google.maps.Marker({
+            position: userLocation,
+            map: map,
+            title: "Tu ubicación",
+            icon: {
+              url: "https://maps.google.com/mapfiles/kml/shapes/man.png",
+              scaledSize: new google.maps.Size(40, 40),
+            },
+          });
+        },
+        function (error) {
+          console.log("Geolocalización no disponible:", error);
+          // No mostramos alertas para no molestar al usuario
         }
-    </script>
-    
-    <!-- Carga de la API de Google Maps. Reemplaza TU_API_KEY_AQUI con tu clave. -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyASN5vvit35yMwGrde7tn4dUgsSVElbpzU&callback=initMap"></script>
+      );
+    }
 
-</body>
+    obtenerTodosLosPuntos();
+  }
 
+  // Función para obtener TODOS los puntos de donación
+  function obtenerTodosLosPuntos() {
+    fetch('obtener_puntos.php')
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.length > 0) {
+          data.forEach((punto) => {
+            agregarMarcador(punto);
+          });
+        } else {
+          console.log('No hay puntos de donación disponibles.');
+          swal({
+            title: "No hay centros disponibles",
+            text: "No se encontraron puntos de donación en la base de datos.",
+            icon: "info"
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error al obtener los puntos:", error);
+        swal({
+          title: "Error",
+          text: "No se pudieron cargar los puntos de donación.",
+          icon: "error"
+        });
+      });
+  }
+
+  // Función para agregar un marcador al mapa
+  function agregarMarcador(punto) {
+    // Crear el contenido del infoWindow
+    const contenidoInfoWindow = `
+      <div style="font-family: Arial, sans-serif; padding: 10px;">
+        <h3 style="margin: 0; font-size: 16px;">${punto.nombre}</h3>
+        <p style="margin: 5px 0; font-size: 14px;"><strong>Estado:</strong> ${punto.estado}</p>
+        <p style="margin: 5px 0; font-size: 14px;"><strong>Municipio:</strong> ${punto.municipio}</p>
+        <button 
+          style="background-color: #4CAF50; color: white; border: none; padding: 8px 16px; text-align: center; text-decoration: none; display: inline-block; font-size: 14px; margin-top: 10px; cursor: pointer;"
+          onclick="seleccionarLugar('${punto.nombre}', ${punto.latitud}, ${punto.longitud})"
+        >
+          Conocer más
+        </button>
+      </div>
+    `;
+
+    // Crear el infoWindow
+    const infoWindow = new google.maps.InfoWindow({
+      content: contenidoInfoWindow,
+    });
+
+    // Crear el marcador con tu imagen personalizada
+    const marcador = new google.maps.Marker({
+      position: {
+        lat: parseFloat(punto.latitud),
+        lng: parseFloat(punto.longitud),
+      },
+      map: map,
+      title: punto.nombre,
+      icon: {
+        url: "img/icon/heart.png", // Asegúrate que esta ruta es correcta
+        scaledSize: new google.maps.Size(40, 40),
+        anchor: new google.maps.Point(20, 20)
+      }
+    });
+
+    // Mostrar el infoWindow al hacer clic en el marcador
+    marcador.addListener("click", () => {
+      if (infoWindow) {
+        infoWindow.close();
+      }
+      infoWindow.open(map, marcador);
+    });
+
+    marcadores.push(marcador); // Guardar el marcador en el array
+  }
+
+  // Función para seleccionar un lugar
+  function seleccionarLugar(nombre, latitud, longitud) {
+    // Almacenar los datos en localStorage
+    localStorage.setItem("nombreLugar", nombre);
+    localStorage.setItem("latitud", latitud);
+    localStorage.setItem("longitud", longitud);
+
+    // Redirigir a la página de confirmación
+    window.location.href = "Tipo-Donacion.html";
+  }
+</script>
+
+
+
+    <!-- Cargar la API de Google Maps -->
+    <script
+      async
+      defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWXq_cevVYbU88p2xYuVUMOWpHctcDlE8&callback=initMap"
+    ></script>
+
+  </body>
 </html>

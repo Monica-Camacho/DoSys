@@ -1,6 +1,6 @@
 <?php
 // Incluir la conexión a la base de datos
-include('conexion_local.php'); // Asegúrate de que la ruta sea correcta
+include('conexion_host.php'); // Asegúrate de que la ruta sea correcta
 
 // Consulta SQL para obtener TODOS los puntos de donación con sus coordenadas
 $sql = "SELECT pd.nombre, pd.estado, pd.municipio, pd.latitud, pd.longitud
