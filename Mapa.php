@@ -27,7 +27,7 @@
 
     <style>
         #map {
-            height: 75vh;
+            height: 80vh; /* Aumentamos la altura para que ocupe más espacio vertical */
             width: 100%;
             border-radius: .5rem;
             box-shadow: 0 0 15px rgba(0,0,0,.1);
@@ -123,7 +123,7 @@
         <div class="container">
             <div>
                 <h1 class='display-5 mb-0'>Mapa de Puntos de Donación</h1>
-                <p class="fs-5 text-muted mb-0">Encuentra hospitales, bancos de sangre y centros de acopio cerca de ti.</p>
+                <p class="fs-5 text-muted mb-0">Encuentra y filtra hospitales, bancos de sangre y centros de acopio.</p>
             </div>
         </div>
     </div>
@@ -132,7 +132,44 @@
     <!-- Map Content Start -->
     <div class="container-fluid py-5">
         <div class="container">
-            <div id="map"></div>
+            <div class="row g-4">
+                <!-- Filter Sidebar -->
+                <div class="col-lg-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-transparent border-bottom-0 p-4">
+                            <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filtrar por:</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <h6>Tipo de Centro</h6>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="1" id="filterSangre" onchange="aplicarFiltros()">
+                                <label class="form-check-label" for="filterSangre">
+                                    Bancos de Sangre
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="2" id="filterMedicamentos" onchange="aplicarFiltros()">
+                                <label class="form-check-label" for="filterMedicamentos">
+                                    Medicamentos
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="3" id="filterDispositivos" onchange="aplicarFiltros()">
+                                <label class="form-check-label" for="filterDispositivos">
+                                    Dispositivos
+                                </label>
+                            </div>
+                            <hr>
+                            <button class="btn btn-outline-secondary btn-sm w-100" onclick="limpiarTodosLosFiltros()">Limpiar Filtros</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Map Column -->
+                <div class="col-lg-9">
+                    <div id="map"></div>
+                </div>
+            </div>
         </div>
     </div>
     <!-- Map Content End -->
@@ -170,16 +207,6 @@
                 </div>
             </div>
         </div>
-        <div class="container-fluid">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12 text-center text-white" style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding: 25px 0;">
-                        <p class="mb-2">Copyright © 2024 DoSys</p>
-                        <p class="small mb-0">El presente sitio web es operado por DoSys S. de R.L. de C.V. Todos los derechos reservados. El uso de esta plataforma está sujeto a nuestros Términos y Condiciones y Política de Privacidad.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
     <!-- Footer End -->
 
@@ -194,14 +221,13 @@
     <script src="lib/waypoints/waypoints.min.js"></script>
     <script src="lib/counterup/counterup.min.js"></script>
     <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-    
-    <!-- Template Javascript -->
     <script src="js/main.js"></script>
 
-    <!-- Script del Mapa (Tu código funcional) -->
+    <!-- Script del Mapa -->
     <script>
         let map;
-        let marcadores = []; 
+        let todosLosPuntos = []; // Guardamos todos los puntos aquí para no llamar al backend cada vez
+        let marcadoresActuales = []; 
 
         function initMap() {
             map = new google.maps.Map(document.getElementById("map"), {
@@ -209,79 +235,68 @@
                 center: { lat: 23.6345, lng: -102.5528 },
             });
 
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function (position) {
-                        const userLocation = {
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude,
-                        };
-                        new google.maps.Marker({
-                            position: userLocation,
-                            map: map,
-                            title: "Tu ubicación",
-                            icon: {
-                                url: "https://maps.google.com/mapfiles/kml/shapes/man.png",
-                                scaledSize: new google.maps.Size(40, 40),
-                            },
-                        });
-                    },
-                    function (error) {
-                        console.log("Geolocalización no disponible:", error);
-                    }
-                );
-            }
-            obtenerTodosLosPuntos();
-        }
-
-        function obtenerTodosLosPuntos() {
+            // Obtener todos los puntos una sola vez al cargar el mapa
             fetch('obtener_puntos.php')
                 .then((response) => response.json())
                 .then((data) => {
-                    if (data.length > 0) {
-                        data.forEach((punto) => {
-                            agregarMarcador(punto);
-                        });
-                    } else {
-                        console.log('No hay puntos de donación disponibles.');
-                    }
+                    todosLosPuntos = data;
+                    mostrarPuntos(todosLosPuntos); // Mostrar todos los puntos inicialmente
                 })
                 .catch((error) => {
-                    console.error("Error al obtener los puntos:", error);
-                    document.getElementById("map").innerHTML = '<div class="alert alert-danger">No se pudieron cargar los puntos. Verifica que el backend funcione correctamente.</div>';
+                    console.error("Error inicial al obtener los puntos:", error);
+                    document.getElementById("map").innerHTML = '<div class="alert alert-danger">No se pudieron cargar los puntos.</div>';
                 });
+        }
+        
+        function aplicarFiltros() {
+            const filtrosActivos = [];
+            if (document.getElementById('filterSangre').checked) filtrosActivos.push(1);
+            if (document.getElementById('filterMedicamentos').checked) filtrosActivos.push(2);
+            if (document.getElementById('filterDispositivos').checked) filtrosActivos.push(3);
+
+            if (filtrosActivos.length === 0) {
+                mostrarPuntos(todosLosPuntos); // Si no hay filtros, mostrar todos
+            } else {
+                const puntosFiltrados = todosLosPuntos.filter(punto => filtrosActivos.includes(parseInt(punto.tipo_id)));
+                mostrarPuntos(puntosFiltrados);
+            }
+        }
+
+        function mostrarPuntos(puntos) {
+            limpiarMarcadores();
+            puntos.forEach(punto => agregarMarcador(punto));
+        }
+
+        function limpiarMarcadores() {
+            marcadoresActuales.forEach(marcador => marcador.setMap(null));
+            marcadoresActuales = [];
+        }
+
+        function limpiarTodosLosFiltros() {
+            document.getElementById('filterSangre').checked = false;
+            document.getElementById('filterMedicamentos').checked = false;
+            document.getElementById('filterDispositivos').checked = false;
+            aplicarFiltros();
         }
 
         function agregarMarcador(punto) {
             const contenidoInfoWindow = `
             <div style="font-family: Arial, sans-serif; padding: 10px;">
                 <h3 style="margin: 0; font-size: 16px;">${punto.nombre}</h3>
-                <p style="margin: 5px 0; font-size: 14px;"><strong>Estado:</strong> ${punto.estado}</p>
-                <p style="margin: 5px 0; font-size: 14px;"><strong>Municipio:</strong> ${punto.municipio}</p>
-                <button 
-                style="background-color: #0d6efd; color: white; border: none; padding: 8px 16px; text-align: center; text-decoration: none; display: inline-block; font-size: 14px; margin-top: 10px; cursor: pointer; border-radius: 20px;"
-                onclick="seleccionarLugar('${punto.nombre}', ${punto.latitud}, ${punto.longitud})"
-                >
-                Conocer más
-                </button>
+                <p style="margin: 5px 0; font-size: 14px;"><strong>Dirección:</strong> ${punto.direccion || 'No disponible'}</p>
+                <a href="${punto.maps}" target="_blank">Ver en Google Maps</a>
             </div>
             `;
 
-            const infoWindow = new google.maps.InfoWindow({
-                content: contenidoInfoWindow,
-            });
+            const infoWindow = new google.maps.InfoWindow({ content: contenidoInfoWindow });
 
             const marcador = new google.maps.Marker({
-                position: {
-                    lat: parseFloat(punto.latitud),
-                    lng: parseFloat(punto.longitud),
-                },
+                position: { lat: parseFloat(punto.latitud), lng: parseFloat(punto.longitud) },
                 map: map,
                 title: punto.nombre,
                 icon: {
-                    url: "img/icon/heart.png", // Asegúrate que esta ruta es correcta
+                    url: "img/icon/heart.png",
                     scaledSize: new google.maps.Size(40, 40),
-                    anchor: new google.maps.Point(20, 20)
                 }
             });
 
@@ -289,14 +304,7 @@
                 infoWindow.open(map, marcador);
             });
 
-            marcadores.push(marcador);
-        }
-
-        function seleccionarLugar(nombre, latitud, longitud) {
-            localStorage.setItem("nombreLugar", nombre);
-            localStorage.setItem("latitud", latitud);
-            localStorage.setItem("longitud", longitud);
-            window.location.href = "segmentos.html"; // Redirigir a la página de segmentos
+            marcadoresActuales.push(marcador);
         }
     </script>
 
