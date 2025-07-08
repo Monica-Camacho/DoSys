@@ -216,12 +216,13 @@
     <script src="lib/owlcarousel/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
 
-    <!-- Script del Mapa (con Iconos Dinámicos) -->
+    <!-- Script del Mapa (Modificado) -->
     <script>
         let map;
         let todosLosPuntos = []; 
         let marcadoresActuales = []; 
         let userLocationMarker;
+        let infoWindow; 
 
         function initMap() {
             const initialPos = { lat: 19.4326, lng: -99.1332 };
@@ -233,6 +234,12 @@
                 streetViewControl: false
             });
             
+            infoWindow = new google.maps.InfoWindow();
+
+            map.addListener('click', function() {
+                infoWindow.close();
+            });
+
             geolocalizarUsuario();
 
             fetch('obtener_puntos.php')
@@ -249,6 +256,7 @@
                 });
         }
         
+        // ===== FUNCIÓN MODIFICADA =====
         function geolocalizarUsuario() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -258,9 +266,29 @@
                         map.setZoom(14); 
                         
                         if (userLocationMarker) userLocationMarker.setMap(null);
+
+                        // Se define el icono SVG de una persona dentro de un círculo
+                        const svgIcon = `
+                        <svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <g>
+                                <circle cx="24" cy="24" r="22" fill="#06A3DA" stroke="#FFFFFF" stroke-width="2"/>
+                                <g fill="#FFFFFF">
+                                    <circle cx="24" cy="18" r="7"/>
+                                    <path d="M14 38 C14 30, 34 30, 34 38 Z"/>
+                                </g>
+                            </g>
+                        </svg>`;
+
                         userLocationMarker = new google.maps.Marker({
-                            position: userLocation, map: map, title: "¡Estás aquí!",
-                            icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: "#06A3DA", fillOpacity: 1, strokeWeight: 2, strokeColor: "#ffffff" },
+                            position: userLocation, 
+                            map: map, 
+                            title: "¡Estás aquí!",
+                            // Se usa el SVG como un Data URI
+                            icon: {
+                                url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svgIcon),
+                                scaledSize: new google.maps.Size(48, 48),
+                                anchor: new google.maps.Point(24, 24) // Centra el icono
+                            },
                         });
                     },
                     () => { 
@@ -271,38 +299,36 @@
         }
         
         function agregarMarcador(punto) {
-            // Mapeo de tipo_id a la ruta del icono correspondiente
             const iconMap = {
-                '1': 'img/icon/sangre.png',       // Para Bancos de Sangre
-                '2': 'img/icon/medicamento.png', // Para Medicamentos
-                '3': 'img/icon/dispositivo.png'  // Para Dispositivos
+                '1': 'img/icon/sangre.png',
+                '2': 'img/icon/medicamento.png',
+                '3': 'img/icon/dispositivo.png'
             };
             
-            // Se elige el icono específico del tipo, o el de corazón por defecto
             const iconPath = iconMap[punto.tipo_id] || 'img/icon/heart.png';
 
             const contenidoInfoWindow = `
                 <div style="font-family: 'DM Sans', sans-serif; max-width: 250px;">
                     <h6 style="margin: 0 0 5px; font-weight: bold;">${punto.nombre}</h6>
-                    <p style="margin: 0 0 12px; font-size: 14px;">${punto.direccion || 'Dirección no disponible'}</p>
-                    <a href="https://www.google.com/maps/search/?api=1&query=${punto.latitud},${punto.longitud}" target="_blank" class="btn btn-sm btn-outline-primary">Ver en Google Maps</a>
+                    <p style="margin: 0; font-size: 14px;">${punto.direccion || 'Dirección no disponible'}</p>
                 </div>
             `;
-
-            const infoWindow = new google.maps.InfoWindow({ content: contenidoInfoWindow });
             
             const marcador = new google.maps.Marker({
                 position: { lat: parseFloat(punto.latitud), lng: parseFloat(punto.longitud) },
                 map: map,
                 title: punto.nombre,
-                // Se usa la ruta del icono que definimos arriba
                 icon: { 
                     url: iconPath, 
                     scaledSize: new google.maps.Size(40, 40) 
                 }
             });
 
-            marcador.addListener("click", () => { infoWindow.open(map, marcador); });
+            marcador.addListener("click", () => {
+                infoWindow.close(); 
+                infoWindow.setContent(contenidoInfoWindow);
+                infoWindow.open(map, marcador);
+            });
             marcadoresActuales.push(marcador);
         }
 
