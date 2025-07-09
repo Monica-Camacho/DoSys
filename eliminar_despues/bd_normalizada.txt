@@ -380,3 +380,126 @@ INSERT INTO `tipos_punto_donacion` (`id`, `nombre`, `icono`) VALUES (1, 'Banco d
 INSERT INTO `urgencia_niveles` (`id`, `nombre`, `color_hex`) VALUES (1, 'Baja', '#28a745'), (2, 'Media', '#ffc107'), (3, 'Alta', '#fd7e14'), (4, 'Crítica', '#dc3545');
 INSERT INTO `tipos_sangre` (`id`, `tipo`) VALUES (1, 'A+'), (2, 'A-'), (3, 'B+'), (4, 'B-'), (5, 'AB+'), (6, 'AB-'), (7, 'O+'), (8, 'O-');
 INSERT INTO `tipos_apoyo` (`id`, `nombre`, `es_canjeable`) VALUES (1, 'Descuentos y Beneficios', TRUE), (2, 'Difusión y Comunicación', FALSE), (3, 'Apoyo Logístico', FALSE), (4, 'Servicios Gratuitos', TRUE);
+
+
+
+
+
+
+
+
+
+
+-- #####################################################
+-- ## INSERCIÓN DE DATOS DE EJEMPLO PARA DoSys v2.0   ##
+-- #####################################################
+
+-- Usar la base de datos correcta
+USE `dosys_db_normalized`;
+
+-- =====================================================
+-- Catálogos (Estos ya estaban en tu script, se incluyen para que sea completo)
+-- =====================================================
+-- Si ya ejecutaste los INSERTs de catálogo, puedes omitir esta sección.
+INSERT INTO `tipos_usuario` (`id`, `nombre`) VALUES (1, 'Persona'), (2, 'Empresa'), (3, 'Organizacion'), (4, 'SuperAdmin') ON DUPLICATE KEY UPDATE nombre=VALUES(nombre);
+INSERT INTO `roles` (`id`, `nombre`) VALUES (1, 'Administrador'), (2, 'Creador'), (3, 'Visualizador'), (4, 'Gestor de Casos') ON DUPLICATE KEY UPDATE nombre=VALUES(nombre);
+INSERT INTO `categorias_donacion` (`id`, `nombre`) VALUES (1, 'Sangre'), (2, 'Medicamentos'), (3, 'Dispositivos'), (4, 'Otro') ON DUPLICATE KEY UPDATE nombre=VALUES(nombre);
+INSERT INTO `estatus_aviso` (`id`, `nombre`) VALUES (1, 'Pendiente de Validar'), (2, 'Activo'), (3, 'Completado'), (4, 'Rechazado') ON DUPLICATE KEY UPDATE nombre=VALUES(nombre);
+INSERT INTO `estatus_donacion` (`id`, `nombre`) VALUES (1, 'Pendiente de Aprobación'), (2, 'Aprobado'), (3, 'Recibido'), (4, 'No Concretado') ON DUPLICATE KEY UPDATE nombre=VALUES(nombre);
+INSERT INTO `tipos_punto_donacion` (`id`, `nombre`, `icono`) VALUES (1, 'Banco de Sangre', 'sangre.png'), (2, 'Centro de Acopio de Medicamentos', 'medicamentos.png'), (3, 'Centro de Acopio de Dispositivos', 'dispositivos.png') ON DUPLICATE KEY UPDATE nombre=VALUES(nombre);
+INSERT INTO `urgencia_niveles` (`id`, `nombre`, `color_hex`) VALUES (1, 'Baja', '#28a745'), (2, 'Media', '#ffc107'), (3, 'Alta', '#fd7e14'), (4, 'Crítica', '#dc3545') ON DUPLICATE KEY UPDATE nombre=VALUES(nombre);
+INSERT INTO `tipos_sangre` (`id`, `tipo`) VALUES (1, 'A+'), (2, 'A-'), (3, 'B+'), (4, 'B-'), (5, 'AB+'), (6, 'AB-'), (7, 'O+'), (8, 'O-') ON DUPLICATE KEY UPDATE tipo=VALUES(tipo);
+INSERT INTO `tipos_apoyo` (`id`, `nombre`, `es_canjeable`) VALUES (1, 'Descuentos y Beneficios', TRUE), (2, 'Difusión y Comunicación', FALSE), (3, 'Apoyo Logístico', FALSE), (4, 'Servicios Gratuitos', TRUE) ON DUPLICATE KEY UPDATE nombre=VALUES(nombre);
+
+-- =====================================================
+-- Catálogos de Perfil de Persona
+-- =====================================================
+INSERT INTO `enfermedades` (`id`, `nombre`) VALUES (1, 'Hipertensión'), (2, 'Diabetes Tipo 2'), (3, 'Asma') ON DUPLICATE KEY UPDATE nombre=VALUES(nombre);
+INSERT INTO `alergias` (`id`, `nombre`) VALUES (1, 'Penicilina'), (2, 'Mariscos'), (3, 'Polen') ON DUPLICATE KEY UPDATE nombre=VALUES(nombre);
+
+-- =====================================================
+-- Entidades Centralizadas (Normalización)
+-- =====================================================
+-- Direcciones
+INSERT INTO `direcciones` (`id`, `calle`, `numero_exterior`, `colonia`, `codigo_postal`, `municipio`, `estado`, `latitud`, `longitud`) VALUES
+(1, 'Av. Universidad', '100', 'Casa Blanca', '86060', 'Centro', 'Tabasco', 17.989, -92.940),
+(2, 'Calle Ficticia', '123', 'Centro', '86000', 'Centro', 'Tabasco', 17.994, -92.929),
+(3, 'Blvd. Adolfo Ruiz Cortines', '1800', 'Atasta de Serra', '86100', 'Centro', 'Tabasco', 17.995, -92.948),
+(4, 'Paseo Tabasco', '1504', 'Lindia Vista', '86050', 'Centro', 'Tabasco', 18.001, -92.942),
+(5, 'Insurgentes Sur', '2021', 'Florida', '01030', 'Álvaro Obregón', 'Ciudad de México', 19.345, -99.178);
+
+-- Representantes de Empresas/Organizaciones
+INSERT INTO `representantes` (`id`, `nombre`, `apellidos`, `email`, `telefono`) VALUES
+(1, 'Laura', 'García Martínez', 'laura.garcia@empresa-ejemplo.com', '9931234567'),
+(2, 'Carlos', 'Hernández López', 'carlos.h@cruzverde.org', '9937654321');
+
+-- =====================================================
+-- Usuarios y Perfiles
+-- =====================================================
+-- Usuarios (Contraseñas de ejemplo, usar hashes reales en producción)
+INSERT INTO `usuarios` (`id`, `email`, `password_hash`, `tipo_usuario_id`, `rol_id`, `estado`) VALUES
+(1, 'juan.perez@email.com', '$2y$10$xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 1, 3, 'Activo'), -- Persona, Visualizador
+(2, 'contacto@empresa-ejemplo.com', '$2y$10$xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 2, 2, 'Activo'), -- Empresa, Creador
+(3, 'info@cruzverde.org', '$2y$10$xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 3, 2, 'Activo'), -- Organizacion, Creador
+(4, 'superadmin@dosys.com', '$2y$10$xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 4, 1, 'Activo'), -- SuperAdmin, Administrador
+(5, 'ana.gomez@cruzverde.org', '$2y$10$xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 3, 4, 'Activo'); -- Persona (de Org), Gestor de Casos
+
+-- Perfil de Persona (para usuario_id=1)
+INSERT INTO `personas_perfil` (`usuario_id`, `nombre`, `apellidos`, `fecha_nacimiento`, `telefono`, `direccion_id`, `tipo_sangre_id`) VALUES
+(1, 'Juan', 'Pérez Rodríguez', '1990-05-15', '9935551122', 1, 7); -- Sangre O+
+
+-- Relaciones para Persona (usuario_id=1)
+INSERT INTO `personas_x_enfermedades` (`usuario_id`, `enfermedad_id`) VALUES (1, 1); -- Hipertensión
+INSERT INTO `personas_x_alergias` (`usuario_id`, `alergia_id`) VALUES (1, 1); -- Alergia a Penicilina
+
+-- Perfil de Empresa (para usuario_id=2)
+INSERT INTO `empresas_perfil` (`usuario_id`, `nombre_comercial`, `razon_social`, `rfc`, `telefono_empresa`, `direccion_fiscal_id`, `representante_id`) VALUES
+(2, 'Farmacias del Ahorro Suc. Centro', 'Farmacias del Ahorro S.A. de C.V.', 'FAH850101XXX', '9931112233', 2, 1);
+
+-- Perfil de Organización (para usuario_id=3)
+INSERT INTO `organizaciones_perfil` (`usuario_id`, `nombre_organizacion`, `cluni`, `direccion_id`, `mision`, `representante_id`, `verificada`) VALUES
+(3, 'Cruz Verde Tabasco', 'CVT123456789', 3, 'Proveer ayuda médica y humanitaria a la comunidad de Tabasco.', 2, TRUE);
+
+-- =====================================================
+-- Entidades Operacionales
+-- =====================================================
+-- Beneficiarios (personas que recibirán la donación)
+INSERT INTO `beneficiarios` (`id`, `nombre`, `apellido_paterno`, `fecha_nacimiento`, `sexo`) VALUES
+(1, 'María Elena', 'Sánchez', '1965-03-22', 'Femenino'),
+(2, 'José Luis', 'Ramírez', '2010-11-08', 'Masculino');
+
+-- Puntos de Donación
+INSERT INTO `puntos_donacion` (`id`, `nombre`, `direccion_id`, `tipo_id`, `telefono`, `horario`, `organizacion_responsable_id`) VALUES
+(1, 'Hospital Rovirosa - Banco de Sangre', 4, 1, '9933157948', 'L-V 8:00-14:00', 3),
+(2, 'Centro de Acopio Cruz Verde', 3, 2, '9937654321', 'L-S 9:00-17:00', 3);
+
+-- Avisos (Solicitudes de Donación)
+INSERT INTO `avisos` (`id`, `titulo`, `descripcion`, `creador_id`, `organizacion_id`, `beneficiario_id`, `categoria_id`, `urgencia_id`, `estatus_id`, `contacto_responsable_id`) VALUES
+(1, 'Se necesitan donadores de sangre O+', 'Paciente María Elena Sánchez requiere 4 unidades de sangre O+ para cirugía programada.', 5, 3, 1, 1, 3, 2, 5), -- Alta, Activo
+(2, 'Urgente: Medicamento para diabetes infantil', 'José Luis Ramírez necesita con urgencia Insulina Glargina (Lantus). No contamos con el recurso.', 5, 3, 2, 2, 4, 2, 5), -- Crítica, Activo
+(3, 'Solicitud de Silla de Ruedas', 'Se solicita una silla de ruedas estándar para adulto mayor con movilidad reducida.', 5, 3, 1, 3, 2, 1, 5); -- Media, Pendiente
+
+-- Detalles de Solicitudes
+INSERT INTO `solicitudes_sangre` (`aviso_id`, `tipo_sangre_id`, `unidades_requeridas`) VALUES
+(1, 7, 4); -- Para aviso 1, sangre O+
+
+INSERT INTO `solicitudes_medicamentos` (`aviso_id`, `nombre_medicamento`, `dosis`, `presentacion`, `cantidad_requerida`) VALUES
+(2, 'Insulina Glargina (Lantus)', '10 UI/día', 'Solución inyectable 100 UI/ml', 2); -- Para aviso 2
+
+INSERT INTO `solicitudes_dispositivos` (`aviso_id`, `nombre_dispositivo`, `especificaciones`, `cantidad_requerida`) VALUES
+(3, 'Silla de Ruedas Estándar para Adulto', 'Plegable, con reposapiés desmontables.', 1); -- Para aviso 3
+
+-- Donaciones (Usuarios respondiendo a Avisos)
+INSERT INTO `donaciones` (`id`, `aviso_id`, `donante_id`, `estatus_id`, `fecha_compromiso`) VALUES
+(1, 1, 1, 2, '2025-07-10 10:00:00'), -- Juan Pérez (user 1) dona para el aviso 1, Aprobado
+(2, 1, 1, 3, '2025-07-11 11:30:00'); -- Otra donación, esta ya fue Recibida
+
+-- Apoyos ofrecidos por Empresas
+INSERT INTO `empresas_apoyos` (`id`, `empresa_id`, `tipo_apoyo_id`, `titulo`, `descripcion`, `fecha_expiracion`, `activo`) VALUES
+(1, 2, 1, '15% de descuento en medicamentos', 'Presenta tu código de canje y obtén un 15% de descuento en la compra de medicamentos de cuadro básico.', '2025-12-31', TRUE),
+(2, 2, 4, 'Consulta médica general gratuita', 'Canjea tu beneficio por una consulta médica general en nuestra sucursal.', '2025-12-31', TRUE);
+
+-- Beneficios obtenidos por Donantes
+-- Suponiendo que la donación con id=2 ya fue completada y validada
+INSERT INTO `donantes_beneficios` (`donacion_id`, `usuario_id`, `apoyo_id`, `codigo_canje`, `estado`, `fecha_otorgado`, `fecha_canje`) VALUES
+(2, 1, 1, 'CANJE-A1B2-C3D4', 'Canjeado', '2025-07-11 12:00:00', '2025-07-12 18:00:00');
