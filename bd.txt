@@ -1,6 +1,6 @@
 -- -----------------------------------------------------
 -- Esquema de Base de Datos para el Proyecto DoSys
--- Versión 1.5 (con Perfil de Empresa Detallado)
+-- Versión 1.6 (con Sistema de Beneficios Flexible)
 -- -----------------------------------------------------
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
@@ -66,6 +66,17 @@ CREATE TABLE IF NOT EXISTS `tipos_sangre` (
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
+-- =====================================================
+-- NUEVA TABLA: `tipos_apoyo`
+-- Clasifica las diferentes formas de colaboración de una empresa.
+-- =====================================================
+CREATE TABLE IF NOT EXISTS `tipos_apoyo` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(100) NOT NULL COMMENT 'Ej: Beneficios y Descuentos, Difusión, Apoyo Logístico',
+  `es_canjeable` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'TRUE si genera un cupón para el donante',
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Tablas de Usuarios y Perfiles
@@ -102,21 +113,10 @@ CREATE TABLE IF NOT EXISTS `personas_perfil` (
   `alergias` TEXT NULL,
   `credencial_lector_url` VARCHAR(255) NULL,
   PRIMARY KEY (`usuario_id`),
-  INDEX `fk_personas_perfil_tipos_sangre_idx` (`tipo_sangre_id` ASC),
-  CONSTRAINT `fk_personas_perfil_usuarios`
-    FOREIGN KEY (`usuario_id`)
-    REFERENCES `usuarios` (`id`)
-    ON DELETE CASCADE,
-  CONSTRAINT `fk_personas_perfil_tipos_sangre`
-    FOREIGN KEY (`tipo_sangre_id`)
-    REFERENCES `tipos_sangre` (`id`)
-    ON DELETE SET NULL)
+  CONSTRAINT `fk_personas_perfil_usuarios` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_personas_perfil_tipos_sangre` FOREIGN KEY (`tipo_sangre_id`) REFERENCES `tipos_sangre` (`id`) ON DELETE SET NULL)
 ENGINE = InnoDB;
 
--- =====================================================
--- TABLA MODIFICADA: `empresas_perfil`
--- Se añaden campos detallados para la empresa y su representante.
--- =====================================================
 CREATE TABLE IF NOT EXISTS `empresas_perfil` (
   `usuario_id` INT NOT NULL,
   `nombre_comercial` VARCHAR(255) NOT NULL,
@@ -231,27 +231,56 @@ CREATE TABLE IF NOT EXISTS `donaciones` (
   CONSTRAINT `fk_donaciones_estatus_donacion` FOREIGN KEY (`estatus_id`) REFERENCES `estatus_donacion` (`id`))
 ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `beneficios` (
+-- =====================================================
+-- TABLA MODIFICADA: `empresas_apoyos` (antes `beneficios`)
+-- Ahora registra cualquier tipo de apoyo, no solo cupones.
+-- =====================================================
+CREATE TABLE IF NOT EXISTS `empresas_apoyos` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `empresa_id` INT NOT NULL,
+  `tipo_apoyo_id` INT NOT NULL,
   `titulo` VARCHAR(255) NOT NULL,
   `descripcion` TEXT NOT NULL,
-  `fecha_expiracion` DATE NULL,
+  `fecha_expiracion` DATE NULL COMMENT 'Aplica solo si el apoyo tiene vigencia',
   `activo` BOOLEAN NOT NULL DEFAULT TRUE,
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_beneficios_usuarios` FOREIGN KEY (`empresa_id`) REFERENCES `usuarios` (`id`))
+  INDEX `fk_empresas_apoyos_usuarios_idx` (`empresa_id` ASC),
+  INDEX `fk_empresas_apoyos_tipos_apoyo_idx` (`tipo_apoyo_id` ASC),
+  CONSTRAINT `fk_empresas_apoyos_usuarios`
+    FOREIGN KEY (`empresa_id`)
+    REFERENCES `usuarios` (`id`),
+  CONSTRAINT `fk_empresas_apoyos_tipos_apoyo`
+    FOREIGN KEY (`tipo_apoyo_id`)
+    REFERENCES `tipos_apoyo` (`id`))
 ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `beneficios_canjeados` (
+-- =====================================================
+-- TABLA MODIFICADA: `donantes_beneficios` (antes `beneficios_canjeados`)
+-- Registra cuando un donante GANA un beneficio canjeable.
+-- =====================================================
+CREATE TABLE IF NOT EXISTS `donantes_beneficios` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `beneficio_id` INT NOT NULL,
-  `usuario_id` INT NOT NULL,
-  `codigo_canje` VARCHAR(45) NOT NULL,
-  `fecha_canje` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `donacion_id` INT NOT NULL COMMENT 'La donación que generó este beneficio',
+  `usuario_id` INT NOT NULL COMMENT 'El donante que recibe el beneficio',
+  `apoyo_id` INT NOT NULL COMMENT 'El apoyo (canjeable) que se ganó',
+  `codigo_canje` VARCHAR(45) NULL COMMENT 'Se genera solo cuando el usuario lo reclama',
+  `estado` ENUM('Disponible', 'Canjeado', 'Expirado') NOT NULL DEFAULT 'Disponible',
+  `fecha_otorgado` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `fecha_canje` TIMESTAMP NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `codigo_canje_UNIQUE` (`codigo_canje` ASC),
-  CONSTRAINT `fk_beneficios_canjeados_beneficios` FOREIGN KEY (`beneficio_id`) REFERENCES `beneficios` (`id`),
-  CONSTRAINT `fk_beneficios_canjeados_usuarios` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`))
+  INDEX `fk_donantes_beneficios_donaciones_idx` (`donacion_id` ASC),
+  INDEX `fk_donantes_beneficios_usuarios_idx` (`usuario_id` ASC),
+  INDEX `fk_donantes_beneficios_empresas_apoyos_idx` (`apoyo_id` ASC),
+  CONSTRAINT `fk_donantes_beneficios_donaciones`
+    FOREIGN KEY (`donacion_id`)
+    REFERENCES `donaciones` (`id`),
+  CONSTRAINT `fk_donantes_beneficios_usuarios`
+    FOREIGN KEY (`usuario_id`)
+    REFERENCES `usuarios` (`id`),
+  CONSTRAINT `fk_donantes_beneficios_empresas_apoyos`
+    FOREIGN KEY (`apoyo_id`)
+    REFERENCES `empresas_apoyos` (`id`))
 ENGINE = InnoDB;
 
 
@@ -270,4 +299,5 @@ INSERT INTO `estatus_donacion` (`id`, `nombre`) VALUES (1, 'Pendiente de Aprobac
 INSERT INTO `tipos_punto_donacion` (`id`, `nombre`, `icono`) VALUES (1, 'Banco de Sangre', 'sangre.png'), (2, 'Centro de Acopio de Medicamentos', 'medicamentos.png'), (3, 'Centro de Acopio de Dispositivos', 'dispositivos.png');
 INSERT INTO `urgencia_niveles` (`id`, `nombre`, `color_hex`) VALUES (1, 'Baja', '#28a745'), (2, 'Media', '#ffc107'), (3, 'Alta', '#fd7e14'), (4, 'Crítica', '#dc3545');
 INSERT INTO `tipos_sangre` (`id`, `tipo`) VALUES (1, 'A+'), (2, 'A-'), (3, 'B+'), (4, 'B-'), (5, 'AB+'), (6, 'AB-'), (7, 'O+'), (8, 'O-');
+INSERT INTO `tipos_apoyo` (`id`, `nombre`, `es_canjeable`) VALUES (1, 'Descuentos y Beneficios', TRUE), (2, 'Difusión y Comunicación', FALSE), (3, 'Apoyo Logístico', FALSE), (4, 'Servicios Gratuitos', TRUE);
 
