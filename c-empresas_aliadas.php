@@ -1,3 +1,13 @@
+<?php
+require_once 'config.php'; // Incluye la configuración y la URL base.
+// Inicia la sesión.
+session_start();
+
+// Muestra una alerta si hay un error en el inicio de sesión.
+if (isset($_GET['error']) && $_GET['error'] == 1) {
+    echo "<script>alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');</script>";
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>

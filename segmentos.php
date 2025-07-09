@@ -1,10 +1,20 @@
+<?php
+require_once 'config.php'; // Incluye la configuración y la URL base.
+// Inicia la sesión.
+session_start();
+
+// Muestra una alerta si hay un error en el inicio de sesión.
+if (isset($_GET['error']) && $_GET['error'] == 1) {
+    echo "<script>alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');</script>";
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 
     <head>
         <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
         <meta charset="utf-8">
-        <title>DoSys (Donation System)</title>
+        <title>DoSys - Seleccionar Tipo de Solicitud</title>
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
         <meta content="" name="keywords">
         <meta content="" name="description">
@@ -32,8 +42,9 @@
 
         <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
+        <link href="css/Donaciones.css" rel="stylesheet">
 
-                <style>
+        <style>
             .carousel-caption {
                 top: 0;
                 bottom: 0;
@@ -137,8 +148,8 @@
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav mx-0 mx-lg-auto">
                         <!-- Botones del menú -->
-                        <a href="index.html" class="nav-item nav-link active">Inicio</a>
-                        <a href="avisos.html" class="nav-item nav-link">Avisos de Donación</a>
+                        <a href="index.html" class="nav-item nav-link">Inicio</a>
+                        <a href="avisos.html" class="nav-item nav-link active">Avisos de Donación</a>
                         <a href="mapa.php" class="nav-item nav-link">Mapa</a>
                         <a href="estadisticas.html" class="nav-item nav-link">Estadísticas</a>
                         <!-- Más botones del menú -->
@@ -231,148 +242,76 @@
     </div>
     <!-- Carousel End -->
         
-        <!-- ACERCA DE DOSYS -->
-        <div class="container-fluid bg-light about pb-5">
-            <div class="container pb-5">
-                <div class="row g-5">
-                    <div class="col-xl-6 wow fadeInLeft" data-wow-delay="0.2s">
-                        <div class="about-item-content bg-white rounded p-5 h-100">
-                            <h4 class="text-primary">Acerca de DoSys</h4>
-                            <h1 class="display-4 mb-4">La Herramienta Universal de donación por excelencia.</h1>
-                            <p style="text-align: justify;">Logramos ser un método universal para las donaciones altruistas en México, 
-                                conectando con las diferentes organizaciones altruistas, las ONG, hospitales y el público en general.
-                            </p>
-                            <p style="text-align: justify;">Buscamos acercar la oportunidad de mejorar el sistema de salud actual, recompensando a los 
-                                donadores altruistas y facilitando el trabajo de las organizaciones altruistas.
-                            </p>
-                            <p class="text-dark" style="text-align: justify;"><i class="fa fa-check text-primary me-3"></i>Facilitamos el sistema de donación.</p>
-                            <p class="text-dark" style="text-align: justify;"><i class="fa fa-check text-primary me-3"></i>Recompensamos a nuestros donadores.</p>
-                            <p class="text-dark mb-4" style="text-align: justify;"><i class="fa fa-check text-primary me-3"></i>Mejoramos la calidad de vida de las personas.</p>
-                            <a class="btn btn-primary rounded-pill py-3 px-5" href="C-Sobre_Nosotros.html">Más información</a>
-                        </div>
+    <!-- Footer Start -->
+    <div class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.2s">
+        <div class="container py-5">
+            <div class="row g-5">
+                <!-- Legal Information -->
+                <div class="col-xl-4 col-lg-4 col-md-6">
+                    <div class="footer-item">
+                        <h4 class="text-white mb-4">Información Legal</h4>
+                        <a class="btn-link" href="#"><i class="fas fa-angle-right me-2"></i> Términos y Condiciones</a>
+                        <a class="btn-link" href="#"><i class="fas fa-angle-right me-2"></i> Política de Privacidad</a>
+                        <a class="btn-link" href="#"><i class="fas fa-angle-right me-2"></i> Aviso Legal</a>
                     </div>
-                    <div class="col-xl-6 wow fadeInRight" data-wow-delay="0.2s">
-                        <div class="bg-white rounded p-5 h-100">
-                            <div class="row g-4 justify-content-center">
-                                <div class="col-12">
-                                    <div class="rounded bg-light">
-                                        <img src="img/about-1.png" class="img-fluid rounded w-100" alt="">
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="counter-item bg-light rounded p-3 h-100">
-                                        <div class="counter-counting">
-                                            <span class="text-primary fs-2 fw-bold" data-toggle="counter-up">25</span>
-                                            <span class="h1 fw-bold text-primary">+</span>
-                                        </div>
-                                        <h4 class="mb-0 text-dark">Donadores Altruistas</h4>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="counter-item bg-light rounded p-3 h-100">
-                                        <div class="counter-counting">
-                                            <span class="text-primary fs-2 fw-bold" data-toggle="counter-up">10</span>
-                                            <span class="h1 fw-bold text-primary">+</span>
-                                        </div>
-                                        <h4 class="mb-0 text-dark">Asociaciones vinculadas</h4>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="counter-item bg-light rounded p-3 h-100">
-                                        <div class="counter-counting">
-                                            <span class="text-primary fs-2 fw-bold" data-toggle="counter-up">100</span>
-                                            <span class="h1 fw-bold text-primary">+</span>
-                                        </div>
-                                        <h4 class="mb-0 text-dark">Personas ayudadas</h4>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="counter-item bg-light rounded p-3 h-100">
-                                        <div class="counter-counting">
-                                            <span class="text-primary fs-2 fw-bold" data-toggle="counter-up">362</span>
-                                            <span class="h1 fw-bold text-primary">+</span>
-                                        </div>
-                                        <h4 class="mb-0 text-dark">Medicamentos donados</h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                </div>
+                <!-- Quick Links -->
+                <div class="col-xl-4 col-lg-4 col-md-6">
+                    <div class="footer-item">
+                        <h4 class="text-white mb-4">Enlaces Rápidos</h4>
+                        <a class="btn-link" href="index.html"><i class="fas fa-angle-right me-2"></i> Inicio</a>
+                        <a class="btn-link" href="avisos.html"><i class="fas fa-angle-right me-2"></i> Avisos de Donación</a>
+                        <a class="btn-link" href="mapa.php"><i class="fas fa-angle-right me-2"></i> Mapa</a>
+                        <a class="btn-link" href="C-Sobre_Nosotros.html"><i class="fas fa-angle-right me-2"></i> Sobre Nosotros</a>
+                        <a class="btn-link" href="C-Nuestro_Equipo.html"><i class="fas fa-angle-right me-2"></i> Nuestro Equipo</a>
+                    </div>
+                </div>
+                <!-- Contact -->
+                <div class="col-xl-4 col-lg-4 col-md-6">
+                    <div class="footer-item">
+                        <h4 class="text-white mb-4">Contáctanos</h4>
+                        <p class="mb-3">¿Tienes alguna duda o necesitas ayuda? No dudes en contactarnos a través de los siguientes medios:</p>
+                        <p class="mb-2"><i class="fas fa-envelope me-2 text-white"></i> <a href="mailto:contacto@dosys.mx" class="text-white">contacto@dosys.mx</a></p>
+                        <p class="mb-2"><i class="fab fa-whatsapp me-2 text-white"></i> Asesor: 99-33-59-09-31</p>
+                        <p class="mb-2"><i class="fab fa-whatsapp me-2 text-white"></i> Líder de Equipo: 99-31-54-67-94</p>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- About End -->
-
-        <!-- Footer Start -->
-        <div class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.2s">
-            <div class="container py-5">
-                <div class="row g-5">
-                    <!-- Legal Information -->
-                    <div class="col-xl-4 col-lg-4 col-md-6">
-                        <div class="footer-item">
-                            <h4 class="text-white mb-4">Información Legal</h4>
-                            <a class="btn-link" href="#"><i class="fas fa-angle-right me-2"></i> Términos y Condiciones</a>
-                            <a class="btn-link" href="#"><i class="fas fa-angle-right me-2"></i> Política de Privacidad</a>
-                            <a class="btn-link" href="#"><i class="fas fa-angle-right me-2"></i> Aviso Legal</a>
-                        </div>
-                    </div>
-                    <!-- Quick Links -->
-                    <div class="col-xl-4 col-lg-4 col-md-6">
-                        <div class="footer-item">
-                            <h4 class="text-white mb-4">Enlaces Rápidos</h4>
-                            <a class="btn-link" href="index.html"><i class="fas fa-angle-right me-2"></i> Inicio</a>
-                            <a class="btn-link" href="avisos.html"><i class="fas fa-angle-right me-2"></i> Avisos de Donación</a>
-                            <a class="btn-link" href="mapa.php"><i class="fas fa-angle-right me-2"></i> Mapa</a>
-                            <a class="btn-link" href="C-Sobre_Nosotros.html"><i class="fas fa-angle-right me-2"></i> Sobre Nosotros</a>
-                            <a class="btn-link" href="C-Nuestro_Equipo.html"><i class="fas fa-angle-right me-2"></i> Nuestro Equipo</a>
-                        </div>
-                    </div>
-                    <!-- Contact -->
-                    <div class="col-xl-4 col-lg-4 col-md-6">
-                        <div class="footer-item">
-                            <h4 class="text-white mb-4">Contáctanos</h4>
-                            <p class="mb-3">¿Tienes alguna duda o necesitas ayuda? No dudes en contactarnos a través de los siguientes medios:</p>
-                            <p class="mb-2"><i class="fas fa-envelope me-2 text-white"></i> <a href="mailto:contacto@dosys.mx">contacto@dosys.mx</a></p>
-                            <p class="mb-2"><i class="fab fa-whatsapp me-2 text-white"></i> Asesor: 99-33-59-09-31</p>
-                            <p class="mb-2"><i class="fab fa-whatsapp me-2 text-white"></i> Líder de Equipo: 99-31-54-67-94</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Copyright Section -->
-             <div class="container-fluid">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-12 text-center text-white" style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding: 25px 0;">
-                            <p class="mb-2">Copyright © 2024 DoSys</p>
-                            <p class="small mb-0">El presente sitio web es operado por DoSys S. de R.L. de C.V. Todos los derechos reservados. El uso de esta plataforma está sujeto a nuestros Términos y Condiciones y Política de Privacidad.</p>
-                        </div>
+        <!-- Copyright Section -->
+         <div class="container-fluid">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 text-center text-white" style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding: 25px 0;">
+                        <p class="mb-2">Copyright © 2024 DoSys</p>
+                        <p class="small mb-0">El presente sitio web es operado por DoSys S. de R.L. de C.V. Todos los derechos reservados. El uso de esta plataforma está sujeto a nuestros Términos y Condiciones y Política de Privacidad.</p>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Footer End -->
+    </div>
+    <!-- Footer End -->
 
 
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
 
-        
-        <!-- JavaScript Libraries -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="lib/wow/wow.min.js"></script>
-        <script src="lib/easing/easing.min.js"></script>
-        <script src="lib/waypoints/waypoints.min.js"></script>
-        <script src="lib/counterup/counterup.min.js"></script>
-        <script src="lib/lightbox/js/lightbox.min.js"></script>
-        <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-        <script src="node_modules/axe-core/axe.min.js"></script>
-        
+    
+    <!-- JavaScript Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/counterup/counterup.min.js"></script>
+    <script src="lib/lightbox/js/lightbox.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="node_modules/axe-core/axe.min.js"></script>
+    
 
-        <!-- Template Javascript -->
-        <script src="js/main.js"></script>
-        
-    </body>
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+    
+</body>
 
 </html>

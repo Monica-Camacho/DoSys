@@ -1,10 +1,20 @@
+<?php
+require_once 'config.php'; // Incluye la configuración y la URL base.
+// Inicia la sesión.
+session_start();
+
+// Muestra una alerta si hay un error en el inicio de sesión.
+if (isset($_GET['error']) && $_GET['error'] == 1) {
+    echo "<script>alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');</script>";
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 
     <head>
         <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
         <meta charset="utf-8">
-        <title>DoSys - En Mantenimiento</title>
+        <title>DoSys - Registro de Empresa</title>
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
         <meta content="" name="keywords">
         <meta content="" name="description">
@@ -32,7 +42,6 @@
 
         <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
-            <link href="css/Donaciones.css" rel="stylesheet">
 
     </head>
 
@@ -95,7 +104,7 @@
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav mx-0 mx-lg-auto">
                         <!-- Botones del menú -->
-                        <a href="index.html" class="nav-item nav-link active">Inicio</a>
+                        <a href="index.html" class="nav-item nav-link">Inicio</a>
                         <a href="avisos.html" class="nav-item nav-link">Avisos de Donación</a>
                         <a href="mapa.php" class="nav-item nav-link">Mapa</a>
                         <a href="estadisticas.html" class="nav-item nav-link">Estadísticas</a>
@@ -122,24 +131,86 @@
     </div>
     <!-- Navbar & Hero End -->
 
-    <!-- Maintenance Start -->
-    <div class="container-fluid py-5" style="background-color: #f8f9fa;">
-        <div class="container text-center py-5">
+    <!-- Registration Form Start -->
+    <div class="container-fluid py-5 bg-light">
+        <div class="container">
             <div class="row justify-content-center">
-                <div class="col-lg-9">
-                    <h1 class="display-5 fw-bold mb-3">Actualización en Proceso</h1>
-                    <p class="fs-5 text-muted mb-4">Estamos trabajando para mejorar tu experiencia</p>
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-lg">
+                        <div class="card-body p-4 p-md-5">
+                            <div class="text-center mb-4">
+                                <i class="fa fa-building fa-3x text-primary mb-3"></i>
+                                <h2 class="card-title mb-2">Registro de Empresa</h2>
+                                <p class="text-muted">Crea una cuenta para tu empresa y empieza a colaborar.</p>
+                            </div>
+                            <form action="register_process.php" method="POST" enctype="multipart/form-data">
+                                <input type="hidden" name="user_type" value="empresa">
+                                
+                                <div class="mb-3">
+                                    <label for="company_name" class="form-label">Nombre de la Empresa</label>
+                                    <input type="text" class="form-control" id="company_name" name="company_name" required>
+                                </div>
 
-                    <h2 class="h4 text-primary mt-5 mb-3">¡Próximamente podrás disfrutar de DoSys en náhuatl y otros idiomas!</h2>
-                    <p>Estamos añadiendo soporte para lenguas indígenas como el náhuatl y mejorando nuestra plataforma para servirte mejor.</p>
-                    <p class="mb-5">Mantente atento a las actualizaciones en nuestro sitio oficial.</p>
+                                <div class="mb-3">
+                                    <label for="rfc" class="form-label">RFC</label>
+                                    <input type="text" class="form-control" id="rfc" name="rfc" required>
+                                </div>
 
-                    <a class="btn btn-primary rounded-pill py-3 px-5" href="index.html">Volver al Inicio</a>
+                                <div class="mb-3">
+                                    <label for="representative_name" class="form-label">Nombre del Representante Legal</label>
+                                    <input type="text" class="form-control" id="representative_name" name="representative_name" required>
+                                    <div class="form-text">Esta persona será la administradora de la cuenta de la empresa.</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="validation_document" class="form-label">Documento de Validación</label>
+                                    <input class="form-control" type="file" id="validation_document" name="validation_document" required>
+                                    <div class="form-text">Sube el acta constitutiva o un documento similar para validar tu empresa (PDF, JPG, PNG).</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Correo Electrónico de Contacto</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">Teléfono de Contacto</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone">
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="password" class="form-label">Contraseña</label>
+                                        <input type="password" class="form-control" id="password" name="password" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="password_confirm" class="form-label">Confirmar Contraseña</label>
+                                        <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-check mb-4">
+                                    <input class="form-check-input" type="checkbox" value="" id="terms" required>
+                                    <label class="form-check-label" for="terms">
+                                        Acepto los <a href="#">Términos y Condiciones</a> y la <a href="#">Política de Privacidad</a>.
+                                    </label>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg">Crear Cuenta de Empresa</button>
+                                </div>
+                                
+                                <div class="text-center mt-4">
+                                    <p class="text-muted">¿Ya tienes una cuenta? <a href="login.php">Inicia Sesión</a></p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Maintenance End -->
+    <!-- Registration Form End -->
         
     <!-- Footer Start -->
     <div class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.2s">
@@ -214,5 +285,3 @@
 </body>
 
 </html>
-
-

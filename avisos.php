@@ -1,10 +1,20 @@
+<?php
+require_once 'config.php'; // Incluye la configuración y la URL base.
+// Inicia la sesión.
+session_start();
+
+// Muestra una alerta si hay un error en el inicio de sesión.
+if (isset($_GET['error']) && $_GET['error'] == 1) {
+    echo "<script>alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');</script>";
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 
     <head>
         <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
         <meta charset="utf-8">
-        <title>DoSys - Registro de Organización</title>
+        <title>DoSys - Avisos de Donación</title>
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
         <meta content="" name="keywords">
         <meta content="" name="description">
@@ -95,7 +105,7 @@
                     <div class="navbar-nav mx-0 mx-lg-auto">
                         <!-- Botones del menú -->
                         <a href="index.html" class="nav-item nav-link">Inicio</a>
-                        <a href="avisos.html" class="nav-item nav-link">Avisos de Donación</a>
+                        <a href="avisos.html" class="nav-item nav-link active">Avisos de Donación</a>
                         <a href="mapa.php" class="nav-item nav-link">Mapa</a>
                         <a href="estadisticas.html" class="nav-item nav-link">Estadísticas</a>
                         <!-- Más botones del menú -->
@@ -121,87 +131,121 @@
     </div>
     <!-- Navbar & Hero End -->
 
-    <!-- Registration Form Start -->
+    <!-- Notices Start -->
     <div class="container-fluid py-5 bg-light">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="card border-0 shadow-lg">
-                        <div class="card-body p-4 p-md-5">
-                            <div class="text-center mb-4">
-                                <i class="fa fa-hands-helping fa-3x text-primary mb-3"></i>
-                                <h2 class="card-title mb-2">Registro de Organización Altruista</h2>
-                                <p class="text-muted">Crea una cuenta para tu organización y gestiona la ayuda.</p>
+            <div class="d-lg-flex justify-content-between align-items-center mb-5">
+                <div class="text-center text-lg-start">
+                    <h1 class="display-5">Avisos de Donación</h1>
+                    <p class="fs-5 text-muted mb-0">Explora las solicitudes activas y encuentra una causa a la que puedas apoyar.</p>
+                </div>
+                <div class="text-center mt-4 mt-lg-0">
+                    <a href="segmentos.html" class="btn btn-success rounded-pill py-2 px-4"><i class="fas fa-plus me-2"></i>Solicitar Donación</a>
+                </div>
+            </div>
+
+            <!-- Advanced Filters -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <form class="row g-3 align-items-center bg-white p-3 rounded shadow-sm">
+                        <div class="col-lg-5 col-md-12">
+                            <input type="text" class="form-control" placeholder="Buscar por palabra clave...">
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <select class="form-select">
+                                <option selected>Tipo de donación...</option>
+                                <option value="all">Todos</option>
+                                <option value="sangre">Sangre</option>
+                                <option value="medicamentos">Medicamentos</option>
+                                <option value="dispositivos">Dispositivos</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                             <select class="form-select">
+                                <option selected>Ubicación...</option>
+                                <option value="centro">Centro</option>
+                                <option value="cardenas">Cárdenas</option>
+                                <option value="comalcalco">Comalcalco</option>
+                                <option value="paraiso">Paraíso</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-1 col-md-12 text-end">
+                            <button type="submit" class="btn btn-primary w-100">Buscar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Notice Card 1: Sangre -->
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s" data-category="sangre">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body d-flex flex-column p-4">
+                            <div class="position-absolute top-0 end-0 p-3">
+                                <i class="fas fa-tint fa-2x text-danger"></i>
                             </div>
-                            <form action="register_process.php" method="POST" enctype="multipart/form-data">
-                                <input type="hidden" name="user_type" value="organizacion">
-                                
-                                <div class="mb-3">
-                                    <label for="org_name" class="form-label">Nombre de la Organización</label>
-                                    <input type="text" class="form-control" id="org_name" name="org_name" required>
+                            <h5 class="card-title mt-5">Solicitud de Sangre O+</h5>
+                            <p class="card-text text-muted small mb-3"><i class="fas fa-map-marker-alt me-2"></i>Villahermosa, Tabasco</p>
+                            <p class="card-text">Se necesitan donantes para una transfusión. Tu donación es vital para ayudar a quien lo necesita.</p>
+                            <div class="mt-auto pt-3">
+                                <div class="progress mb-2" style="height: 10px;">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
-
-                                <div class="mb-3">
-                                    <label for="cluni" class="form-label">CLUNI (si aplica)</label>
-                                    <input type="text" class="form-control" id="cluni" name="cluni">
-                                    <div class="form-text">Clave Única de Inscripción al Registro Federal de las OSC.</div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="representative_name" class="form-label">Nombre del Representante</label>
-                                    <input type="text" class="form-control" id="representative_name" name="representative_name" required>
-                                    <div class="form-text">Esta persona será la administradora de la cuenta de la organización.</div>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="validation_document" class="form-label">Documento de Validación</label>
-                                    <input class="form-control" type="file" id="validation_document" name="validation_document" required>
-                                    <div class="form-text">Sube el acta constitutiva o documento similar para validar tu organización (PDF, JPG, PNG).</div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Correo Electrónico de Contacto</label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="phone" class="form-label">Teléfono de Contacto</label>
-                                    <input type="tel" class="form-control" id="phone" name="phone">
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="password" class="form-label">Contraseña</label>
-                                        <input type="password" class="form-control" id="password" name="password" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="password_confirm" class="form-label">Confirmar Contraseña</label>
-                                        <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
-                                    </div>
-                                </div>
-
-                                <div class="form-check mb-4">
-                                    <input class="form-check-input" type="checkbox" value="" id="terms" required>
-                                    <label class="form-check-label" for="terms">
-                                        Acepto los <a href="#">Términos y Condiciones</a> y la <a href="#">Política de Privacidad</a>.
-                                    </label>
-                                </div>
-
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary btn-lg">Crear Cuenta de Organización</button>
-                                </div>
-                                
-                                <div class="text-center mt-4">
-                                    <p class="text-muted">¿Ya tienes una cuenta? <a href="login.php">Inicia Sesión</a></p>
-                                </div>
-                            </form>
+                                <p class="text-muted small">2 de 8 unidades recolectadas</p>
+                                <a href="avisos_detalles.php" class="btn btn-primary rounded-pill w-100">Ver Detalles</a>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Notice Card 2: Medicamentos -->
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s" data-category="medicamentos">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body d-flex flex-column p-4">
+                             <div class="position-absolute top-0 end-0 p-3">
+                                <i class="fas fa-pills fa-2x text-primary"></i>
+                            </div>
+                            <h5 class="card-title mt-5">Solicitud de Insulina</h5>
+                            <p class="card-text text-muted small mb-3"><i class="fas fa-map-marker-alt me-2"></i>Comalcalco, Tabasco</p>
+                            <p class="card-text">Se requiere donación de insulina glargina para un tratamiento médico. Cualquier cantidad es de gran ayuda.</p>
+                             <div class="mt-auto pt-3">
+                                <div class="progress mb-2" style="height: 10px;">
+                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <p class="text-muted small">3 de 5 cajas obtenidas</p>
+                                <a href="avisos_detalles.php" class="btn btn-primary rounded-pill w-100">Ver Detalles</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notice Card 3: Dispositivos -->
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s" data-category="dispositivos">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body d-flex flex-column p-4">
+                            <div class="position-absolute top-0 end-0 p-3">
+                                <i class="fas fa-wheelchair fa-2x text-warning"></i>
+                            </div>
+                            <h5 class="card-title mt-5">Solicitud de Silla de Ruedas</h5>
+                            <p class="card-text text-muted small mb-3"><i class="fas fa-map-marker-alt me-2"></i>Cárdenas, Tabasco</p>
+                            <p class="card-text">Se necesita una silla de ruedas en buen estado para mejorar la movilidad y calidad de vida de una persona.</p>
+                             <div class="mt-auto pt-3">
+                                <div class="progress mb-2" style="height: 10px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <p class="text-muted small">0 de 1 silla obtenida</p>
+                                <a href="avisos_detalles.php" class="btn btn-primary rounded-pill w-100">Ver Detalles</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Add more notice cards as needed -->
+
             </div>
         </div>
     </div>
-    <!-- Registration Form End -->
+    <!-- Notices End -->
         
     <!-- Footer Start -->
     <div class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.2s">

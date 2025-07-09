@@ -1,10 +1,20 @@
+<?php
+require_once 'config.php'; // Incluye la configuración y la URL base.
+// Inicia la sesión.
+session_start();
+
+// Muestra una alerta si hay un error en el inicio de sesión.
+if (isset($_GET['error']) && $_GET['error'] == 1) {
+    echo "<script>alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');</script>";
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 
     <head>
         <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
         <meta charset="utf-8">
-        <title>DoSys - Seleccionar Tipo de Solicitud</title>
+        <title>DoSys - En Mantenimiento</title>
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
         <meta content="" name="keywords">
         <meta content="" name="description">
@@ -32,50 +42,7 @@
 
         <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
-        <link href="css/Donaciones.css" rel="stylesheet">
-
-        <style>
-            .carousel-caption {
-                top: 0;
-                bottom: 0;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-            }
-            
-            /* Responsive adjustments ONLY for mobile devices */
-            @media (max-width: 768px) {
-                .carousel-item {
-                    height: 85vh; /* Give a consistent, good-looking height on mobile */
-                }
-                .carousel-item .carousel-image-container,
-                .carousel-item .carousel-image {
-                    height: 100%;
-                    object-fit: cover; /* Ensure image covers the slide area without distortion */
-                }
-
-                .carousel-caption h1 {
-                    font-size: 2.5rem; /* Smaller title on mobile */
-                }
-                .carousel-caption p {
-                    font-size: 1rem; /* Smaller paragraph on mobile */
-                    margin-bottom: 1.5rem !important;
-                }
-                .carousel-caption .d-flex.gap-4 {
-                    flex-direction: column; /* Stack buttons vertically on mobile */
-                    gap: 0.75rem !important; /* Reduce gap between stacked buttons */
-                    align-items: center;
-                }
-                 .carousel-caption .btn {
-                    font-size: 0.9rem;
-                    padding: 0.7rem 1.5rem;
-                    width: 80%;
-                    max-width: 280px;
-                }
-            }
-        </style>
+            <link href="css/Donaciones.css" rel="stylesheet">
 
     </head>
 
@@ -138,8 +105,8 @@
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav mx-0 mx-lg-auto">
                         <!-- Botones del menú -->
-                        <a href="index.html" class="nav-item nav-link">Inicio</a>
-                        <a href="avisos.html" class="nav-item nav-link active">Avisos de Donación</a>
+                        <a href="index.html" class="nav-item nav-link active">Inicio</a>
+                        <a href="avisos.html" class="nav-item nav-link">Avisos de Donación</a>
                         <a href="mapa.php" class="nav-item nav-link">Mapa</a>
                         <a href="estadisticas.html" class="nav-item nav-link">Estadísticas</a>
                         <!-- Más botones del menú -->
@@ -165,72 +132,24 @@
     </div>
     <!-- Navbar & Hero End -->
 
-    <!-- Carousel Start -->
-    <div id="donationCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            <!-- Slide 1: Sangre -->
-            <div class="carousel-item active">
-                <div class="carousel-image-container h-100">
-                    <img src="img/fondos/sangre.png" class="d-block w-100 carousel-image img-fluid" alt="Donación de sangre">
-                    <div class="carousel-caption">
-                        <div class="px-3">
-                            <h1 class="text-light display-3 mb-4">Sangre</h1>
-                            <p class="fs-5 fw-medium text-white mb-4 pb-2">Tu donación puede salvar vidas. Ayuda a quienes más lo necesitan.</p>
-                            <div class="d-flex gap-4 justify-content-center">
-                                <a href="crear_donacion_persona.php?categoria=sangre" class="btn btn-primary btn-lg rounded-pill px-4">Ser Donante</a>
-                                <a href="crear_aviso_persona.php?categoria=sangre" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Donante</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Maintenance Start -->
+    <div class="container-fluid py-5" style="background-color: #f8f9fa;">
+        <div class="container text-center py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-9">
+                    <h1 class="display-5 fw-bold mb-3">Actualización en Proceso</h1>
+                    <p class="fs-5 text-muted mb-4">Estamos trabajando para mejorar tu experiencia</p>
 
-            <!-- Slide 2: Medicamentos -->
-            <div class="carousel-item">
-                <div class="carousel-image-container h-100">
-                    <img src="img/fondos/medicinas.png" class="d-block w-100 carousel-image img-fluid" alt="Donación de medicamentos">
-                    <div class="carousel-caption">
-                         <div class="px-3">
-                            <h1 class="text-light display-3 mb-4">Medicamentos</h1>
-                            <p class="fs-5 fw-medium text-white mb-4 pb-2">Dona medicamentos que ya no necesites y ayuda a un tratamiento.</p>
-                            <div class="d-flex gap-4 justify-content-center">
-                                <a href="crear_donacion_persona.php?categoria=medicamentos" class="btn btn-primary btn-lg rounded-pill px-4">Donar Medicamentos</a>
-                                <a href="crear_aviso_persona.php?categoria=medicamentos" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Medicamentos</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                    <h2 class="h4 text-primary mt-5 mb-3">¡Próximamente podrás disfrutar de DoSys en náhuatl y otros idiomas!</h2>
+                    <p>Estamos añadiendo soporte para lenguas indígenas como el náhuatl y mejorando nuestra plataforma para servirte mejor.</p>
+                    <p class="mb-5">Mantente atento a las actualizaciones en nuestro sitio oficial.</p>
 
-            <!-- Slide 3: Dispositivos -->
-            <div class="carousel-item">
-                <div class="carousel-image-container h-100">
-                    <img src="img/fondos/dispositivos.png" class="d-block w-100 carousel-image img-fluid" alt="Donación de dispositivos">
-                    <div class="carousel-caption">
-                         <div class="px-3">
-                            <h1 class="text-light display-3 mb-4">Dispositivos de Asistencia</h1>
-                            <p class="fs-5 fw-medium text-white mb-4 pb-2">Mejora la calidad de vida de alguien donando un dispositivo médico.</p>
-                            <div class="d-flex gap-4 justify-content-center">
-                                <a href="crear_donacion_persona.php?categoria=dispositivos" class="btn btn-primary btn-lg rounded-pill px-4">Donar Dispositivo</a>
-                                <a href="crear_aviso_persona.php?categoria=dispositivos" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Dispositivo</a>
-                            </div>
-                        </div>
-                    </div>
+                    <a class="btn btn-primary rounded-pill py-3 px-5" href="index.html">Volver al Inicio</a>
                 </div>
             </div>
         </div>
-
-        <!-- Controles del Carrusel -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#donationCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Anterior</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#donationCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Siguiente</span>
-        </button>
     </div>
-    <!-- Carousel End -->
+    <!-- Maintenance End -->
         
     <!-- Footer Start -->
     <div class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.2s">
@@ -305,3 +224,5 @@
 </body>
 
 </html>
+
+
