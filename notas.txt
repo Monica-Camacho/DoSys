@@ -1,307 +1,115 @@
-1. Páginas Públicas Principales
-index.html: Página de inicio.
+# Documentación y Especificaciones del Proyecto DoSys
 
-avisos.html: Página para mostrar solicitudes de donación urgentes.
-
-mapa.php: Mapa interactivo con puntos de donación.
-
-estadisticas.html: Página para mostrar datos y logros del proyecto.
-
-mantenimiento.html: Página para secciones en construcción.
-
-2. Proceso de Registro y Autenticación
-r_seleccionar_tipo.html: Página para que el usuario elija qué tipo de cuenta crear (Persona, Empresa, Organización).
-
-r_persona.html: Formulario de registro para personas (donantes/donatarios).
-
-r_empresa.html: Formulario de registro para empresas.
-
-r_organizacion.html: Formulario de registro para ONGs.
-
-login.php: Página con el formulario para iniciar sesión.
-
-logout.php: Script para cerrar la sesión del usuario.
-
-register_process.php: (Backend) Script PHP que recibirá los datos de los 3 formularios de registro, validará la información y la guardará en la base de datos.
-
-login_process.php: (Backend) Script PHP que verificará las credenciales del usuario y gestionará el inicio de sesión.
-
-3. Páginas de Contenido (Sección "Conócenos")
-C-Sobre_Nosotros.html: Información sobre la misión y visión de DoSys.
-
-C-Nuestro_Equipo.html: Presentación del equipo.
-
-C-Logros.html: Página para destacar hitos y el impacto del proyecto.
-
-aliados.html: Página para mostrar las empresas que colaboran.
-
-4. Formularios de Donación y Solicitud (Acciones Principales)
-Formularios de Donación:
-
-donar_sangre.php
-
-donar_medicamentos.php
-
-donar_dispositivos.php
-
-Formularios de Solicitud (Donatario):
-
-solicitar_sangre.php
-
-solicitar_medicamentos.php
-
-solicitar_dispositivos.php
-
-5. Panel de Usuario (Dashboard - Nombres sugeridos)
-Estas son las páginas que un usuario vería después de iniciar sesión.
-
-dashboard.php: Página principal del panel de usuario.
-
-perfil.php: Página para ver y editar la información del perfil.
-
-historial.php: Historial de donaciones y solicitudes.
-
-crear_aviso.php: Formulario para crear un nuevo aviso de donación.
-
-configuracion.php: Para cambiar contraseña y otros ajustes.
-
-
-
-
-
-¡Excelente pregunta! Una vez que un usuario inicia sesión, entra a su espacio personal dentro de DoSys. Este espacio, o "Panel de Control", debe ser intuitivo, útil y adaptado al tipo de usuario.
-
-Basándome en la estructura que ya tienes en tus archivos, especialmente en `notas.txt`, así es como debería verse la experiencia para un usuario que ha iniciado sesión:
-
-### El Panel de Control Principal (`dashboard.php`)
-
-Al iniciar sesión, el usuario debería ser redirigido a una página principal de su perfil. Esta página sería el `dashboard.php` que tienes planeado. Este panel debe mostrar la información más relevante de un vistazo y dar acceso a todas las demás secciones.
-
-Aquí te presento una propuesta visual y funcional, dividida por tipo de usuario:
+**Versión 1.3**
+**Fecha: 08 de Julio de 2025**
 
 ---
 
-### **1. Para el Usuario "Persona" (Donante/Donatario)**
+### 1. Resumen Ejecutivo
 
-Este es el usuario más común. Su panel debe centrarse en la acción de donar y solicitar.
-
-**Propuesta de Panel de Control para Personas:**
-
-* **Menú de Navegación Lateral (o superior):**
-    * **Inicio / Resumen:** La vista principal.
-    * **Mi Perfil (`perfil.php`):** Para ver y editar su información.
-    * **Mis Solicitudes:** Ver el estado de las solicitudes que ha creado.
-    * **Mis Donaciones:** Historial de las donaciones que ha realizado.
-    * **Crear Aviso (`crear_aviso.php`):** Un botón destacado para iniciar una nueva solicitud de donación.
-    * **Configuración (`configuracion.php`):** Para cambiar contraseña, notificaciones, etc.
-    * **Cerrar Sesión (`logout.php`):** Para salir de forma segura.
-
-* **Vista Principal del Panel (`dashboard.php`):**
-    * **Saludo de Bienvenida:** "Hola, [Nombre del Usuario]".
-    * **Resumen de Actividad:**
-        * **Solicitudes Activas:** Un cuadro que muestre sus solicitudes actuales y el progreso (ej. "2 de 5 donantes de sangre encontrados").
-        * **Última Donación Realizada:** Información sobre su donación más reciente.
-    * **Acciones Rápidas:**
-        * Un botón grande y claro para "**Crear Nueva Solicitud**".
-        * Un botón para "**Ver Avisos Urgentes**" que lo lleve a `avisos.html`.
-    * **Beneficios y Reconocimientos:** Un espacio para mostrar las recompensas o beneficios que ha obtenido de las empresas aliadas por sus donaciones.
+**DoSys (Donation System)** es una plataforma tecnológica integral diseñada para centralizar, optimizar y fomentar la cultura de donación altruista en México. El proyecto se enfoca en tres áreas críticas de salud: **sangre, medicamentos y dispositivos de asistencia**. Su misión es crear un ecosistema digital transparente y eficiente que conecte a donantes, beneficiarios, organizaciones de salud y empresas socialmente responsables, asegurando que la ayuda llegue a quienes más la necesitan de manera rápida y segura.
 
 ---
 
-### **2. Para el Usuario "Empresa"**
+### 2. Ecosistema de Usuarios y Roles
 
-El panel para empresas debe centrarse en cómo su colaboración está impactando a la comunidad y en la gestión de los beneficios que ofrecen.
-
-**Propuesta de Panel de Control para Empresas:**
-
-* **Menú de Navegación:**
-    * **Inicio / Resumen:** Vista principal.
-    * **Perfil de la Empresa (`perfil.php`):** Editar información de la empresa, logo, descripción.
-    * **Gestionar Beneficios:** Un formulario para crear o actualizar las promociones que ofrecen a los donantes.
-    * **Estadísticas de Impacto:** Gráficas que muestren cuántos donantes han utilizado sus beneficios.
-    * **Configuración (`configuracion.php`):** Gestionar la cuenta.
-    * **Cerrar Sesión (`logout.php`)**.
-
-* **Vista Principal del Panel (`dashboard.php`):**
-    * **Resumen del Impacto:**
-        * "Gracias a tu apoyo, **[XX]** donantes han recibido beneficios este mes".
-        * Total de donaciones incentivadas gracias a su participación.
-    * **Acciones Rápidas:**
-        * Botón para "**Añadir Nuevo Beneficio**".
-        * Botón para "**Ver Donantes Beneficiados**".
+La plataforma está diseñada para cuatro perfiles de usuario principales, cada uno con un panel de control y funcionalidades específicas: **Persona (Donante/Donatario)**, **Empresa Aliada**, **Organización** y **Administrador de DoSys**.
 
 ---
 
-### **3. Para el Usuario "Organización Altruista"**
-
-Este panel es para ONGs y otras organizaciones que gestionan múltiples solicitudes y beneficiarios.
-
-**Propuesta de Panel de Control para Organizaciones:**
-
-* **Menú de Navegación:**
-    * **Inicio / Resumen:** Vista principal.
-    * **Perfil de la Organización (`perfil.php`):** Editar datos de la organización.
-    * **Gestionar Solicitudes:** Una tabla con todas las solicitudes creadas por la organización, con opciones para ver, editar o marcar como completadas.
-    * **Crear Aviso de Donación (`crear_aviso.php`):** Formulario para crear una nueva solicitud para sus beneficiarios.
-    * **Historial de Donaciones Recibidas (`historial.php`):** Un registro de todo lo que han recibido a través de la plataforma.
-    * **Configuración (`configuracion.php`):** Gestionar la cuenta de la organización.
-    * **Cerrar Sesión (`logout.php`)**.
-
-* **Vista Principal del Panel (`dashboard.php`):**
-    * **Resumen General:**
-        * Número de **solicitudes activas**.
-        * Total de **donaciones recibidas** este mes.
-        * **Beneficiarios ayudados** a través de la plataforma.
-    * **Acciones Rápidas:**
-        * Botón para "**Crear Nueva Solicitud Urgente**".
-        * Acceso directo para "**Ver Solicitudes Pendientes**".
-
-La clave es que cada panel se sienta personalizado y funcional para el rol que cada usuario desempeña en el ecosistema de **DoSys**. Esto mejora la experiencia y fomenta el uso continuo de la plataforma.
-
-
-
-1. Panel de Persona
-persona_dashboard.php
-
-persona_perfil.php
-
-persona_configuracion.php
-
-2. Panel de Empresa
-empresa_dashboard.php
-
-empresa_perfil.php
-
-empresa_beneficios.php
-
-empresa_reportes.php
-
-empresa_configuracion.php
-
-3. Panel de Organización
-organizacion_dashboard.php
-
-organizacion_perfil.php
-
-organizacion_solicitudes.php
-
-organizacion_crear_aviso.php
-
-organizacion_historial.php
-
-organizacion_configuracion.php
-
-
-
-Vistas para el Rol de Administrador
-El Administrador tendrá acceso a todas las funcionalidades.
-
-empresa_dashboard.php: La página de inicio. Mostrará un resumen del impacto (beneficios canjeados), un listado rápido de usuarios y accesos directos a las funciones principales.
-
-empresa_perfil.php: La que acabamos de diseñar. Aquí el admin edita los datos de la empresa, ubicación y representante.
-
-empresa_beneficios.php: Para crear, ver, editar y eliminar los beneficios o promociones que la empresa ofrece a los donantes.
-
-empresa_usuarios.php: (Nueva Vista Clave) Una tabla para ver a todos los usuarios afiliados a la empresa, su rol y su estado. Desde aquí, el admin podrá añadir nuevos usuarios o editar los existentes.
-
-empresa_crear_usuario.php: (Nuevo Formulario) El formulario que usará el admin para registrar a un nuevo empleado en la plataforma, asignándole un rol (Creador o Visualizador).
-
-empresa_reportes.php: Para ver estadísticas detalladas sobre el uso de los beneficios.
-
-empresa_configuracion.php: Para las opciones de seguridad de la cuenta de administrador.
-
-Vistas para el Rol de Sub-usuario (Creador de Promociones)
-Este usuario tendrá un panel más simple.
-
-empresa_dashboard.php: Verá un resumen enfocado en las promociones.
-
-empresa_beneficios.php: Tendrá acceso completo a esta página para crear y editar promociones.
-
-empresa_reportes.php: Podrá ver el rendimiento de las promociones.
-
-empresa_configuracion.php: Para gestionar su propia contraseña.
-
-(Acceso Denegado a empresa_perfil.php y empresa_usuarios.php)
-
-Vistas para el Rol de Sub-usuario (Visualizador)
-Este es el rol más restringido.
-
-empresa_dashboard.php: Verá una lista simple de las promociones activas.
-
-empresa_beneficios.php: Verá la misma página, pero en modo de solo lectura. Los botones para crear o editar estarán ocultos o desactivados.
-
-empresa_configuracion.php: Para gestionar su propia contraseña.
-
-(Acceso Denegado a todo lo demás)
-
-
-Vistas para el Panel de Organización (Rol Administrador)
-1. Vistas Principales y de Gestión
-organizacion_dashboard.php:
-
-Propósito: Página de inicio. Mostrará los datos más urgentes: un contador de "Solicitudes por Validar" y otro de "Donantes por Aprobar". Incluirá accesos directos a las secciones más importantes.
-
-organizacion_solicitudes.php:
-
-Propósito: El centro de operaciones para gestionar las peticiones de ayuda. Tendrá pestañas para filtrar las solicitudes por su estado:
-
-Por Validar: Lista de solicitudes enviadas por usuarios que la organización debe revisar y aprobar.
-
-Activas: Solicitudes ya aprobadas y visibles públicamente.
-
-Historial: Solicitudes completadas o cerradas.
-
-organizacion_donantes.php:
-
-Propósito: Página para administrar a los donantes que se han comprometido a ayudar. Tendrá pestañas para:
-
-Pendientes de Aprobación: Donantes que han expresado su intención de donar y esperan el visto bueno de la organización.
-
-Aprobados (En Proceso): Donantes que ya fueron aprobados y de quienes se espera la entrega de la donación.
-
-Completados: Historial de donaciones recibidas.
-
-2. Vistas de Perfil y Configuración
-organizacion_perfil.php:
-
-Propósito: Para que el administrador edite la información pública de la organización (nombre, CLUNI, misión, dirección, logo, etc.).
-
-organizacion_configuracion.php:
-
-Propósito: Para la configuración de la cuenta principal, incluyendo la "Zona de Peligro" para desactivar o eliminar la cuenta de la organización.
-
-3. Vistas para la Gestión de Usuarios (Voluntarios/Personal)
-organizacion_usuarios.php:
-
-Propósito: Tabla para que el administrador gestione las cuentas de su equipo (voluntarios o personal). Podrá ver su rol, estado y realizar acciones.
-
-organizacion_crear_usuario.php:
-
-Propósito: El formulario que usará el administrador para registrar un nuevo miembro de su equipo en la plataforma, asignándole un rol (Gestor de Casos o Visualizador).
-
-
-
-
-🔍 Búsqueda de Direcciones y Lugares:
-
-¿Qué hace? Agrega una barra de búsqueda en el mapa (como en Google Maps) donde el usuario puede escribir una dirección, una colonia o un punto de interés. El mapa se moverá a esa ubicación.
-
-Beneficio: Permite a los usuarios que no quieren compartir su ubicación, o que están planeando una donación desde otro lugar, encontrar centros de acopio fácilmente.
-
-🚗 Cálculo de Rutas:
-
-¿Qué hace? Al hacer clic en un marcador, además de ver la información del lugar, el usuario tendrá un botón de "Cómo llegar". Al presionarlo, se dibujará la ruta desde su ubicación (o una dirección que ingrese) hasta el centro de donación.
-
-Beneficio: Facilita la logística para el donante, incentivando a que complete la donación al saber exactamente cómo y cuánto tiempo le tomará llegar.
-
-ℹ️ Ventanas de Información Mejoradas (InfoWindows):
-
-¿Qué hace? Enriquece la información que aparece al hacer clic en un marcador. Podríamos añadir datos como:
-
-Horarios de atención.
-
-Teléfono de contacto.
-
-Requisitos específicos (ej. "Se necesita sangre O+ con urgencia").
-
-Un enlace directo al perfil de la organización (si aplica).
+### 3. Mapa de Vistas y Flujos de la Aplicación
+
+Esta sección detalla la estructura de archivos y el propósito de cada vista dentro de la plataforma DoSys.
+
+#### 3.1. Páginas Públicas Principales
+Vistas accesibles para cualquier visitante del sitio.
+
+- **index.html:** Página de inicio y presentación principal del proyecto.
+- **avisos.html:** Galería pública que muestra las solicitudes de donación activas y urgentes.
+- **mapa.php:** Mapa interactivo con geolocalización de centros de donación, hospitales y bancos de sangre.
+- **estadisticas.html:** Página con datos de impacto, gráficas y logros del proyecto.
+- **mantenimiento.html:** Página genérica para secciones en construcción.
+
+#### 3.2. Proceso de Registro y Autenticación
+Flujo para la creación de cuentas y el inicio de sesión.
+
+- **r_seleccionar_tipo.html:** Página inicial del flujo donde el usuario elige si se registra como Persona, Empresa u Organización.
+- **r_persona.html:** Formulario de registro para usuarios individuales (donantes/donatarios).
+- **r_empresa.html:** Formulario de registro para empresas aliadas.
+- **r_organizacion.html:** Formulario de registro para ONGs, hospitales, etc.
+- **login.php:** Formulario para que los usuarios existentes inicien sesión.
+- **logout.php:** Script para cerrar la sesión activa del usuario.
+- **register_process.php (Backend):** Script que procesa los datos de los formularios de registro, los valida y los guarda en la base de datos.
+- **login_process.php (Backend):** Script que valida las credenciales del usuario contra la base de datos y gestiona el inicio de sesión.
+
+#### 3.3. Páginas de Contenido (Sección "Conócenos")
+- **C-Sobre_Nosotros.html:** Detalla la historia, misión y visión de DoSys.
+- **C-Nuestro_Equipo.html:** Presenta a los miembros del equipo fundador y asesores.
+- **C-Logros.html:** Muestra los hitos, premios y reconocimientos del proyecto.
+- **R-Empresas_Aliadas.php:** Directorio público de las empresas que colaboran con DoSys.
+
+#### 3.4. Panel de Usuario: Persona
+Vistas a las que accede un usuario de tipo "Persona" tras iniciar sesión.
+
+- **persona_dashboard.php:** Página principal del panel. Muestra un resumen de actividad (solicitudes, donaciones) y acciones rápidas.
+- **persona_perfil.php:** Para ver y editar la información personal.
+- **persona_beneficios.php:** Catálogo de beneficios y recompensas obtenidas por sus donaciones.
+- **persona_configuracion.php:** Para cambiar contraseña y otros ajustes de la cuenta.
+- **crear_aviso_persona.php:** Formulario para que el usuario cree una nueva solicitud de donación.
+
+#### 3.5. Panel de Usuario: Empresa
+Vistas para la gestión de la cuenta de una Empresa Aliada. Incluye múltiples roles internos.
+
+##### **Rol: Administrador de Empresa (Acceso Total)**
+- **empresa_dashboard.php:** Resumen de impacto, listado de usuarios y accesos directos.
+- **empresa_perfil.php:** Para editar los datos generales de la empresa.
+- **empresa_beneficios.php:** Para crear, ver, editar y eliminar los beneficios que la empresa ofrece.
+- **empresa_usuarios.php:** Tabla para gestionar a los sub-usuarios (empleados) de la empresa.
+- **empresa_crear_usuario.php:** Formulario para añadir nuevos sub-usuarios (Creador o Visualizador).
+- **empresa_reportes.php:** Estadísticas detalladas sobre el uso de los beneficios.
+- **empresa_configuracion.php:** Opciones de seguridad de la cuenta de administrador.
+
+##### **Rol: Creador de Promociones (Sub-usuario)**
+- **Acceso a:** `empresa_dashboard.php`, `empresa_beneficios.php`, `empresa_reportes.php`, `empresa_configuracion.php`.
+- *Acceso denegado a la edición del perfil de la empresa y a la gestión de usuarios.*
+
+##### **Rol: Visualizador (Sub-usuario)**
+- **Acceso a:** `empresa_dashboard.php` (vista simple), `empresa_beneficios.php` (solo lectura), `empresa_configuracion.php`.
+- *Acceso denegado a la creación o edición de contenido.*
+
+#### 3.6. Panel de Usuario: Organización
+Vistas para la gestión de una Organización (ONG, Hospital, etc.). Incluye múltiples roles internos.
+
+##### **Rol: Administrador de Organización (Acceso Total)**
+- **organizacion_dashboard.php:** Página de inicio con contadores de "Solicitudes por Validar" y "Donantes por Aprobar". Acceso a todas las funcionalidades.
+- **organizacion_solicitudes.php:** Centro de operaciones para gestionar peticiones de ayuda, con pestañas (Por Validar, Activas, Historial).
+- **organizacion_donantes.php:** Para administrar a los donantes comprometidos, con pestañas (Pendientes, Aprobados, Completados).
+- **organizacion_perfil.php:** Para editar la información pública de la organización (CLUNI, misión, etc.).
+- **organizacion_usuarios.php:** Tabla para gestionar las cuentas de su equipo (voluntarios o personal).
+- **organizacion_crear_usuario.php:** Formulario para registrar un nuevo miembro del equipo (Gestor de Casos o Visualizador).
+- **organizacion_configuracion.php:** Para la configuración de la cuenta, incluyendo la "Zona de Peligro".
+
+##### **Rol: Gestor de Casos (Sub-usuario)**
+- **Acceso a:**
+    - `organizacion_dashboard.php`: Verá los contadores y podrá acceder a las secciones de gestión.
+    - `organizacion_solicitudes.php`: Acceso completo para validar, activar y dar seguimiento a las solicitudes.
+    - `organizacion_donantes.php`: Acceso completo para aprobar y gestionar a los donantes.
+    - `organizacion_configuracion.php`: Para gestionar su propia contraseña.
+- ***Acceso Denegado a:*** `organizacion_perfil.php` (no puede cambiar datos de la ONG) y `organizacion_usuarios.php` (no puede gestionar a otros usuarios).
+
+##### **Rol: Visualizador (Sub-usuario)**
+- **Acceso a:**
+    - `organizacion_dashboard.php`: Verá los contadores pero sin acceso a botones de gestión.
+    - `organizacion_solicitudes.php`: Modo de solo lectura.
+    - `organizacion_donantes.php`: Modo de solo lectura.
+    - `organizacion_configuracion.php`: Para gestionar su propia contraseña.
+- ***Acceso Denegado a:*** Creación o edición de cualquier tipo de contenido.
+
+---
+
+### 4. Arquitectura y Tecnologías
+
+* **Frontend:** HTML5, CSS3, JavaScript, Bootstrap 5.
+* **Backend:** PHP.
+* **Base de Datos:** MySQL.
+* **APIs Externas:** Google Maps API.
