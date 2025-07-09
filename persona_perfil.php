@@ -111,10 +111,11 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-end m-0">
                             <a href="persona_dashboard.php" class="dropdown-item">Mi Panel</a>
-                            <a href="persona_perfil.php" class="dropdown-item active">Editar Perfil</a>
+                            <a href="persona_beneficios.php" class="dropdown-item">Mis Beneficios</a>
+                            <a href="persona_perfil.php" class="dropdown-item">Mi Perfil</a>
                             <a href="persona_configuracion.php" class="dropdown-item">Configuración</a>
                             <hr class="dropdown-divider">
-                            <a href="logout.php" class="dropdown-item text-danger">Cerrar Sesión</a>
+                            <a href="php/logout.php" class="dropdown-item text-danger">Cerrar Sesión</a>
                         </div>
                     </div>
                 </div>
