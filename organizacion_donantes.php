@@ -85,56 +85,9 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
         </div>
         <!-- Topbar End -->    
 
-    <!-- Navbar Start -->
-    <div class="container-fluid nav-bar px-0 px-lg-4 py-lg-0">
-        <div class="container">
-            <nav class="navbar navbar-expand-lg navbar-light"> 
-                <a href="index.html" class="navbar-brand p-0">
-                    <img src="img/logos/DoSys_largo_fondoTransparente.png" alt="DoSys_Logo" class="img-fluid">
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                    <span class="fa fa-bars"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <div class="navbar-nav mx-auto">
-                        <!-- Menú de navegación principal (público) -->
-                        <a href="index.html" class="nav-item nav-link">Inicio</a>
-                        <a href="avisos.html" class="nav-item nav-link">Avisos de Donación</a>
-                        <a href="mapa.php" class="nav-item nav-link">Mapa</a>
-                        <a href="estadisticas.html" class="nav-item nav-link">Estadísticas</a>
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link" data-bs-toggle="dropdown">
-                                <span class="dropdown-toggle">Conócenos</span>
-                            </a>
-                            <div class="dropdown-menu">
-                                <a href="C-Sobre_Nosotros.html" class="dropdown-item">Sobre Nosotros</a>
-                                <a href="C-Nuestro_Equipo.html" class="dropdown-item">Nuestro Equipo</a>
-                                <a href="C-Logros.html" class="dropdown-item">Logros</a>
-                                <a href="R-Empresas_Aliadas.php" class="dropdown-item">Empresas Aliadas</a>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Menú de Usuario Desplegable -->
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <i class="fas fa-sitemap me-2"></i> Nombre Organización
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end m-0">
-                            <a href="organizacion_dashboard.php" class="dropdown-item">Panel de Organización</a>
-                            <a href="organizacion_solicitudes.php" class="dropdown-item">Solicitudes</a>
-                            <a href="organizacion_donantes.php" class="dropdown-item">Donantes</a>
-                            <a href="organizacion_usuarios.php" class="dropdown-item">Voluntarios</a>
-                            <a href="organizacion_perfil.php" class="dropdown-item">Perfil de la Organización</a>
-                            <a href="organizacion_configuracion.php" class="dropdown-item">Configuración</a>
-                            <hr class="dropdown-divider">
-                            <a href="logout.php" class="dropdown-item text-danger">Cerrar Sesión</a>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        </div>
-    </div>
-    <!-- Navbar End -->
+        <!-- Navbar Start -->
+        <?php require_once 'templates/navbar.php'; ?>
+        <!-- Navbar End -->
 
     <!-- Header Start -->
     <div class="container-fluid bg-light py-5">

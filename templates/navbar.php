@@ -15,7 +15,7 @@ $user_name = ($is_logged_in && isset($_SESSION['nombre_usuario'])) ? $_SESSION['
                 <span class="fa fa-bars"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
-                <div class="navbar-nav mx-0 mx-lg-auto">
+                <div class="navbar-nav justify-content-center w-100">
                     <a href="<?php echo BASE_URL; ?>index.php" class="nav-item nav-link">Inicio</a>
                     <a href="<?php echo BASE_URL; ?>avisos.php" class="nav-item nav-link">Avisos de Donación</a>
                     <a href="<?php echo BASE_URL; ?>mapa.php" class="nav-item nav-link">Mapa</a>
@@ -23,10 +23,10 @@ $user_name = ($is_logged_in && isset($_SESSION['nombre_usuario'])) ? $_SESSION['
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Conócenos</a>
                         <div class="dropdown-menu">
-                            <a href="<?php echo BASE_URL; ?>C-Sobre_Nosotros.html" class="dropdown-item">Sobre Nosotros</a>
-                            <a href="<?php echo BASE_URL; ?>C-Nuestro_Equipo.html" class="dropdown-item">Nuestro Equipo</a>
-                            <a href="<?php echo BASE_URL; ?>C-Logros.html" class="dropdown-item">Logros</a>
-                            <a href="<?php echo BASE_URL; ?>R-Empresas_Aliadas.php" class="dropdown-item">Empresas Aliadas</a>
+                            <a href="<?php echo BASE_URL; ?>c-sobre_nosotros.php" class="dropdown-item">Sobre Nosotros</a>
+                            <a href="<?php echo BASE_URL; ?>c-nuestro_equipo.php" class="dropdown-item">Nuestro Equipo</a>
+                            <a href="<?php echo BASE_URL; ?>c-logros.php" class="dropdown-item">Logros</a>
+                            <a href="<?php echo BASE_URL; ?>c-empresas_aliadas.php" class="dropdown-item">Empresas Aliadas</a>
                         </div>
                     </div>
                 </div>
@@ -74,7 +74,7 @@ $user_name = ($is_logged_in && isset($_SESSION['nombre_usuario'])) ? $_SESSION['
                         </div>
                     <?php else: ?>
                         <a href="<?php echo BASE_URL; ?>login.php" class="btn btn-primary rounded-pill py-2 px-4 me-2 text-nowrap">Iniciar Sesión</a>
-                        <a href="<?php echo BASE_URL; ?>r_seleccionar_tipo.html" class="btn btn-outline-primary rounded-pill py-2 px-4">Regístrate</a>
+                        <a href="<?php echo BASE_URL; ?>r_seleccionar_tipo.php" class="btn btn-outline-primary rounded-pill py-2 px-4">Regístrate</a>
                     <?php endif; ?>
                 </div>
             </div>

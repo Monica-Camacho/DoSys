@@ -82,7 +82,10 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                 </div>
             </div>
         </div>
+
+        <!-- Navbar Start -->
         <?php require_once 'templates/navbar.php'; ?>
+        <!-- Navbar End -->
 
 
         <div class="container-fluid py-5 bg-light">

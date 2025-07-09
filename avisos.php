@@ -90,46 +90,9 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
         </div>
         <!-- Topbar End -->
          
-    <!-- MENÚ PRINCIPAL -->
-    <!-- Navbar & Hero Start -->
-    <div class="container-fluid nav-bar px-0 px-lg-4 py-lg-0">
-        <div class="container">
-            <nav class="navbar navbar-expand-lg navbar-light"> 
-                <a href="index.html" class="navbar-brand p-0">
-                    <img src="img/logos/DoSys_largo_fondoTransparente.png" alt="DoSys_Logo" class="img-fluid">
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                    <span class="fa fa-bars"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <div class="navbar-nav mx-0 mx-lg-auto">
-                        <!-- Botones del menú -->
-                        <a href="index.html" class="nav-item nav-link">Inicio</a>
-                        <a href="avisos.html" class="nav-item nav-link active">Avisos de Donación</a>
-                        <a href="mapa.php" class="nav-item nav-link">Mapa</a>
-                        <a href="estadisticas.html" class="nav-item nav-link">Estadísticas</a>
-                        <!-- Más botones del menú -->
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link" data-bs-toggle="dropdown">
-                                <span class="dropdown-toggle">Conócenos</span>
-                            </a>
-                            <div class="dropdown-menu">
-                                <a href="C-Sobre_Nosotros.html" class="dropdown-item">Sobre Nosotros</a>
-                                <a href="C-Nuestro_Equipo.html" class="dropdown-item">Nuestro Equipo</a>
-                                <a href="C-Nuestro_Equipo.html" class="dropdown-item">Logros</a>
-                                <a href="index.html" class="dropdown-item">Empresas Aliadas</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center ms-lg-4">
-                        <a href="login.php" class="btn btn-primary rounded-pill py-2 px-4 me-2 text-nowrap">Iniciar Sesión</a>
-                        <a href="r_seleccionar_tipo.html" class="btn btn-outline-primary rounded-pill py-2 px-4">Regístrate</a>
-                   </div>
-                </div>
-            </nav>
-        </div>
-    </div>
-    <!-- Navbar & Hero End -->
+        <!-- Navbar Start -->
+        <?php require_once 'templates/navbar.php'; ?>
+        <!-- Navbar End -->
 
     <!-- Notices Start -->
     <div class="container-fluid py-5 bg-light">
