@@ -1,6 +1,6 @@
 -- -----------------------------------------------------
 -- Esquema de Base de Datos para el Proyecto DoSys
--- Versión 1.0
+-- Versión 1.5 (con Perfil de Empresa Detallado)
 -- -----------------------------------------------------
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
@@ -14,30 +14,61 @@ CREATE SCHEMA IF NOT EXISTS `dosys_db` DEFAULT CHARACTER SET utf8mb4 ;
 USE `dosys_db` ;
 
 -- -----------------------------------------------------
--- Tabla `tipos_usuario`
--- Define los roles principales en la plataforma.
+-- Tablas de Catálogos
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tipos_usuario` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `nombre` VARCHAR(45) NOT NULL COMMENT 'Ej: Persona, Empresa, Organizacion',
+  `nombre` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Tabla `roles`
--- Define los sub-roles o permisos dentro de cada tipo de usuario.
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `roles` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `nombre` VARCHAR(45) NOT NULL COMMENT 'Ej: Administrador, Creador, Visualizador, Gestor de Casos',
+  `nombre` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `categorias_donacion` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `estatus_aviso` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `estatus_donacion` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `tipos_punto_donacion` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(100) NOT NULL,
+  `icono` VARCHAR(100) NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `urgencia_niveles` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  `color_hex` VARCHAR(7) NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `tipos_sangre` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `tipo` VARCHAR(5) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Tabla `usuarios`
--- Tabla central para la autenticación de todos los usuarios.
+-- Tablas de Usuarios y Perfiles
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `usuarios` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -49,59 +80,62 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `estado` ENUM('Activo', 'Inactivo', 'Pendiente') NOT NULL DEFAULT 'Pendiente',
   PRIMARY KEY (`id`),
   UNIQUE INDEX `email_UNIQUE` (`email` ASC),
-  INDEX `fk_usuarios_tipos_usuario_idx` (`tipo_usuario_id` ASC),
-  INDEX `fk_usuarios_roles_idx` (`rol_id` ASC),
-  CONSTRAINT `fk_usuarios_tipos_usuario`
-    FOREIGN KEY (`tipo_usuario_id`)
-    REFERENCES `tipos_usuario` (`id`),
-  CONSTRAINT `fk_usuarios_roles`
-    FOREIGN KEY (`rol_id`)
-    REFERENCES `roles` (`id`))
+  CONSTRAINT `fk_usuarios_tipos_usuario` FOREIGN KEY (`tipo_usuario_id`) REFERENCES `tipos_usuario` (`id`),
+  CONSTRAINT `fk_usuarios_roles` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`))
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Tabla `personas_perfil`
--- Almacena información específica de los usuarios tipo "Persona".
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `personas_perfil` (
   `usuario_id` INT NOT NULL,
   `nombre` VARCHAR(100) NOT NULL,
   `apellidos` VARCHAR(100) NOT NULL,
   `fecha_nacimiento` DATE NULL,
   `telefono` VARCHAR(20) NULL,
+  `calle` VARCHAR(255) NULL,
+  `numero_exterior` VARCHAR(20) NULL,
+  `numero_interior` VARCHAR(20) NULL,
+  `colonia` VARCHAR(100) NULL,
+  `codigo_postal` VARCHAR(10) NULL,
+  `municipio` VARCHAR(100) NULL,
+  `estado` VARCHAR(100) NULL,
+  `tipo_sangre_id` INT NULL,
+  `enfermedades_cronicas` TEXT NULL,
+  `alergias` TEXT NULL,
+  `credencial_lector_url` VARCHAR(255) NULL,
   PRIMARY KEY (`usuario_id`),
+  INDEX `fk_personas_perfil_tipos_sangre_idx` (`tipo_sangre_id` ASC),
   CONSTRAINT `fk_personas_perfil_usuarios`
     FOREIGN KEY (`usuario_id`)
     REFERENCES `usuarios` (`id`)
-    ON DELETE CASCADE)
+    ON DELETE CASCADE,
+  CONSTRAINT `fk_personas_perfil_tipos_sangre`
+    FOREIGN KEY (`tipo_sangre_id`)
+    REFERENCES `tipos_sangre` (`id`)
+    ON DELETE SET NULL)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Tabla `empresas_perfil`
--- Almacena información específica de los usuarios tipo "Empresa".
--- -----------------------------------------------------
+-- =====================================================
+-- TABLA MODIFICADA: `empresas_perfil`
+-- Se añaden campos detallados para la empresa y su representante.
+-- =====================================================
 CREATE TABLE IF NOT EXISTS `empresas_perfil` (
   `usuario_id` INT NOT NULL,
-  `nombre_empresa` VARCHAR(255) NOT NULL,
-  `rfc` VARCHAR(13) NULL,
-  `direccion` TEXT NULL,
+  `nombre_comercial` VARCHAR(255) NOT NULL,
+  `razon_social` VARCHAR(255) NOT NULL,
+  `rfc` VARCHAR(13) NOT NULL,
   `logo_url` VARCHAR(255) NULL,
-  `representante_legal` VARCHAR(255) NULL,
-  `empresa_padre_id` INT NULL COMMENT 'Si es un sub-usuario, aquí va el ID del admin de la empresa',
+  `telefono_empresa` VARCHAR(20) NULL,
+  `direccion_fiscal` TEXT NOT NULL,
+  `ubicacion_comercial` TEXT NULL,
+  `descripcion` TEXT NULL,
+  `representante_nombre` VARCHAR(100) NOT NULL,
+  `representante_apellidos` VARCHAR(100) NOT NULL,
+  `representante_email` VARCHAR(255) NOT NULL,
+  `representante_telefono` VARCHAR(20) NOT NULL,
+  `empresa_padre_id` INT NULL,
   PRIMARY KEY (`usuario_id`),
-  CONSTRAINT `fk_empresas_perfil_usuarios`
-    FOREIGN KEY (`usuario_id`)
-    REFERENCES `usuarios` (`id`)
-    ON DELETE CASCADE)
+  CONSTRAINT `fk_empresas_perfil_usuarios` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Tabla `organizaciones_perfil`
--- Almacena información específica de los usuarios tipo "Organización".
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `organizaciones_perfil` (
   `usuario_id` INT NOT NULL,
   `nombre_organizacion` VARCHAR(255) NOT NULL,
@@ -110,87 +144,80 @@ CREATE TABLE IF NOT EXISTS `organizaciones_perfil` (
   `direccion` TEXT NULL,
   `logo_url` VARCHAR(255) NULL,
   `verificada` BOOLEAN NOT NULL DEFAULT FALSE,
-  `organizacion_padre_id` INT NULL COMMENT 'Si es un sub-usuario, aquí va el ID del admin de la organización',
+  `organizacion_padre_id` INT NULL,
   PRIMARY KEY (`usuario_id`),
-  CONSTRAINT `fk_organizaciones_perfil_usuarios`
-    FOREIGN KEY (`usuario_id`)
-    REFERENCES `usuarios` (`id`)
-    ON DELETE CASCADE)
+  CONSTRAINT `fk_organizaciones_perfil_usuarios` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Tabla `categorias_donacion`
--- Catálogo para los tipos de donación.
+-- Tabla `beneficiarios`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `categorias_donacion` (
+CREATE TABLE IF NOT EXISTS `beneficiarios` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `nombre` VARCHAR(45) NOT NULL COMMENT 'Ej: Sangre, Medicamentos, Dispositivos',
+  `nombre` VARCHAR(100) NOT NULL,
+  `apellido_paterno` VARCHAR(100) NOT NULL,
+  `apellido_materno` VARCHAR(100) NULL,
+  `fecha_nacimiento` DATE NOT NULL,
+  `sexo` ENUM('Masculino', 'Femenino') NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Tabla `estatus_aviso`
--- Catálogo para los estados de una solicitud/aviso.
+-- Tablas Operacionales
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `estatus_aviso` (
+CREATE TABLE IF NOT EXISTS `puntos_donacion` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `nombre` VARCHAR(45) NOT NULL COMMENT 'Ej: Pendiente de Validar, Activo, Completado, Rechazado',
-  PRIMARY KEY (`id`))
+  `nombre` VARCHAR(255) NOT NULL,
+  `direccion` TEXT NOT NULL,
+  `municipio` VARCHAR(100) NOT NULL,
+  `estado` VARCHAR(100) NOT NULL,
+  `latitud` DECIMAL(10, 8) NOT NULL,
+  `longitud` DECIMAL(11, 8) NOT NULL,
+  `tipo_id` INT NOT NULL,
+  `telefono` VARCHAR(20) NULL,
+  `horario` VARCHAR(255) NULL,
+  `organizacion_responsable_id` INT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_puntos_donacion_tipos_punto_donacion` FOREIGN KEY (`tipo_id`) REFERENCES `tipos_punto_donacion` (`id`),
+  CONSTRAINT `fk_puntos_donacion_usuarios` FOREIGN KEY (`organizacion_responsable_id`) REFERENCES `usuarios` (`id`) ON DELETE SET NULL)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Tabla `avisos`
--- Tabla principal para las solicitudes de donación.
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `avisos` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `solicitante_id` INT NOT NULL COMMENT 'ID del usuario (persona) que necesita la ayuda',
-  `organizacion_id` INT NOT NULL COMMENT 'ID de la organización que gestiona el caso',
-  `categoria_id` INT NOT NULL,
   `titulo` VARCHAR(255) NOT NULL,
   `descripcion` TEXT NOT NULL,
-  `detalles_json` JSON NULL COMMENT 'Para datos específicos, ej: {"tipo_sangre": "O+", "unidades": 8}',
+  `creador_id` INT NOT NULL,
+  `organizacion_id` INT NOT NULL,
+  `beneficiario_id` INT NOT NULL,
+  `categoria_id` INT NOT NULL,
+  `urgencia_id` INT NOT NULL,
   `estatus_id` INT NOT NULL,
+  `contacto_responsable_nombre` VARCHAR(255) NOT NULL,
+  `contacto_responsable_telefono` VARCHAR(20) NOT NULL,
+  `detalles_solicitud_json` JSON NULL,
   `fecha_creacion` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `fecha_cierre` TIMESTAMP NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_avisos_usuarios_solicitante_idx` (`solicitante_id` ASC),
-  INDEX `fk_avisos_usuarios_organizacion_idx` (`organizacion_id` ASC),
-  INDEX `fk_avisos_categorias_donacion_idx` (`categoria_id` ASC),
-  INDEX `fk_avisos_estatus_aviso_idx` (`estatus_id` ASC),
-  CONSTRAINT `fk_avisos_usuarios_solicitante`
-    FOREIGN KEY (`solicitante_id`)
-    REFERENCES `usuarios` (`id`),
-  CONSTRAINT `fk_avisos_usuarios_organizacion`
-    FOREIGN KEY (`organizacion_id`)
-    REFERENCES `usuarios` (`id`),
-  CONSTRAINT `fk_avisos_categorias_donacion`
-    FOREIGN KEY (`categoria_id`)
-    REFERENCES `categorias_donacion` (`id`),
-  CONSTRAINT `fk_avisos_estatus_aviso`
-    FOREIGN KEY (`estatus_id`)
-    REFERENCES `estatus_aviso` (`id`))
+  CONSTRAINT `fk_avisos_usuarios_creador` FOREIGN KEY (`creador_id`) REFERENCES `usuarios` (`id`),
+  CONSTRAINT `fk_avisos_usuarios_organizacion` FOREIGN KEY (`organizacion_id`) REFERENCES `usuarios` (`id`),
+  CONSTRAINT `fk_avisos_beneficiarios` FOREIGN KEY (`beneficiario_id`) REFERENCES `beneficiarios` (`id`),
+  CONSTRAINT `fk_avisos_categorias_donacion` FOREIGN KEY (`categoria_id`) REFERENCES `categorias_donacion` (`id`),
+  CONSTRAINT `fk_avisos_urgencia_niveles` FOREIGN KEY (`urgencia_id`) REFERENCES `urgencia_niveles` (`id`),
+  CONSTRAINT `fk_avisos_estatus_aviso` FOREIGN KEY (`estatus_id`) REFERENCES `estatus_aviso` (`id`))
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Tabla `estatus_donacion`
--- Catálogo para los estados de una donación comprometida.
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `estatus_donacion` (
+CREATE TABLE IF NOT EXISTS `avisos_documentos` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `nombre` VARCHAR(45) NOT NULL COMMENT 'Ej: Pendiente de Aprobación, Aprobado, Recibido, No Concretado',
-  PRIMARY KEY (`id`))
+  `aviso_id` INT NOT NULL,
+  `tipo_documento` ENUM('Receta Médica', 'Orden Médica', 'Identificación', 'Otro') NOT NULL,
+  `ruta_archivo` VARCHAR(255) NOT NULL,
+  `fecha_carga` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_avisos_documentos_avisos` FOREIGN KEY (`aviso_id`) REFERENCES `avisos` (`id`) ON DELETE CASCADE)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Tabla `donaciones`
--- Registra el compromiso de un donante con un aviso específico.
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `donaciones` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `aviso_id` INT NOT NULL,
@@ -199,25 +226,11 @@ CREATE TABLE IF NOT EXISTS `donaciones` (
   `fecha_compromiso` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `fecha_validacion` TIMESTAMP NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_donaciones_avisos_idx` (`aviso_id` ASC),
-  INDEX `fk_donaciones_usuarios_idx` (`donante_id` ASC),
-  INDEX `fk_donaciones_estatus_donacion_idx` (`estatus_id` ASC),
-  CONSTRAINT `fk_donaciones_avisos`
-    FOREIGN KEY (`aviso_id`)
-    REFERENCES `avisos` (`id`),
-  CONSTRAINT `fk_donaciones_usuarios`
-    FOREIGN KEY (`donante_id`)
-    REFERENCES `usuarios` (`id`),
-  CONSTRAINT `fk_donaciones_estatus_donacion`
-    FOREIGN KEY (`estatus_id`)
-    REFERENCES `estatus_donacion` (`id`))
+  CONSTRAINT `fk_donaciones_avisos` FOREIGN KEY (`aviso_id`) REFERENCES `avisos` (`id`),
+  CONSTRAINT `fk_donaciones_usuarios` FOREIGN KEY (`donante_id`) REFERENCES `usuarios` (`id`),
+  CONSTRAINT `fk_donaciones_estatus_donacion` FOREIGN KEY (`estatus_id`) REFERENCES `estatus_donacion` (`id`))
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Tabla `beneficios`
--- Catálogo de beneficios ofrecidos por las empresas.
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `beneficios` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `empresa_id` INT NOT NULL,
@@ -226,17 +239,9 @@ CREATE TABLE IF NOT EXISTS `beneficios` (
   `fecha_expiracion` DATE NULL,
   `activo` BOOLEAN NOT NULL DEFAULT TRUE,
   PRIMARY KEY (`id`),
-  INDEX `fk_beneficios_usuarios_idx` (`empresa_id` ASC),
-  CONSTRAINT `fk_beneficios_usuarios`
-    FOREIGN KEY (`empresa_id`)
-    REFERENCES `usuarios` (`id`))
+  CONSTRAINT `fk_beneficios_usuarios` FOREIGN KEY (`empresa_id`) REFERENCES `usuarios` (`id`))
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Tabla `beneficios_canjeados`
--- Registra qué usuario ha canjeado qué beneficio.
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `beneficios_canjeados` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `beneficio_id` INT NOT NULL,
@@ -245,14 +250,8 @@ CREATE TABLE IF NOT EXISTS `beneficios_canjeados` (
   `fecha_canje` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `codigo_canje_UNIQUE` (`codigo_canje` ASC),
-  INDEX `fk_beneficios_canjeados_beneficios_idx` (`beneficio_id` ASC),
-  INDEX `fk_beneficios_canjeados_usuarios_idx` (`usuario_id` ASC),
-  CONSTRAINT `fk_beneficios_canjeados_beneficios`
-    FOREIGN KEY (`beneficio_id`)
-    REFERENCES `beneficios` (`id`),
-  CONSTRAINT `fk_beneficios_canjeados_usuarios`
-    FOREIGN KEY (`usuario_id`)
-    REFERENCES `usuarios` (`id`))
+  CONSTRAINT `fk_beneficios_canjeados_beneficios` FOREIGN KEY (`beneficio_id`) REFERENCES `beneficios` (`id`),
+  CONSTRAINT `fk_beneficios_canjeados_usuarios` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`))
 ENGINE = InnoDB;
 
 
@@ -268,4 +267,7 @@ INSERT INTO `roles` (`id`, `nombre`) VALUES (1, 'Administrador'), (2, 'Creador')
 INSERT INTO `categorias_donacion` (`id`, `nombre`) VALUES (1, 'Sangre'), (2, 'Medicamentos'), (3, 'Dispositivos');
 INSERT INTO `estatus_aviso` (`id`, `nombre`) VALUES (1, 'Pendiente de Validar'), (2, 'Activo'), (3, 'Completado'), (4, 'Rechazado');
 INSERT INTO `estatus_donacion` (`id`, `nombre`) VALUES (1, 'Pendiente de Aprobación'), (2, 'Aprobado'), (3, 'Recibido'), (4, 'No Concretado');
+INSERT INTO `tipos_punto_donacion` (`id`, `nombre`, `icono`) VALUES (1, 'Banco de Sangre', 'sangre.png'), (2, 'Centro de Acopio de Medicamentos', 'medicamentos.png'), (3, 'Centro de Acopio de Dispositivos', 'dispositivos.png');
+INSERT INTO `urgencia_niveles` (`id`, `nombre`, `color_hex`) VALUES (1, 'Baja', '#28a745'), (2, 'Media', '#ffc107'), (3, 'Alta', '#fd7e14'), (4, 'Crítica', '#dc3545');
+INSERT INTO `tipos_sangre` (`id`, `tipo`) VALUES (1, 'A+'), (2, 'A-'), (3, 'B+'), (4, 'B-'), (5, 'AB+'), (6, 'AB-'), (7, 'O+'), (8, 'O-');
 
