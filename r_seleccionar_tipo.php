@@ -1,3 +1,13 @@
+<?php
+require_once 'config.php'; // Incluye la configuración y la URL base.
+// Inicia la sesión.
+session_start();
+
+// Muestra una alerta si hay un error en el inicio de sesión.
+if (isset($_GET['error']) && $_GET['error'] == 1) {
+    echo "<script>alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');</script>";
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -144,7 +154,7 @@
                             </div>
                             <h4 class="card-title mb-3">Persona</h4>
                             <p class="card-text text-muted flex-grow-1">Regístrate para ofrecer ayuda como donante o para recibirla como donatario.</p>
-                            <a href="r_persona.html" class="btn btn-outline-custom rounded-pill mt-auto">Soy Persona <i class="fa fa-arrow-right ms-2"></i></a>
+                            <a href="r_persona.php" class="btn btn-outline-custom rounded-pill mt-auto">Soy Persona <i class="fa fa-arrow-right ms-2"></i></a>
                         </div>
                     </div>
                 </div>
@@ -157,7 +167,7 @@
                             </div>
                             <h4 class="card-title mb-3">Empresa</h4>
                             <p class="card-text text-muted flex-grow-1">Ofrece promociones y beneficios a los donantes de la comunidad.</p>
-                            <a href="r_empresa.html" class="btn btn-outline-custom rounded-pill mt-auto">Soy Empresa <i class="fa fa-arrow-right ms-2"></i></a>
+                            <a href="r_empresa.php" class="btn btn-outline-custom rounded-pill mt-auto">Soy Empresa <i class="fa fa-arrow-right ms-2"></i></a>
                         </div>
                     </div>
                 </div>
@@ -170,7 +180,7 @@
                             </div>
                             <h4 class="card-title mb-3">Organización Altruista</h4>
                             <p class="card-text text-muted flex-grow-1">Gestiona la ayuda recibida y las solicitudes de tu organización.</p>
-                            <a href="r_organizacion.html" class="btn btn-outline-custom rounded-pill mt-auto">Soy Organización <i class="fa fa-arrow-right ms-2"></i></a>
+                            <a href="r_organizacion.php" class="btn btn-outline-custom rounded-pill mt-auto">Soy Organización <i class="fa fa-arrow-right ms-2"></i></a>
                         </div>
                     </div>
                 </div>
