@@ -18,12 +18,12 @@ $sql = "SELECT
             p.nombre, p.apellido_paterno, p.apellido_materno, p.fecha_nacimiento, p.sexo, p.telefono, 
             p.tipo_sangre_id, u.email,
             (SELECT ruta_archivo FROM documentos WHERE propietario_id = u.id AND tipo_documento_id = 1 ORDER BY fecha_carga DESC LIMIT 1) AS foto_url,
-            (SELECT ruta_archivo FROM documentos WHERE propietario_id = u.id AND tipo_documento_id = 8 ORDER BY fecha_carga DESC LIMIT 1) AS ine_url
+            (SELECT ruta_archivo FROM documentos WHERE propietario_id = u.id AND tipo_documento_id = 8 ORDER BY fecha_carga DESC LIMIT 1) AS ine_url,
+            d.calle, d.numero_exterior, d.numero_interior, d.colonia, d.codigo_postal, d.municipio, d.estado
         FROM personas_perfil p
         JOIN usuarios u ON p.usuario_id = u.id
+        LEFT JOIN direcciones d ON p.direccion_id = d.id
         WHERE p.usuario_id = ?";
-
-$perfil = []; 
 
 if ($stmt = $conexion->prepare($sql)) {
     $stmt->bind_param("i", $usuario_id);
@@ -141,6 +141,11 @@ $conexion->close();
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="direccion-tab" data-bs-toggle="tab" data-bs-target="#direccion" type="button" role="tab" aria-controls="direccion" aria-selected="false">
+                                <i class="fas fa-map-marker-alt me-2"></i>Dirección
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
                             <button class="nav-link" id="medical-tab" data-bs-toggle="tab" data-bs-target="#medical" type="button" role="tab" aria-controls="medical" aria-selected="false">
                                 <i class="fas fa-briefcase-medical me-2"></i>Información Médica
                             </button>
@@ -152,18 +157,20 @@ $conexion->close();
                         </li>
                     </ul>
 
+                    <form action="<?php echo BASE_URL; ?>auth/update_profile_process.php" method="POST">
                     <div class="tab-content" id="profileTabsContent">
                         
-                        <div class="tab-pane fade show active" id="personal" role="tabpanel" aria-labelledby="personal-tab">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body p-4">
-                                    <form>
+                            <!-- Tab de Información Personal -->
+                            <div class="tab-pane fade show active" id="personal" role="tabpanel" aria-labelledby="personal-tab">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body p-4">
+                                        <h5 class="card-title mb-4">Datos Personales</h5>
                                         <div class="row g-3">
-                                            <div class="col-md-4"><label for="nombre" class="form-label">Nombre(s)</label><input type="text" class="form-control" id="nombre" value="<?php echo htmlspecialchars($perfil['nombre'] ?? ''); ?>" disabled></div>
-                                            <div class="col-md-4"><label for="apellido_paterno" class="form-label">Apellido Paterno</label><input type="text" class="form-control" id="apellido_paterno" value="<?php echo htmlspecialchars($perfil['apellido_paterno'] ?? ''); ?>" disabled></div>
-                                            <div class="col-md-4"><label for="apellido_materno" class="form-label">Apellido Materno</label><input type="text" class="form-control" id="apellido_materno" value="<?php echo htmlspecialchars($perfil['apellido_materno'] ?? ''); ?>" disabled></div>
-                                            <div class="col-md-6"><label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label><input type="date" class="form-control" id="fecha_nacimiento" value="<?php echo htmlspecialchars($perfil['fecha_nacimiento'] ?? ''); ?>" disabled></div>
-                                            <div class="col-md-6"><label for="sexo" class="form-label">Sexo al Nacer</label><select id="sexo" class="form-select" disabled><option <?php if(empty($perfil['sexo'])) echo 'selected'; ?>>No especificado</option><option <?php if(($perfil['sexo'] ?? '') == 'Masculino') echo 'selected'; ?>>Masculino</option><option <?php if(($perfil['sexo'] ?? '') == 'Femenino') echo 'selected'; ?>>Femenino</option></select></div>
+                                            <div class="col-md-4"><label for="nombre" class="form-label">Nombre(s)</label><input type="text" class="form-control" name="nombre" id="nombre" value="<?php echo htmlspecialchars($perfil['nombre'] ?? ''); ?>" disabled></div>
+                                            <div class="col-md-4"><label for="apellido_paterno" class="form-label">Apellido Paterno</label><input type="text" class="form-control" name="apellido_paterno" id="apellido_paterno" value="<?php echo htmlspecialchars($perfil['apellido_paterno'] ?? ''); ?>" disabled></div>
+                                            <div class="col-md-4"><label for="apellido_materno" class="form-label">Apellido Materno</label><input type="text" class="form-control" name="apellido_materno" id="apellido_materno" value="<?php echo htmlspecialchars($perfil['apellido_materno'] ?? ''); ?>" disabled></div>
+                                            <div class="col-md-6"><label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label><input type="date" class="form-control" name="fecha_nacimiento" id="fecha_nacimiento" value="<?php echo htmlspecialchars($perfil['fecha_nacimiento'] ?? ''); ?>" disabled></div>
+                                            <div class="col-md-6"><label for="sexo" class="form-label">Sexo al Nacer</label><select id="sexo" name="sexo" class="form-select" disabled><option <?php if(empty($perfil['sexo'])) echo 'selected'; ?>>No especificado</option><option <?php if(($perfil['sexo'] ?? '') == 'Masculino') echo 'selected'; ?>>Masculino</option><option <?php if(($perfil['sexo'] ?? '') == 'Femenino') echo 'selected'; ?>>Femenino</option></select></div>
                                         </div>
                                         <hr class="my-4">
                                         <h6 class="mb-3">Documento de Identidad</h6>
@@ -181,44 +188,65 @@ $conexion->close();
                                                 <?php endif; ?>
                                             </div>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="tab-pane fade" id="medical" role="tabpanel" aria-labelledby="medical-tab">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body p-4">
-                                    <form>
+                            <!-- Tab de Dirección -->
+                            <div class="tab-pane fade" id="direccion" role="tabpanel" aria-labelledby="direccion-tab">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body p-4">
+                                        <h5 class="card-title mb-4">Dirección Postal</h5>
                                         <div class="row g-3">
-                                            <div class="col-md-6"><label class="form-label">Tipo de Sangre</label><select class="form-select"><?php foreach($tipos_sangre as $tipo): ?><option value="<?php echo $tipo['id']; ?>" <?php if(($perfil['tipo_sangre_id'] ?? '') == $tipo['id']) echo 'selected'; ?>><?php echo htmlspecialchars($tipo['tipo']); ?></option><?php endforeach; ?></select></div>
-                                            <div class="col-12"><label class="form-label">Enfermedades Crónicas</label><textarea class="form-control" rows="2"></textarea></div>
-                                            <div class="col-12"><label class="form-label">Alergias</label><textarea class="form-control" rows="2"></textarea></div>
+                                            <div class="col-12"><label class="form-label">Calle</label><input type="text" class="form-control" name="dir_calle" value="<?php echo htmlspecialchars($perfil['calle'] ?? ''); ?>" disabled></div>
+                                            <div class="col-md-6"><label class="form-label">Número Exterior</label><input type="text" class="form-control" name="dir_num_ext" value="<?php echo htmlspecialchars($perfil['numero_exterior'] ?? ''); ?>" disabled></div>
+                                            <div class="col-md-6"><label class="form-label">Número Interior (Opcional)</label><input type="text" class="form-control" name="dir_num_int" value="<?php echo htmlspecialchars($perfil['numero_interior'] ?? ''); ?>" disabled></div>
+                                            <div class="col-md-6"><label class="form-label">Colonia</label><input type="text" class="form-control" name="dir_colonia" value="<?php echo htmlspecialchars($perfil['colonia'] ?? ''); ?>" disabled></div>
+                                            <div class="col-md-6"><label class="form-label">Código Postal</label><input type="text" class="form-control" name="dir_cp" value="<?php echo htmlspecialchars($perfil['codigo_postal'] ?? ''); ?>" disabled></div>
+                                            <div class="col-md-6"><label class="form-label">Municipio</label><input type="text" class="form-control" name="dir_municipio" value="<?php echo htmlspecialchars($perfil['municipio'] ?? ''); ?>" disabled></div>
+                                            <div class="col-md-6"><label class="form-label">Estado</label><input type="text" class="form-control" name="dir_estado" value="<?php echo htmlspecialchars($perfil['estado'] ?? ''); ?>" disabled></div>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body p-4">
-                                    <form>
-                                        <div class="row g-3">
-                                            <div class="col-12"><label class="form-label">Correo Electrónico</label><input type="email" class="form-control" value="<?php echo htmlspecialchars($perfil['email'] ?? ''); ?>" readonly></div>
-                                            <hr>
-                                            <div class="col-md-6"><label class="form-label">Contraseña Actual</label><input type="password" class="form-control"></div>
-                                            <div class="col-md-6"><label class="form-label">Nueva Contraseña</label><input type="password" class="form-control"></div>
-                                        </div>
-                                    </form>
+                            <!-- Tab de Información Médica -->
+                            <div class="tab-pane fade" id="medical" role="tabpanel" aria-labelledby="medical-tab">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body p-4">
+                                        <form>
+                                            <div class="row g-3">
+                                                <div class="col-md-6"><label class="form-label">Tipo de Sangre</label><select class="form-select"><?php foreach($tipos_sangre as $tipo): ?><option value="<?php echo $tipo['id']; ?>" <?php if(($perfil['tipo_sangre_id'] ?? '') == $tipo['id']) echo 'selected'; ?>><?php echo htmlspecialchars($tipo['tipo']); ?></option><?php endforeach; ?></select></div>
+                                                <div class="col-12"><label class="form-label">Enfermedades Crónicas</label><textarea class="form-control" rows="2"></textarea></div>
+                                                <div class="col-12"><label class="form-label">Alergias</label><textarea class="form-control" rows="2"></textarea></div>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
+
+                            <!-- Tab de Seguridad -->
+                            <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body p-4">
+                                        <form>
+                                            <div class="row g-3">
+                                                <div class="col-12"><label class="form-label">Correo Electrónico</label><input type="email" class="form-control" value="<?php echo htmlspecialchars($perfil['email'] ?? ''); ?>" readonly></div>
+                                                <hr>
+                                                <div class="col-md-6"><label class="form-label">Contraseña Actual</label><input type="password" class="form-control"></div>
+                                                <div class="col-md-6"><label class="form-label">Nueva Contraseña</label><input type="password" class="form-control"></div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                        <!-- Botones de Acción -->
+                        <div class="mt-4 text-end">
+                            <button type="button" class="btn btn-secondary">Editar Perfil</button>
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                         </div>
-                    </div>
-                    
-                    <div class="mt-4 text-end">
-                        <button type="button" class="btn btn-secondary">Editar Perfil</button>
-                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </form>
                     </div>
                 </div>
             </div>
