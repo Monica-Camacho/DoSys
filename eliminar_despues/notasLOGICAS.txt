@@ -1,0 +1,7 @@
+Así es como tu BD manejará el registro de una empresa, cumpliendo tus reglas:
+
+Se crea el usuario: Se guarda el email y la contraseña en la tabla usuarios.
+
+Se crea el representante: Se guardan el nombre, email y teléfono del encargado en la tabla representantes.
+
+Se crea el empresas_perfil: Se guarda el RFC y el nombre comercial, y se enlaza tanto al usuario_id del nuevo login como al id del nuevo representante.

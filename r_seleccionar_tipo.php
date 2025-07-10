@@ -19,28 +19,22 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
         <meta content="" name="keywords">
         <meta content="" name="description">
 
-        <!-- Favicon -->
         <link rel="icon" type="image/png" href="img/logos/DoSys_chico.png">
 
-        <!-- Google Web Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
 
-        <!-- Icon Font Stylesheet -->
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
-        <!-- Libraries Stylesheet -->
         <link rel="stylesheet" href="lib/animate/animate.min.css"/>
         <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
         <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 
 
-        <!-- Customized Bootstrap Stylesheet -->
         <link href="css/bootstrap.min.css" rel="stylesheet">
 
-        <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
         <link href="css/Donaciones.css" rel="stylesheet">
 
@@ -137,15 +131,13 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
         <?php require_once 'templates/navbar.php'; ?>
         <!-- Navbar End -->
 
-    <!-- Selection Start -->
-    <div class="container-fluid py-5 bg-light">
+        <div class="container-fluid py-5 bg-light">
         <div class="container">
             <div class="text-center mx-auto" style="max-width: 800px;">
                 <h1 class="display-5 mb-3">Regístrate</h1>
                 <p class="fs-5 text-muted mb-5">Cada cuenta está diseñada para una necesidad específica dentro de nuestra comunidad.</p>
             </div>
             <div class="row g-4 justify-content-center">
-                <!-- Persona Card -->
                 <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                     <div class="card selection-card-v4 card-user h-100 text-center">
                         <div class="card-body d-flex flex-column p-4 p-lg-5">
@@ -158,7 +150,6 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                         </div>
                     </div>
                 </div>
-                <!-- Empresa Card -->
                 <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
                     <div class="card selection-card-v4 card-company h-100 text-center">
                         <div class="card-body d-flex flex-column p-4 p-lg-5">
@@ -171,7 +162,6 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                         </div>
                     </div>
                 </div>
-                <!-- Organización Altruista Card -->
                 <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
                     <div class="card selection-card-v4 card-org h-100 text-center">
                         <div class="card-body d-flex flex-column p-4 p-lg-5">
@@ -193,7 +183,6 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
     <div class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.2s">
         <div class="container py-5">
             <div class="row g-5">
-                <!-- Legal Information -->
                 <div class="col-xl-4 col-lg-4 col-md-6">
                     <div class="footer-item">
                         <h4 class="text-white mb-4">Información Legal</h4>
@@ -202,7 +191,6 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                         <a class="btn-link" href="#"><i class="fas fa-angle-right me-2"></i> Aviso Legal</a>
                     </div>
                 </div>
-                <!-- Quick Links -->
                 <div class="col-xl-4 col-lg-4 col-md-6">
                     <div class="footer-item">
                         <h4 class="text-white mb-4">Enlaces Rápidos</h4>
@@ -213,7 +201,6 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                         <a class="btn-link" href="C-Nuestro_Equipo.html"><i class="fas fa-angle-right me-2"></i> Nuestro Equipo</a>
                     </div>
                 </div>
-                <!-- Contact -->
                 <div class="col-xl-4 col-lg-4 col-md-6">
                     <div class="footer-item">
                         <h4 class="text-white mb-4">Contáctanos</h4>
@@ -225,8 +212,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                 </div>
             </div>
         </div>
-        <!-- Copyright Section -->
-         <div class="container-fluid">
+        <div class="container-fluid">
             <div class="container">
                 <div class="row">
                     <div class="col-12 text-center text-white" style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding: 25px 0;">
@@ -237,14 +223,9 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
             </div>
         </div>
     </div>
-    <!-- Footer End -->
-
-
-    <!-- Back to Top -->
     <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
 
     
-    <!-- JavaScript Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="lib/wow/wow.min.js"></script>

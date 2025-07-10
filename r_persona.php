@@ -1,6 +1,7 @@
 <?php
-require_once 'config.php'; // Incluye la configuración y la URL base.
-// Inicia la sesión.
+// Incluye el archivo de configuración para la BASE_URL y otras constantes.
+require_once 'config.php';
+// Inicia la sesión para que el navbar funcione correctamente.
 session_start();
 
 // Muestra una alerta si hay un error en el inicio de sesión.
@@ -75,14 +76,6 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                                 <a class="btn p-0 text-primary me-3" href="https://www.instagram.com/dosys_official/" target="_blank"><i class="fab fa-instagram"></i></a>
                                 <a class="btn p-0 text-primary me-0" href="https://www.tiktok.com/@dosys.official" target="_blank"><i class="fab fa-tiktok"></i></a>
                             </div>
-                            <div class="dropdown ms-3">
-                                <a href="#" class="dropdown-toggle text-dark" data-bs-toggle="dropdown"><small><i class="fas fa-globe-europe text-primary me-2"></i> Idioma</small></a>
-                                <div class="dropdown-menu rounded">
-                                    <a href="#" class="dropdown-item">Español</a>
-                                    <a href="mantenimiento.html" class="dropdown-item">Inglés</a>
-                                    <a href="mantenimiento.html" class="dropdown-item">Nahuatl</a>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -106,7 +99,9 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                                 <h2 class="card-title mb-2">Registro de Persona</h2>
                                 <p class="text-muted">Crea tu cuenta para donar o solicitar ayuda.</p>
                             </div>
-                            <form action="register_process.php" method="POST">
+                            
+                            <form action="<?php echo BASE_URL; ?>auth/register_process.php" method="POST">
+                                
                                 <input type="hidden" name="user_type" value="persona">
                                 
                                 <div class="row">
@@ -149,19 +144,19 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                                         <label for="sexo" class="form-label">Sexo al nacer</label>
                                         <select class="form-select" id="sexo" name="sexo" required>
                                             <option selected disabled value="">Seleccionar...</option>
-                                            <option value="masculino">Masculino</option>
-                                            <option value="femenino">Femenino</option>
+                                            <option value="Masculino">Masculino</option>
+                                            <option value="Femenino">Femenino</option>
                                         </select>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="telefono" class="form-label">Teléfono</label>
-                                    <input type="tel" class="form-control" id="telefono" name="telefono">
+                                    <input type="tel" class="form-control" id="telefono" name="telefono" required>
                                 </div>
 
                                 <div class="form-check mb-4">
-                                    <input class="form-check-input" type="checkbox" value="" id="terms" required>
+                                    <input class="form-check-input" type="checkbox" id="terms" required>
                                     <label class="form-check-label" for="terms">
                                         Acepto los <a href="#">Términos y Condiciones</a> y la <a href="#">Política de Privacidad</a>.
                                     </label>
@@ -172,7 +167,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                                 </div>
                                 
                                 <div class="text-center mt-4">
-                                    <p class="text-muted">¿Ya tienes una cuenta? <a href="login.php">Inicia Sesión</a></p>
+                                    <p class="text-muted">¿Ya tienes una cuenta? <a href="<?php echo BASE_URL; ?>login.php">Inicia Sesión</a></p>
                                 </div>
                             </form>
                         </div>
@@ -237,8 +232,6 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
     <!-- Back to Top -->
     <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
 
-    
-    <!-- JavaScript Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="lib/wow/wow.min.js"></script>
@@ -256,4 +249,3 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
 </body>
 
 </html>
-
