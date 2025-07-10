@@ -14,16 +14,20 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 $usuario_id = $_SESSION['id'];
 
 // 4. Consulta a la Base de Datos para obtener los datos del perfil
+// 4. Consulta a la Base de Datos
 $sql = "SELECT 
             p.nombre, p.apellido_paterno, p.apellido_materno, p.fecha_nacimiento, p.sexo, p.telefono, 
             p.tipo_sangre_id, u.email,
             (SELECT ruta_archivo FROM documentos WHERE propietario_id = u.id AND tipo_documento_id = 1 ORDER BY fecha_carga DESC LIMIT 1) AS foto_url,
             (SELECT ruta_archivo FROM documentos WHERE propietario_id = u.id AND tipo_documento_id = 8 ORDER BY fecha_carga DESC LIMIT 1) AS ine_url,
-            d.calle, d.numero_exterior, d.numero_interior, d.colonia, d.codigo_postal, d.municipio, d.estado
+            d.calle, d.numero_exterior, d.numero_interior, d.colonia, d.codigo_postal, d.municipio, d.estado,
+            d.latitud, d.longitud
         FROM personas_perfil p
         JOIN usuarios u ON p.usuario_id = u.id
         LEFT JOIN direcciones d ON p.direccion_id = d.id
         WHERE p.usuario_id = ?";
+
+$perfil = []; 
 
 if ($stmt = $conexion->prepare($sql)) {
     $stmt->bind_param("i", $usuario_id);
@@ -56,6 +60,16 @@ $conexion->close();
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+    
+        <style>
+        #map-canvas {
+            height: 400px;
+            width: 100%;
+            border-radius: 0.5rem;
+            border: 1px solid #dee2e6;
+        }
+    </style>
+
 </head>
 <body>
         <!-- Spinner Start -->
@@ -193,19 +207,30 @@ $conexion->close();
                             </div>
 
                             <!-- Tab de Dirección -->
+                            <!-- Tab de Dirección -->
                             <div class="tab-pane fade" id="direccion" role="tabpanel" aria-labelledby="direccion-tab">
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body p-4">
-                                        <h5 class="card-title mb-4">Dirección Postal</h5>
+                                        <h5 class="card-title mb-4">Tu Dirección Registrada</h5>
                                         <div class="row g-3">
                                             <div class="col-12"><label class="form-label">Calle</label><input type="text" class="form-control" name="dir_calle" value="<?php echo htmlspecialchars($perfil['calle'] ?? ''); ?>" disabled></div>
                                             <div class="col-md-6"><label class="form-label">Número Exterior</label><input type="text" class="form-control" name="dir_num_ext" value="<?php echo htmlspecialchars($perfil['numero_exterior'] ?? ''); ?>" disabled></div>
-                                            <div class="col-md-6"><label class="form-label">Número Interior (Opcional)</label><input type="text" class="form-control" name="dir_num_int" value="<?php echo htmlspecialchars($perfil['numero_interior'] ?? ''); ?>" disabled></div>
+                                            <div class="col-md-6"><label class="form-label">Número Interior</label><input type="text" class="form-control" name="dir_num_int" value="<?php echo htmlspecialchars($perfil['numero_interior'] ?? ''); ?>" disabled></div>
                                             <div class="col-md-6"><label class="form-label">Colonia</label><input type="text" class="form-control" name="dir_colonia" value="<?php echo htmlspecialchars($perfil['colonia'] ?? ''); ?>" disabled></div>
                                             <div class="col-md-6"><label class="form-label">Código Postal</label><input type="text" class="form-control" name="dir_cp" value="<?php echo htmlspecialchars($perfil['codigo_postal'] ?? ''); ?>" disabled></div>
                                             <div class="col-md-6"><label class="form-label">Municipio</label><input type="text" class="form-control" name="dir_municipio" value="<?php echo htmlspecialchars($perfil['municipio'] ?? ''); ?>" disabled></div>
                                             <div class="col-md-6"><label class="form-label">Estado</label><input type="text" class="form-control" name="dir_estado" value="<?php echo htmlspecialchars($perfil['estado'] ?? ''); ?>" disabled></div>
                                         </div>
+                                        
+                                        <hr class="my-4">
+                                        <h6 class="mb-3">Ubicación en el Mapa</h6>
+                                        
+                                        <!-- Contenedor del Mapa -->
+                                        <div id="map-canvas" class="mb-3"></div>
+                                        
+                                        <!-- Campos ocultos para guardar las coordenadas -->
+                                        <input type="hidden" id="lat-input" name="latitud" value="<?php echo htmlspecialchars($perfil['latitud'] ?? '17.9869'); ?>">
+                                        <input type="hidden" id="lng-input" name="longitud" value="<?php echo htmlspecialchars($perfil['longitud'] ?? '-92.9303'); ?>">
                                     </div>
                                 </div>
                             </div>
@@ -357,10 +382,122 @@ $conexion->close();
     <!-- Back to Top -->
     <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
 
-       
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/main.js"></script>
+
+    <!-- IMPORTANTE: Reemplaza 'TU_API_KEY' con tu clave de API de Google Maps -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWXq_cevVYbU88p2xYuVUMOWpHctcDlE8&libraries=places&callback=initMap" async defer></script>
+
+    <script>
+        let map;
+        let marker;
+
+        // Función para inicializar el mapa y el autocompletado
+        function initMap() {
+            // Lee las coordenadas iniciales desde los campos ocultos
+            const initialLat = parseFloat(document.getElementById('lat-input').value) || 17.9869;
+            const initialLng = parseFloat(document.getElementById('lng-input').value) || -92.9303;
+            const initialPosition = { lat: initialLat, lng: initialLng };
+
+            // Crea el mapa centrado en la posición inicial
+            map = new google.maps.Map(document.getElementById('map-canvas'), {
+                center: initialPosition,
+                zoom: 16
+            });
+
+            // Crea el marcador en la posición inicial
+            marker = new google.maps.Marker({
+                position: initialPosition,
+                map: map,
+                draggable: false // Inicialmente no se puede arrastrar
+            });
+
+            // --- Lógica de Autocompletado ---
+            const addressInput = document.getElementById('address-input');
+            const autocomplete = new google.maps.places.Autocomplete(addressInput, {
+                fields: ["address_components", "geometry", "name", "formatted_address"],
+                types: ["address"],
+            });
+            autocomplete.bindTo('bounds', map);
+
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+                if (!place.geometry || !place.geometry.location) {
+                    return;
+                }
+
+                // Mueve el mapa y el marcador a la nueva dirección
+                map.setCenter(place.geometry.location);
+                map.setZoom(18);
+                marker.setPosition(place.geometry.location);
+                
+                // Rellena los campos del formulario con los datos de la dirección
+                fillInAddress(place);
+            });
+
+            // --- Lógica de arrastrar el marcador ---
+            marker.addListener('dragend', () => {
+                const newPosition = marker.getPosition();
+                updateCoordinates(newPosition.lat(), newPosition.lng());
+                
+                // Realiza geocodificación inversa para obtener la dirección del punto arrastrado
+                const geocoder = new google.maps.Geocoder();
+                geocoder.geocode({ 'location': newPosition }, (results, status) => {
+                    if (status === 'OK' && results[0]) {
+                        addressInput.value = results[0].formatted_address;
+                        fillInAddress(results[0]);
+                    }
+                });
+            });
+        }
+
+        // Función para rellenar los campos del formulario de forma robusta
+        function fillInAddress(place) {
+            const components = place.address_components;
+            if (!components) return;
+
+            const get = (type) => components.find(c => c.types.includes(type))?.long_name || '';
+            
+            let streetName = get('route');
+            let streetNumber = get('street_number');
+
+            document.getElementById('dir_calle').value = streetName;
+            document.getElementById('dir_num_ext').value = streetNumber;
+            document.getElementById('dir_colonia').value = get('sublocality_level_1') || get('locality');
+            document.getElementById('dir_municipio').value = get('administrative_area_level_2') || get('locality');
+            document.getElementById('dir_estado').value = get('administrative_area_level_1');
+            document.getElementById('dir_cp').value = get('postal_code');
+            
+            // Actualiza los campos ocultos de latitud y longitud
+            if (place.geometry) {
+                updateCoordinates(place.geometry.location.lat(), place.geometry.location.lng());
+            }
+        }
+
+        // Función para actualizar los campos ocultos de latitud y longitud
+        function updateCoordinates(lat, lng) {
+            document.getElementById('lat-input').value = lat;
+            document.getElementById('lng-input').value = lng;
+        }
+
+        // Script para habilitar/deshabilitar la edición de campos
+        document.getElementById('edit-button').addEventListener('click', function() {
+            const form = this.closest('form');
+            const inputs = form.querySelectorAll('input:not([readonly]), select, textarea');
+            inputs.forEach(input => {
+                input.removeAttribute('disabled');
+            });
+            
+            if(marker) {
+                marker.setDraggable(true); // Hacer el marcador arrastrable
+            }
+            
+            this.style.display = 'none';
+            document.getElementById('save-button').style.display = 'inline-block';
+        });
+    </script>
+
 </body>
 </html>
