@@ -22,6 +22,7 @@ session_start();
     <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
 </head>
 
     <body>
@@ -83,94 +84,43 @@ session_start();
                             <div class="text-center mb-4">
                                 <i class="fa fa-building fa-3x text-primary mb-3"></i>
                                 <h2 class="card-title mb-2">Registro de Empresa</h2>
-                                <p class="text-muted">Inscribe a tu empresa para ofrecer apoyos y beneficios.</p>
+                                <p class="text-muted">Completa todos los datos para crear la cuenta de tu empresa.</p>
                             </div>
                             
-                            <form action="<?php echo BASE_URL; ?>auth/register_process.php" method="POST" enctype="multipart/form-data">
+                            <form action="<?php echo BASE_URL; ?>auth/register_process.php" method="POST">
                                 <input type="hidden" name="user_type" value="empresa">
 
                                 <h5 class="mb-3 border-bottom pb-2">Paso 1: Tus Datos (Operador de la cuenta)</h5>
                                 <div class="row g-3 mb-4">
-                                    <div class="col-md-4"><label class="form-label">Nombre(s)</label><input type="text" class="form-control" name="operador_nombre" required></div>
-                                    <div class="col-md-4"><label class="form-label">Apellido Paterno</label><input type="text" class="form-control" name="operador_apellido_paterno" required></div>
-                                    <div class="col-md-4"><label class="form-label">Apellido Materno</label><input type="text" class="form-control" name="operador_apellido_materno"></div>
-                                    <div class="col-md-6"><label class="form-label">Correo (para iniciar sesión)</label><input type="email" class="form-control" name="email" required></div>
-                                    <div class="col-md-6"><label class="form-label">Teléfono de Contacto</label><input type="tel" class="form-control" name="operador_telefono" required></div>
+                                    <div class="col-md-4"><label class="form-label">Tu Nombre(s)</label><input type="text" class="form-control" name="operador_nombre" required></div>
+                                    <div class="col-md-4"><label class="form-label">Tu Apellido Paterno</label><input type="text" class="form-control" name="operador_apellido_paterno" required></div>
+                                    <div class="col-md-4"><label class="form-label">Tu Apellido Materno</label><input type="text" class="form-control" name="operador_apellido_materno"></div>
+                                    <div class="col-md-12"><label class="form-label">Tu Correo (para iniciar sesión)</label><input type="email" class="form-control" name="email" required></div>
                                     <div class="col-md-6"><label class="form-label">Crea una Contraseña</label><input type="password" class="form-control" name="password" required></div>
                                     <div class="col-md-6"><label class="form-label">Confirma la Contraseña</label><input type="password" class="form-control" name="password_confirm" required></div>
                                 </div>
 
                                 <h5 class="mb-3 border-bottom pb-2">Paso 2: Datos Fiscales de la Empresa</h5>
                                 <div class="row g-3 mb-4">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Nombre Comercial</label>
-                                        <input type="text" class="form-control" name="empresa_nombre_comercial" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">RFC</label>
-                                        <input type="text" class="form-control" name="empresa_rfc" required>
-                                    </div>
-                                    <div class="col-12">
-                                        <label class="form-label">Razón Social</label>
-                                        <input type="text" class="form-control" name="empresa_razon_social" required>
-                                    </div>
-
-                                    <div class="col-12">
-                                        <label class="form-label">Calle</label>
-                                        <input type="text" class="form-control" name="dir_calle" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Colonia</label>
-                                        <input type="text" class="form-control" name="dir_colonia" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Municipio</label>
-                                        <input type="text" class="form-control" name="dir_municipio" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Estado</label>
-                                        <input type="text" class="form-control" name="dir_estado" value="Tabasco" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Código Postal</label>
-                                        <input type="text" class="form-control" name="dir_cp" required>
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <label class="form-label">Documento de Validación (PDF)</label>
-                                        <input type="file" class="form-control" name="empresa_documento" accept=".pdf" required>
-                                    </div>
+                                    <div class="col-md-6"><label class="form-label">Nombre Comercial</label><input type="text" class="form-control" name="empresa_nombre_comercial" required></div>
+                                    <div class="col-md-6"><label class="form-label">Razón Social</label><input type="text" class="form-control" name="empresa_razon_social" required></div>
+                                    <div class="col-md-12"><label class="form-label">RFC</label><input type="text" class="form-control" name="empresa_rfc" required></div>
                                 </div>
 
                                 <h5 class="mb-3 border-bottom pb-2">Paso 3: Datos del Representante Legal</h5>
                                 <div class="row g-3">
-                                    <div class="col-md-4">
-                                        <label class="form-label">Nombre(s) del Rep.</label>
-                                        <input type="text" class="form-control" name="rep_nombre" required>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Apellido Paterno del Rep.</label>
-                                        <input type="text" class="form-control" name="rep_apellido_paterno" required>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Apellido Materno del Rep.</label>
-                                        <input type="text" class="form-control" name="rep_apellido_materno">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Email del Representante</label>
-                                        <input type="email" class="form-control" name="rep_email" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Teléfono del Representante</label>
-                                        <input type="tel" class="form-control" name="rep_telefono" required>
-                                    </div>
+                                    <div class="col-md-4"><label class="form-label">Nombre(s) del Rep.</label><input type="text" class="form-control" name="rep_nombre" required></div>
+                                    <div class="col-md-4"><label class="form-label">Apellido Paterno del Rep.</label><input type="text" class="form-control" name="rep_apellido_paterno" required></div>
+                                    <div class="col-md-4"><label class="form-label">Apellido Materno del Rep.</label><input type="text" class="form-control" name="rep_apellido_materno"></div>
+                                    <div class="col-md-6"><label class="form-label">Email del Representante</label><input type="email" class="form-control" name="rep_email" required></div>
+                                    <div class="col-md-6"><label class="form-label">Teléfono del Representante</label><input type="tel" class="form-control" name="rep_telefono" required></div>
                                 </div>
                                 
                                 <div class="form-check my-4">
                                     <input class="form-check-input" type="checkbox" id="terms" required>
                                     <label class="form-check-label" for="terms">Acepto los <a href="#">Términos y Condiciones</a>.</label>
                                 </div>
-                                <div class="d-grid"><button type="submit" class="btn btn-primary btn-lg">Registrar Empresa</button></div>
+                                <div class="d-grid"><button type="submit" class="btn btn-primary btn-lg">Crear Cuenta de Empresa</button></div>
                             </form>
                         </div>
                     </div>
@@ -231,5 +181,4 @@ session_start();
     <script src="js/main.js"></script>
     
 </body>
-
 </html>
