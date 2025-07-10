@@ -18,10 +18,10 @@ $usuario_id = $_SESSION['id'];
 $sql = "SELECT 
             p.nombre, p.apellido_paterno, p.apellido_materno, p.fecha_nacimiento, p.sexo, p.telefono, 
             p.tipo_sangre_id, u.email,
-            d.calle, d.numero_exterior, d.numero_interior, d.colonia, d.codigo_postal, d.municipio, d.estado
+            doc.ruta_archivo AS foto_url
         FROM personas_perfil p
         JOIN usuarios u ON p.usuario_id = u.id
-        LEFT JOIN direcciones d ON p.direccion_id = d.id
+        LEFT JOIN documentos doc ON u.id = doc.propietario_id AND doc.tipo_documento_id = 1 -- Asumiendo que 1 es el ID para 'FOTO_PERFIL_PERSONA'
         WHERE p.usuario_id = ?";
 
 $perfil = []; 
@@ -33,16 +33,6 @@ if ($stmt = $conexion->prepare($sql)) {
     
     if ($resultado->num_rows === 1) {
         $perfil = $resultado->fetch_assoc();
-        // Construimos la dirección completa para mostrarla en un solo campo
-        $perfil['direccion_completa'] = trim(sprintf('%s %s %s, %s, %s, %s %s',
-            $perfil['calle'] ?? '',
-            $perfil['numero_exterior'] ?? '',
-            $perfil['numero_interior'] ?? '',
-            $perfil['colonia'] ?? '',
-            $perfil['municipio'] ?? '',
-            $perfil['estado'] ?? '',
-            $perfil['codigo_postal'] ?? ''
-        ));
     } else {
         die("Error: No se pudo encontrar el perfil del usuario.");
     }
@@ -55,12 +45,12 @@ $resultado_sangre = $conexion->query("SELECT id, tipo FROM tipos_sangre ORDER BY
 if ($resultado_sangre) {
     $tipos_sangre = $resultado_sangre->fetch_all(MYSQLI_ASSOC);
 }
-
 $conexion->close();
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- Tu head original se mantiene intacto -->
     <meta charset="utf-8">
     <title>Mi Perfil - DoSys</title>
     <link rel="icon" type="image/png" href="img/logos/DoSys_chico.png">
@@ -127,11 +117,20 @@ $conexion->close();
     <div class="container-fluid py-5">
         <div class="container">
             <div class="row g-5">
+                <!-- Columna de la Foto -->
                 <div class="col-lg-4">
                      <div class="d-flex flex-column text-center align-items-center bg-white p-4 rounded shadow-sm">
-                        <img class="img-fluid rounded-circle mb-3" src="img/user.jpg" alt="User" style="width: 150px; height: 150px; object-fit: cover;">
+                        <!-- La imagen ahora muestra la foto del usuario o la de por defecto -->
+                        <img class="img-fluid rounded-circle mb-3" 
+                             src="<?php echo !empty($perfil['foto_url']) ? BASE_URL . htmlspecialchars($perfil['foto_url']) : BASE_URL . 'img/user.jpg'; ?>" 
+                             alt="Foto de Perfil" 
+                             style="width: 150px; height: 150px; object-fit: cover;">
+                        
                         <h4 class="mb-1"><?php echo htmlspecialchars($perfil['nombre'] ?? 'Usuario'); ?></h4>
-                        <button class="btn btn-outline-primary btn-sm mt-2">Cambiar Foto</button>
+                        
+                        <button type="button" class="btn btn-outline-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#uploadPhotoModal">
+                            Subir Foto
+                        </button>
                     </div>
                 </div>
 
@@ -213,9 +212,35 @@ $conexion->close();
         </div>
     </div>
 
-        <div class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.2s">
+        <!-- Ventana Modal para Subir la Foto (se mantiene igual) -->
+    <div class="modal fade" id="uploadPhotoModal" tabindex="-1" aria-labelledby="uploadPhotoModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="uploadPhotoModalLabel">Subir Nueva Foto de Perfil</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form action="<?php echo BASE_URL; ?>auth/upload_photo_process.php" method="POST" enctype="multipart/form-data">
+              <div class="mb-3">
+                <label for="profile_photo" class="form-label">Selecciona una imagen (JPG, PNG)</label>
+                <input class="form-control" type="file" id="profile_photo" name="profile_photo" accept="image/jpeg, image/png" required>
+              </div>
+              <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Subir Foto</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Start -->
+    <div class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.2s">
         <div class="container py-5">
             <div class="row g-5">
+                <!-- Legal Information -->
                 <div class="col-xl-4 col-lg-4 col-md-6">
                     <div class="footer-item">
                         <h4 class="text-white mb-4">Información Legal</h4>
@@ -224,6 +249,7 @@ $conexion->close();
                         <a class="btn-link" href="#"><i class="fas fa-angle-right me-2"></i> Aviso Legal</a>
                     </div>
                 </div>
+                <!-- Quick Links -->
                 <div class="col-xl-4 col-lg-4 col-md-6">
                     <div class="footer-item">
                         <h4 class="text-white mb-4">Enlaces Rápidos</h4>
@@ -234,6 +260,7 @@ $conexion->close();
                         <a class="btn-link" href="C-Nuestro_Equipo.html"><i class="fas fa-angle-right me-2"></i> Nuestro Equipo</a>
                     </div>
                 </div>
+                <!-- Contact -->
                 <div class="col-xl-4 col-lg-4 col-md-6">
                     <div class="footer-item">
                         <h4 class="text-white mb-4">Contáctanos</h4>
@@ -245,9 +272,25 @@ $conexion->close();
                 </div>
             </div>
         </div>
+        <!-- Copyright Section -->
+         <div class="container-fluid">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 text-center text-white" style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding: 25px 0;">
+                        <p class="mb-2">Copyright © 2024 DoSys</p>
+                        <p class="small mb-0">El presente sitio web es operado por DoSys S. de R.L. de C.V. Todos los derechos reservados. El uso de esta plataforma está sujeto a nuestros Términos y Condiciones y Política de Privacidad.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    
+    <!-- Footer End -->
+
+
+    <!-- Back to Top -->
     <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
+
+       
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
