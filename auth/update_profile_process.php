@@ -37,10 +37,14 @@ $estado = $_POST['dir_estado'] ?? null;
 $latitud = $_POST['latitud'] ?? null;
 $longitud = $_POST['longitud'] ?? null;
 
+// Datos Médicos (ahora se reciben como un string JSON de Tagify)
+$tipo_sangre_id = $_POST['tipo_sangre_id'] ?? null;
+$enfermedades_json = $_POST['enfermedades'] ?? '[]';
+$alergias_json = $_POST['alergias'] ?? '[]';
+
 // Datos de Seguridad
 $current_password = $_POST['current_password'] ?? null;
 $new_password = $_POST['new_password'] ?? null;
-
 
 // 4. Iniciamos una transacción para asegurar la integridad de los datos
 $conexion->begin_transaction();
@@ -99,6 +103,63 @@ try {
         $stmt_link_dir->execute();
         $stmt_link_dir->close();
     }
+
+        // --- FUNCIÓN REUTILIZABLE PARA MANEJAR TAGS (ALERGIAS/ENFERMEDADES) ---
+    function manejar_tags($conexion, $usuario_id, $json_tags, $tabla_principal, $tabla_union, $columna_union) {
+        // Decodificar el JSON que envía Tagify
+        $tags = json_decode($json_tags, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            // Si no es un JSON válido, asumimos que es una lista separada por comas
+            $tags = array_map(function($item) {
+                return ['value' => trim($item)];
+            }, explode(',', $json_tags));
+        }
+
+        // 1. Borrar todas las asociaciones existentes para este usuario
+        $stmt_delete = $conexion->prepare("DELETE FROM $tabla_union WHERE usuario_id = ?");
+        $stmt_delete->bind_param("i", $usuario_id);
+        $stmt_delete->execute();
+        $stmt_delete->close();
+
+        // 2. Procesar cada nueva etiqueta
+        foreach ($tags as $tag) {
+            $nombre_tag = trim($tag['value']);
+            if (empty($nombre_tag)) continue;
+
+            // 2a. Verificar si la enfermedad/alergia ya existe en el catálogo
+            $stmt_find = $conexion->prepare("SELECT id FROM $tabla_principal WHERE nombre = ?");
+            $stmt_find->bind_param("s", $nombre_tag);
+            $stmt_find->execute();
+            $resultado = $stmt_find->get_result();
+            $tag_id = null;
+
+            if ($resultado->num_rows > 0) {
+                $tag_id = $resultado->fetch_assoc()['id'];
+            } else {
+                // 2b. Si no existe, la insertamos en el catálogo
+                $stmt_insert_tag = $conexion->prepare("INSERT INTO $tabla_principal (nombre) VALUES (?)");
+                $stmt_insert_tag->bind_param("s", $nombre_tag);
+                $stmt_insert_tag->execute();
+                $tag_id = $conexion->insert_id;
+                $stmt_insert_tag->close();
+            }
+            $stmt_find->close();
+
+            // 2c. Crear la nueva asociación en la tabla de unión
+            if ($tag_id) {
+                $stmt_link = $conexion->prepare("INSERT INTO $tabla_union (usuario_id, $columna_union) VALUES (?, ?)");
+                $stmt_link->bind_param("ii", $usuario_id, $tag_id);
+                $stmt_link->execute();
+                $stmt_link->close();
+            }
+        }
+    }
+
+    // Llamamos a la función para las enfermedades
+    manejar_tags($conexion, $usuario_id, $enfermedades_json, 'enfermedades', 'personas_x_enfermedades', 'enfermedad_id');
+    
+    // Llamamos a la función para las alergias
+    manejar_tags($conexion, $usuario_id, $alergias_json, 'alergias', 'personas_x_alergias', 'alergia_id');
 
     // --- ACTUALIZAR CONTRASEÑA (si se proporcionó una nueva) ---
     if (!empty($new_password) && !empty($current_password)) {

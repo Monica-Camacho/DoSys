@@ -88,6 +88,7 @@ $conexion->close();
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+    <link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
     
         <style>
         #map-canvas {
@@ -95,6 +96,24 @@ $conexion->close();
             width: 100%;
             border-radius: 0.5rem;
             border: 1px solid #dee2e6;
+        }
+                .tagify{
+            --tags-border-color: #dee2e6;
+            --tags-focus-border-color: #86b7fe;
+            border-radius: .375rem;
+            /* Ajustes para que se parezca a un input de Bootstrap */
+            padding: .375rem .75rem;
+        }
+        .tagify.tagify--focus{
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 .25rem rgba(13,110,253,.25);
+        }
+        .tagify[readonly]{
+            background-color: #e9ecef;
+            --tags-border-color: #e9ecef;
+        }
+        .tagify[readonly] .tagify__tag > div::before{
+            background: none; /* Oculta la 'x' de eliminar en modo solo lectura */
         }
     </style>
 
@@ -280,12 +299,12 @@ $conexion->close();
                                                 </select>
                                             </div>
                                             <div class="col-12">
-                                                <label for="enfermedades" class="form-label">Enfermedades Crónicas</label>
-                                                <textarea class="form-control" name="enfermedades" id="enfermedades" rows="2" disabled><?php echo htmlspecialchars(implode(', ', $enfermedades_usuario)); ?></textarea>
+                                                <label for="enfermedades" class="form-label">Enfermedades Crónicas (presiona Enter para añadir)</label>
+                                                <input type="text" name="enfermedades" id="enfermedades" value="<?php echo htmlspecialchars(implode(',', $enfermedades_usuario)); ?>">
                                             </div>
                                             <div class="col-12">
-                                                <label for="alergias" class="form-label">Alergias</label>
-                                                <textarea class="form-control" name="alergias" id="alergias" rows="2" disabled><?php echo htmlspecialchars(implode(', ', $alergias_usuario)); ?></textarea>
+                                                <label for="alergias" class="form-label">Alergias (presiona Enter para añadir)</label>
+                                                <input type="text" name="alergias" id="alergias" value="<?php echo htmlspecialchars(implode(',', $alergias_usuario)); ?>">
                                             </div>
                                         </div>
                                     </div>
@@ -439,21 +458,37 @@ $conexion->close();
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/@yaireo/tagify"></script>
+    <script src="https://unpkg.com/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+
     <script src="js/main.js"></script>
 
     <!-- IMPORTANTE: Reemplaza 'TU_API_KEY' con tu clave de API de Google Maps -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWXq_cevVYbU88p2xYuVUMOWpHctcDlE8&libraries=places&callback=initMap" async defer></script>
 
     <script>
-        // Declaramos las variables del mapa globalmente para que sean accesibles por todas las funciones
+        // Declaramos las variables globales
         let map;
         let marker;
+        let tagifyEnfermedades;
+        let tagifyAlergias;
 
         // Espera a que todo el contenido de la página se cargue antes de ejecutar el script
         document.addEventListener('DOMContentLoaded', function() {
             const editButton = document.getElementById('edit-button');
             const saveButton = document.getElementById('save-button');
             const form = document.querySelector('form');
+
+            // Inicializar los campos de etiquetas
+            const enfermedadesInput = document.querySelector('input[name=enfermedades]');
+            const alergiasInput = document.querySelector('input[name=alergias]');
+            
+            tagifyEnfermedades = new Tagify(enfermedadesInput);
+            tagifyAlergias = new Tagify(alergiasInput);
+
+            // Deshabilitar los campos de etiquetas por defecto
+            tagifyEnfermedades.setReadonly(true);
+            tagifyAlergias.setReadonly(true);
 
             if (editButton) {
                 editButton.addEventListener('click', function() {
@@ -463,8 +498,11 @@ $conexion->close();
                         element.removeAttribute('disabled');
                     });
 
-                    // Hacemos el marcador del mapa arrastrable
-                    if (marker) { // Usamos la variable global 'marker'
+                    // Habilitar los campos de etiquetas para edición
+                    tagifyEnfermedades.setReadonly(false);
+                    tagifyAlergias.setReadonly(false);
+
+                    if (marker) {
                         marker.setDraggable(true);
                     }
 
