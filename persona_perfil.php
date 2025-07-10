@@ -42,14 +42,42 @@ if ($stmt = $conexion->prepare($sql)) {
     $stmt->close();
 }
 
-// Consulta para obtener todos los tipos de sangre
+// Consulta para obtener las enfermedades del usuario
+$enfermedades_usuario = [];
+$sql_enfermedades = "SELECT e.nombre FROM enfermedades e JOIN personas_x_enfermedades pxe ON e.id = pxe.enfermedad_id WHERE pxe.usuario_id = ?";
+if($stmt_enf = $conexion->prepare($sql_enfermedades)) {
+    $stmt_enf->bind_param("i", $usuario_id);
+    $stmt_enf->execute();
+    $resultado_enf = $stmt_enf->get_result();
+    while($fila = $resultado_enf->fetch_assoc()){
+        $enfermedades_usuario[] = $fila['nombre'];
+    }
+    $stmt_enf->close();
+}
+
+// Consulta para obtener las alergias del usuario
+$alergias_usuario = [];
+$sql_alergias = "SELECT a.nombre FROM alergias a JOIN personas_x_alergias pxa ON a.id = pxa.alergia_id WHERE pxa.usuario_id = ?";
+if($stmt_ale = $conexion->prepare($sql_alergias)) {
+    $stmt_ale->bind_param("i", $usuario_id);
+    $stmt_ale->execute();
+    $resultado_ale = $stmt_ale->get_result();
+    while($fila = $resultado_ale->fetch_assoc()){
+        $alergias_usuario[] = $fila['nombre'];
+    }
+    $stmt_ale->close();
+}
+
+// Consulta para obtener todos los tipos de sangre para el menú desplegable
 $tipos_sangre = [];
 $resultado_sangre = $conexion->query("SELECT id, tipo FROM tipos_sangre ORDER BY tipo");
 if ($resultado_sangre) {
     $tipos_sangre = $resultado_sangre->fetch_all(MYSQLI_ASSOC);
 }
+// Se cierra la conexión DESPUÉS de todas las consultas.
 $conexion->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -207,7 +235,6 @@ $conexion->close();
                             </div>
 
                             <!-- Tab de Dirección -->
-                            <!-- Tab de Dirección -->
                             <div class="tab-pane fade" id="direccion" role="tabpanel" aria-labelledby="direccion-tab">
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body p-4">
@@ -239,13 +266,28 @@ $conexion->close();
                             <div class="tab-pane fade" id="medical" role="tabpanel" aria-labelledby="medical-tab">
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body p-4">
-                                        <form>
-                                            <div class="row g-3">
-                                                <div class="col-md-6"><label class="form-label">Tipo de Sangre</label><select class="form-select"><?php foreach($tipos_sangre as $tipo): ?><option value="<?php echo $tipo['id']; ?>" <?php if(($perfil['tipo_sangre_id'] ?? '') == $tipo['id']) echo 'selected'; ?>><?php echo htmlspecialchars($tipo['tipo']); ?></option><?php endforeach; ?></select></div>
-                                                <div class="col-12"><label class="form-label">Enfermedades Crónicas</label><textarea class="form-control" rows="2"></textarea></div>
-                                                <div class="col-12"><label class="form-label">Alergias</label><textarea class="form-control" rows="2"></textarea></div>
+                                        <h5 class="card-title mb-4">Datos Médicos</h5>
+                                        <div class="row g-3">
+                                            <div class="col-md-12">
+                                                <label for="tipo_sangre" class="form-label">Tipo de Sangre</label>
+                                                <select id="tipo_sangre" name="tipo_sangre_id" class="form-select" disabled>
+                                                    <option value="">No especificado</option>
+                                                    <?php foreach($tipos_sangre as $tipo): ?>
+                                                        <option value="<?php echo $tipo['id']; ?>" <?php if(($perfil['tipo_sangre_id'] ?? '') == $tipo['id']) echo 'selected'; ?>>
+                                                            <?php echo htmlspecialchars($tipo['tipo']); ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
+                                                </select>
                                             </div>
-                                        </form>
+                                            <div class="col-12">
+                                                <label for="enfermedades" class="form-label">Enfermedades Crónicas</label>
+                                                <textarea class="form-control" name="enfermedades" id="enfermedades" rows="2" disabled><?php echo htmlspecialchars(implode(', ', $enfermedades_usuario)); ?></textarea>
+                                            </div>
+                                            <div class="col-12">
+                                                <label for="alergias" class="form-label">Alergias</label>
+                                                <textarea class="form-control" name="alergias" id="alergias" rows="2" disabled><?php echo htmlspecialchars(implode(', ', $alergias_usuario)); ?></textarea>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
