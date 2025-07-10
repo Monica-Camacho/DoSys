@@ -100,6 +100,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $redirect_url = BASE_URL . "empresa_dashboard.php";
         }
+        // --- LÓGICA PARA REGISTRO DE ORGANIZACIÓN ---
+        elseif ($user_type === 'organizacion') {
+            
+            $operador_nombre = $_POST['operador_nombre'];
+            $operador_ap_paterno = $_POST['operador_apellido_paterno'];
+            $operador_ap_materno = $_POST['operador_apellido_materno'];
+            $org_nombre = $_POST['org_nombre'];
+            $nombre_para_sesion = $org_nombre;
+            $tipo_usuario_id_sesion = 3;
+
+            // 1. Insertar en `usuarios`
+            $stmt_user = $conexion->prepare("INSERT INTO usuarios (email, password_hash, tipo_usuario_id, rol_id) VALUES (?, ?, 3, 2)");
+            $stmt_user->bind_param("ss", $email, $password_hash);
+            $stmt_user->execute();
+            $usuario_id = $conexion->insert_id;
+            $stmt_user->close();
+
+            // 2. Insertar en `personas_perfil` (operador)
+            $stmt_persona = $conexion->prepare("INSERT INTO personas_perfil (usuario_id, nombre, apellido_paterno, apellido_materno) VALUES (?, ?, ?, ?)");
+            $stmt_persona->bind_param("isss", $usuario_id, $operador_nombre, $operador_ap_paterno, $operador_ap_materno);
+            $stmt_persona->execute();
+            $stmt_persona->close();
+
+            // 3. Insertar en `representantes`
+            $rep_nombre = $_POST['rep_nombre'];
+            $rep_apellido_paterno = $_POST['rep_apellido_paterno'];
+            $rep_apellido_materno = $_POST['rep_apellido_materno'];
+            $rep_email = $_POST['rep_email'];
+            $rep_telefono = $_POST['rep_telefono'];
+            $stmt_rep = $conexion->prepare("INSERT INTO representantes (nombre, apellido_paterno, apellido_materno, email, telefono) VALUES (?, ?, ?, ?, ?)");
+            $stmt_rep->bind_param("sssss", $rep_nombre, $rep_apellido_paterno, $rep_apellido_materno, $rep_email, $rep_telefono);
+            $stmt_rep->execute();
+            $representante_id = $conexion->insert_id;
+            $stmt_rep->close();
+
+            // 4. Insertar en `organizaciones_perfil`
+            $org_cluni = $_POST['org_cluni'];
+            $stmt_org = $conexion->prepare("INSERT INTO organizaciones_perfil (usuario_id, nombre_organizacion, cluni, representante_id) VALUES (?, ?, ?, ?)");
+            $stmt_org->bind_param("issi", $usuario_id, $org_nombre, $org_cluni, $representante_id);
+            $stmt_org->execute();
+            $stmt_org->close();
+
+            $redirect_url = BASE_URL . "organizacion_dashboard.php";
+        }
         
         $conexion->commit();
         

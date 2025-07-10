@@ -1,12 +1,7 @@
 <?php
-require_once 'config.php'; // Incluye la configuración y la URL base.
-// Inicia la sesión.
+// Incluye la configuración y inicia la sesión.
+require_once 'config.php';
 session_start();
-
-// Muestra una alerta si hay un error en el inicio de sesión.
-if (isset($_GET['error']) && $_GET['error'] == 1) {
-    echo "<script>alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');</script>";
-}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -94,79 +89,51 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
         <?php require_once 'templates/navbar.php'; ?>
         <!-- Navbar End -->
 
-    <!-- Registration Form Start -->
     <div class="container-fluid py-5 bg-light">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-lg-8">
+                <div class="col-lg-9">
                     <div class="card border-0 shadow-lg">
                         <div class="card-body p-4 p-md-5">
                             <div class="text-center mb-4">
                                 <i class="fa fa-hands-helping fa-3x text-primary mb-3"></i>
-                                <h2 class="card-title mb-2">Registro de Organización Altruista</h2>
-                                <p class="text-muted">Crea una cuenta para tu organización y gestiona la ayuda.</p>
+                                <h2 class="card-title mb-2">Registro de Organización</h2>
+                                <p class="text-muted">Inscribe a tu fundación, hospital u OSC para gestionar ayuda.</p>
                             </div>
-                            <form action="register_process.php" method="POST" enctype="multipart/form-data">
+                            
+                            <form action="<?php echo BASE_URL; ?>auth/register_process.php" method="POST">
                                 <input type="hidden" name="user_type" value="organizacion">
-                                
-                                <div class="mb-3">
-                                    <label for="org_name" class="form-label">Nombre de la Organización</label>
-                                    <input type="text" class="form-control" id="org_name" name="org_name" required>
+
+                                <h5 class="mb-3 border-bottom pb-2">Paso 1: Tus Datos (Operador de la cuenta)</h5>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-4"><label class="form-label">Tu Nombre(s)</label><input type="text" class="form-control" name="operador_nombre" required></div>
+                                    <div class="col-md-4"><label class="form-label">Tu Apellido Paterno</label><input type="text" class="form-control" name="operador_apellido_paterno" required></div>
+                                    <div class="col-md-4"><label class="form-label">Tu Apellido Materno</label><input type="text" class="form-control" name="operador_apellido_materno"></div>
+                                    <div class="col-md-12"><label class="form-label">Tu Correo (para iniciar sesión)</label><input type="email" class="form-control" name="email" required></div>
+                                    <div class="col-md-6"><label class="form-label">Crea una Contraseña</label><input type="password" class="form-control" name="password" required></div>
+                                    <div class="col-md-6"><label class="form-label">Confirma la Contraseña</label><input type="password" class="form-control" name="password_confirm" required></div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label for="cluni" class="form-label">CLUNI (si aplica)</label>
-                                    <input type="text" class="form-control" id="cluni" name="cluni">
-                                    <div class="form-text">Clave Única de Inscripción al Registro Federal de las OSC.</div>
+                                <h5 class="mb-3 border-bottom pb-2">Paso 2: Datos de la Organización</h5>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6"><label class="form-label">Nombre de la Organización</label><input type="text" class="form-control" name="org_nombre" required></div>
+                                    <div class="col-md-6"><label class="form-label">CLUNI (Opcional)</label><input type="text" class="form-control" name="org_cluni"></div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label for="representative_name" class="form-label">Nombre del Representante</label>
-                                    <input type="text" class="form-control" id="representative_name" name="representative_name" required>
-                                    <div class="form-text">Esta persona será la administradora de la cuenta de la organización.</div>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="validation_document" class="form-label">Documento de Validación</label>
-                                    <input class="form-control" type="file" id="validation_document" name="validation_document" required>
-                                    <div class="form-text">Sube el acta constitutiva o documento similar para validar tu organización (PDF, JPG, PNG).</div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Correo Electrónico de Contacto</label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
+                                <h5 class="mb-3 border-bottom pb-2">Paso 3: Datos del Representante Legal</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-4"><label class="form-label">Nombre(s) del Rep.</label><input type="text" class="form-control" name="rep_nombre" required></div>
+                                    <div class="col-md-4"><label class="form-label">Apellido Paterno del Rep.</label><input type="text" class="form-control" name="rep_apellido_paterno" required></div>
+                                    <div class="col-md-4"><label class="form-label">Apellido Materno del Rep.</label><input type="text" class="form-control" name="rep_apellido_materno"></div>
+                                    <div class="col-md-6"><label class="form-label">Email del Representante</label><input type="email" class="form-control" name="rep_email" required></div>
+                                    <div class="col-md-6"><label class="form-label">Teléfono del Representante</label><input type="tel" class="form-control" name="rep_telefono" required></div>
                                 </div>
                                 
-                                <div class="mb-3">
-                                    <label for="phone" class="form-label">Teléfono de Contacto</label>
-                                    <input type="tel" class="form-control" id="phone" name="phone">
+                                <div class="form-check my-4">
+                                    <input class="form-check-input" type="checkbox" id="terms" required>
+                                    <label class="form-check-label" for="terms">Acepto los <a href="#">Términos y Condiciones</a>.</label>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="password" class="form-label">Contraseña</label>
-                                        <input type="password" class="form-control" id="password" name="password" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="password_confirm" class="form-label">Confirmar Contraseña</label>
-                                        <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
-                                    </div>
-                                </div>
-
-                                <div class="form-check mb-4">
-                                    <input class="form-check-input" type="checkbox" value="" id="terms" required>
-                                    <label class="form-check-label" for="terms">
-                                        Acepto los <a href="#">Términos y Condiciones</a> y la <a href="#">Política de Privacidad</a>.
-                                    </label>
-                                </div>
-
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary btn-lg">Crear Cuenta de Organización</button>
-                                </div>
-                                
-                                <div class="text-center mt-4">
-                                    <p class="text-muted">¿Ya tienes una cuenta? <a href="login.php">Inicia Sesión</a></p>
-                                </div>
+                                <div class="d-grid"><button type="submit" class="btn btn-primary btn-lg">Crear Cuenta de Organización</button></div>
                             </form>
                         </div>
                     </div>
@@ -247,5 +214,4 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
     <script src="js/main.js"></script>
     
 </body>
-
 </html>
