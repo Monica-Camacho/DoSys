@@ -14,14 +14,13 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 $usuario_id = $_SESSION['id'];
 
 // 4. Consulta a la Base de Datos para obtener los datos del perfil
-// He añadido la consulta de la dirección para que también esté disponible
 $sql = "SELECT 
             p.nombre, p.apellido_paterno, p.apellido_materno, p.fecha_nacimiento, p.sexo, p.telefono, 
             p.tipo_sangre_id, u.email,
-            doc.ruta_archivo AS foto_url
+            (SELECT ruta_archivo FROM documentos WHERE propietario_id = u.id AND tipo_documento_id = 1 ORDER BY fecha_carga DESC LIMIT 1) AS foto_url,
+            (SELECT ruta_archivo FROM documentos WHERE propietario_id = u.id AND tipo_documento_id = 8 ORDER BY fecha_carga DESC LIMIT 1) AS ine_url
         FROM personas_perfil p
         JOIN usuarios u ON p.usuario_id = u.id
-        LEFT JOIN documentos doc ON u.id = doc.propietario_id AND doc.tipo_documento_id = 1 -- Asumiendo que 1 es el ID para 'FOTO_PERFIL_PERSONA'
         WHERE p.usuario_id = ?";
 
 $perfil = []; 
@@ -160,12 +159,27 @@ $conexion->close();
                                 <div class="card-body p-4">
                                     <form>
                                         <div class="row g-3">
-                                            <div class="col-md-4"><label class="form-label">Nombre(s)</label><input type="text" class="form-control" value="<?php echo htmlspecialchars($perfil['nombre'] ?? ''); ?>"></div>
-                                            <div class="col-md-4"><label class="form-label">Apellido Paterno</label><input type="text" class="form-control" value="<?php echo htmlspecialchars($perfil['apellido_paterno'] ?? ''); ?>"></div>
-                                            <div class="col-md-4"><label class="form-label">Apellido Materno</label><input type="text" class="form-control" value="<?php echo htmlspecialchars($perfil['apellido_materno'] ?? ''); ?>"></div>
-                                            <div class="col-md-6"><label class="form-label">Fecha de Nacimiento</label><input type="date" class="form-control" value="<?php echo htmlspecialchars($perfil['fecha_nacimiento'] ?? ''); ?>"></div>
-                                            <div class="col-md-6"><label class="form-label">Sexo al Nacer</label><select class="form-select"><option>No especificado</option><option <?php if(($perfil['sexo'] ?? '') == 'Masculino') echo 'selected'; ?>>Masculino</option><option <?php if(($perfil['sexo'] ?? '') == 'Femenino') echo 'selected'; ?>>Femenino</option></select></div>
-                                            <div class="col-12"><label class="form-label">Dirección</label><textarea class="form-control" rows="2"><?php echo htmlspecialchars(trim($perfil['direccion_completa'])); ?></textarea></div>
+                                            <div class="col-md-4"><label for="nombre" class="form-label">Nombre(s)</label><input type="text" class="form-control" id="nombre" value="<?php echo htmlspecialchars($perfil['nombre'] ?? ''); ?>" disabled></div>
+                                            <div class="col-md-4"><label for="apellido_paterno" class="form-label">Apellido Paterno</label><input type="text" class="form-control" id="apellido_paterno" value="<?php echo htmlspecialchars($perfil['apellido_paterno'] ?? ''); ?>" disabled></div>
+                                            <div class="col-md-4"><label for="apellido_materno" class="form-label">Apellido Materno</label><input type="text" class="form-control" id="apellido_materno" value="<?php echo htmlspecialchars($perfil['apellido_materno'] ?? ''); ?>" disabled></div>
+                                            <div class="col-md-6"><label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label><input type="date" class="form-control" id="fecha_nacimiento" value="<?php echo htmlspecialchars($perfil['fecha_nacimiento'] ?? ''); ?>" disabled></div>
+                                            <div class="col-md-6"><label for="sexo" class="form-label">Sexo al Nacer</label><select id="sexo" class="form-select" disabled><option <?php if(empty($perfil['sexo'])) echo 'selected'; ?>>No especificado</option><option <?php if(($perfil['sexo'] ?? '') == 'Masculino') echo 'selected'; ?>>Masculino</option><option <?php if(($perfil['sexo'] ?? '') == 'Femenino') echo 'selected'; ?>>Femenino</option></select></div>
+                                        </div>
+                                        <hr class="my-4">
+                                        <h6 class="mb-3">Documento de Identidad</h6>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <i class="fas fa-id-card fa-2x text-muted me-2"></i>
+                                                <span class="fw-bold">Credencial del Lector (INE)</span>
+                                            </div>
+                                            <div>
+                                                <?php if (!empty($perfil['ine_url'])): ?>
+                                                    <a href="<?php echo BASE_URL . htmlspecialchars($perfil['ine_url']); ?>" target="_blank" class="btn btn-success btn-sm">Ver Documento</a>
+                                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#uploadIneModal">Reemplazar</button>
+                                                <?php else: ?>
+                                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#uploadIneModal">Subir Documento</button>
+                                                <?php endif; ?>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
@@ -178,7 +192,6 @@ $conexion->close();
                                     <form>
                                         <div class="row g-3">
                                             <div class="col-md-6"><label class="form-label">Tipo de Sangre</label><select class="form-select"><?php foreach($tipos_sangre as $tipo): ?><option value="<?php echo $tipo['id']; ?>" <?php if(($perfil['tipo_sangre_id'] ?? '') == $tipo['id']) echo 'selected'; ?>><?php echo htmlspecialchars($tipo['tipo']); ?></option><?php endforeach; ?></select></div>
-                                            <div class="col-md-6"><label class="form-label">Credencial del Lector (INE)</label><input type="file" class="form-control"></div>
                                             <div class="col-12"><label class="form-label">Enfermedades Crónicas</label><textarea class="form-control" rows="2"></textarea></div>
                                             <div class="col-12"><label class="form-label">Alergias</label><textarea class="form-control" rows="2"></textarea></div>
                                         </div>
@@ -212,7 +225,7 @@ $conexion->close();
         </div>
     </div>
 
-        <!-- Ventana Modal para Subir la Foto (se mantiene igual) -->
+    <!-- Ventana Modal para Subir la Foto (se mantiene igual) -->
     <div class="modal fade" id="uploadPhotoModal" tabindex="-1" aria-labelledby="uploadPhotoModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -229,6 +242,32 @@ $conexion->close();
               <div class="modal-footer border-0">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <button type="submit" class="btn btn-primary">Subir Foto</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ventana Modal para Subir la Credencial del Lector (INE) -->
+    <div class="modal fade" id="uploadIneModal" tabindex="-1" aria-labelledby="uploadIneModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="uploadIneModalLabel">Subir Credencial del Lector (INE)</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form action="<?php echo BASE_URL; ?>auth/upload_document_process.php" method="POST" enctype="multipart/form-data">
+              <!-- Campo oculto para decirle al script qué tipo de documento es -->
+              <input type="hidden" name="document_type_code" value="DOC_INE_PERFIL">
+              <div class="mb-3">
+                <label for="ine_document" class="form-label">Selecciona un archivo (PDF, JPG, PNG)</label>
+                <input class="form-control" type="file" id="ine_document" name="document_file" accept=".pdf, image/jpeg, image/png" required>
+              </div>
+              <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Subir Documento</button>
               </div>
             </form>
           </div>
