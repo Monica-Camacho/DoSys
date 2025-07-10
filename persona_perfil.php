@@ -294,18 +294,30 @@ $conexion->close();
 
                             <!-- Tab de Seguridad -->
                             <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
-                                <div class="card border-0 shadow-sm">
-                                    <div class="card-body p-4">
-                                        <form>
-                                            <div class="row g-3">
-                                                <div class="col-12"><label class="form-label">Correo Electrónico</label><input type="email" class="form-control" value="<?php echo htmlspecialchars($perfil['email'] ?? ''); ?>" readonly></div>
-                                                <hr>
-                                                <div class="col-md-6"><label class="form-label">Contraseña Actual</label><input type="password" class="form-control"></div>
-                                                <div class="col-md-6"><label class="form-label">Nueva Contraseña</label><input type="password" class="form-control"></div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
+                               <div class="card border-0 shadow-sm">
+                                   <div class="card-body p-4">
+                                       <h5 class="card-title mb-4">Seguridad y Contacto</h5>
+                                       <div class="row g-3">
+                                           <div class="col-12">
+                                               <label for="email" class="form-label">Correo Electrónico</label>
+                                               <input type="email" class="form-control" id="email" value="<?php echo htmlspecialchars($perfil['email'] ?? ''); ?>" readonly>
+                                           </div>
+                                           <div class="col-12">
+                                               <label for="telefono_seguridad" class="form-label">Número Telefónico</label>
+                                               <input type="tel" class="form-control" name="telefono" id="telefono_seguridad" value="<?php echo htmlspecialchars($perfil['telefono'] ?? ''); ?>" disabled>
+                                           </div>
+                                           <hr class="my-3">
+                                           <div class="col-md-6">
+                                               <label for="current_password" class="form-label">Contraseña Actual</label>
+                                               <input type="password" class="form-control" name="current_password" id="current_password" disabled>
+                                           </div>
+                                           <div class="col-md-6">
+                                               <label for="new_password" class="form-label">Nueva Contraseña</label>
+                                               <input type="password" class="form-control" name="new_password" id="new_password" disabled>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </div>
                             </div>
 
                         <!-- Botones de Acción -->
