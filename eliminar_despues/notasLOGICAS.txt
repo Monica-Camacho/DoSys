@@ -1,7 +1,19 @@
-Así es como tu BD manejará el registro de una empresa, cumpliendo tus reglas:
+Ana García llega a la página de registro. Elige la opción "Empresa".
 
-Se crea el usuario: Se guarda el email y la contraseña en la tabla usuarios.
+El formulario le pide DOS tipos de información:
 
-Se crea el representante: Se guardan el nombre, email y teléfono del encargado en la tabla representantes.
+Sus datos personales: Nombre (Ana), Apellidos (García), su fecha de nacimiento, sexo, teléfono, y el correo y contraseña que ELLA usará para entrar a la plataforma.
 
-Se crea el empresas_perfil: Se guarda el RFC y el nombre comercial, y se enlaza tanto al usuario_id del nuevo login como al id del nuevo representante.
+Los datos de la empresa: Nombre Comercial (Farmacias S.A.), RFC, y los datos del Representante Legal (Sr. Juan Pérez).
+
+Al procesar el registro, hacemos lo siguiente en la base de datos:
+
+Tabla usuarios: Se crea un nuevo usuario con el email de Ana y su contraseña. El tipo_usuario_id se establece como 2 (Empresa).
+
+Tabla personas_perfil: Se crea un perfil con los datos de Ana García (nombre, apellidos, etc.) y se enlaza al id del usuario recién creado. Esto cumple tu requisito a la perfección. Sabemos exactamente quién es la persona que maneja la cuenta.
+
+Tabla representantes: Se crea un registro con los datos del Sr. Juan Pérez.
+
+Tabla empresas_perfil: Se crea el perfil de "Farmacias S.A." y se enlaza con el id del usuario de Ana y con el id del representante Juan Pérez.
+
+El resultado es impecable: Ana García es la operadora de la cuenta (y sus datos están guardados), mientras que el Sr. Juan Pérez es el contacto oficial.

@@ -1,49 +1,28 @@
 <?php
-require_once 'config.php'; // Incluye la configuración y la URL base.
-// Inicia la sesión.
+// Incluye la configuración y inicia la sesión.
+require_once 'config.php';
 session_start();
-
-// Muestra una alerta si hay un error en el inicio de sesión.
-if (isset($_GET['error']) && $_GET['error'] == 1) {
-    echo "<script>alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');</script>";
-}
 ?>
 <!DOCTYPE html>
 <html lang="es">
 
-    <head>
-        <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
-        <meta charset="utf-8">
-        <title>DoSys - Registro de Empresa</title>
-        <meta content="width=device-width, initial-scale=1.0" name="viewport">
-        <meta content="" name="keywords">
-        <meta content="" name="description">
+<head>
+    <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
+    <meta charset="utf-8">
+    <title>DoSys - Registro de Empresa</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
 
-        <!-- Favicon -->
-        <link rel="icon" type="image/png" href="img/logos/DoSys_chico.png">
-
-        <!-- Google Web Fonts -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
-
-        <!-- Icon Font Stylesheet -->
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
-
-        <!-- Libraries Stylesheet -->
-        <link rel="stylesheet" href="lib/animate/animate.min.css"/>
-        <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
-        <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-
-
-        <!-- Customized Bootstrap Stylesheet -->
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-
-        <!-- Template Stylesheet -->
-        <link href="css/style.css" rel="stylesheet">
-
-    </head>
+    <link rel="icon" type="image/png" href="img/logos/DoSys_chico.png">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="lib/animate/animate.min.css" rel="stylesheet"/>
+    <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
 
     <body>
 
@@ -98,74 +77,100 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
     <div class="container-fluid py-5 bg-light">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-lg-8">
+                <div class="col-lg-9">
                     <div class="card border-0 shadow-lg">
                         <div class="card-body p-4 p-md-5">
                             <div class="text-center mb-4">
                                 <i class="fa fa-building fa-3x text-primary mb-3"></i>
                                 <h2 class="card-title mb-2">Registro de Empresa</h2>
-                                <p class="text-muted">Crea una cuenta para tu empresa y empieza a colaborar.</p>
+                                <p class="text-muted">Inscribe a tu empresa para ofrecer apoyos y beneficios.</p>
                             </div>
-                            <form action="register_process.php" method="POST" enctype="multipart/form-data">
+                            
+                            <form action="<?php echo BASE_URL; ?>auth/register_process.php" method="POST" enctype="multipart/form-data">
                                 <input type="hidden" name="user_type" value="empresa">
-                                
-                                <div class="mb-3">
-                                    <label for="company_name" class="form-label">Nombre de la Empresa</label>
-                                    <input type="text" class="form-control" id="company_name" name="company_name" required>
+
+                                <h5 class="mb-3 border-bottom pb-2">Paso 1: Tus Datos (Operador de la cuenta)</h5>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-4"><label class="form-label">Nombre(s)</label><input type="text" class="form-control" name="operador_nombre" required></div>
+                                    <div class="col-md-4"><label class="form-label">Apellido Paterno</label><input type="text" class="form-control" name="operador_apellido_paterno" required></div>
+                                    <div class="col-md-4"><label class="form-label">Apellido Materno</label><input type="text" class="form-control" name="operador_apellido_materno"></div>
+                                    <div class="col-md-6"><label class="form-label">Correo (para iniciar sesión)</label><input type="email" class="form-control" name="email" required></div>
+                                    <div class="col-md-6"><label class="form-label">Teléfono de Contacto</label><input type="tel" class="form-control" name="operador_telefono" required></div>
+                                    <div class="col-md-6"><label class="form-label">Crea una Contraseña</label><input type="password" class="form-control" name="password" required></div>
+                                    <div class="col-md-6"><label class="form-label">Confirma la Contraseña</label><input type="password" class="form-control" name="password_confirm" required></div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label for="rfc" class="form-label">RFC</label>
-                                    <input type="text" class="form-control" id="rfc" name="rfc" required>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="representative_name" class="form-label">Nombre del Representante Legal</label>
-                                    <input type="text" class="form-control" id="representative_name" name="representative_name" required>
-                                    <div class="form-text">Esta persona será la administradora de la cuenta de la empresa.</div>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="validation_document" class="form-label">Documento de Validación</label>
-                                    <input class="form-control" type="file" id="validation_document" name="validation_document" required>
-                                    <div class="form-text">Sube el acta constitutiva o un documento similar para validar tu empresa (PDF, JPG, PNG).</div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Correo Electrónico de Contacto</label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="phone" class="form-label">Teléfono de Contacto</label>
-                                    <input type="tel" class="form-control" id="phone" name="phone">
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="password" class="form-label">Contraseña</label>
-                                        <input type="password" class="form-control" id="password" name="password" required>
+                                <h5 class="mb-3 border-bottom pb-2">Paso 2: Datos Fiscales de la Empresa</h5>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Nombre Comercial</label>
+                                        <input type="text" class="form-control" name="empresa_nombre_comercial" required>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="password_confirm" class="form-label">Confirmar Contraseña</label>
-                                        <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+                                    <div class="col-md-6">
+                                        <label class="form-label">RFC</label>
+                                        <input type="text" class="form-control" name="empresa_rfc" required>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Razón Social</label>
+                                        <input type="text" class="form-control" name="empresa_razon_social" required>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label">Calle</label>
+                                        <input type="text" class="form-control" name="dir_calle" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Colonia</label>
+                                        <input type="text" class="form-control" name="dir_colonia" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Municipio</label>
+                                        <input type="text" class="form-control" name="dir_municipio" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Estado</label>
+                                        <input type="text" class="form-control" name="dir_estado" value="Tabasco" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Código Postal</label>
+                                        <input type="text" class="form-control" name="dir_cp" required>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label class="form-label">Documento de Validación (PDF)</label>
+                                        <input type="file" class="form-control" name="empresa_documento" accept=".pdf" required>
                                     </div>
                                 </div>
 
-                                <div class="form-check mb-4">
-                                    <input class="form-check-input" type="checkbox" value="" id="terms" required>
-                                    <label class="form-check-label" for="terms">
-                                        Acepto los <a href="#">Términos y Condiciones</a> y la <a href="#">Política de Privacidad</a>.
-                                    </label>
-                                </div>
-
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary btn-lg">Crear Cuenta de Empresa</button>
+                                <h5 class="mb-3 border-bottom pb-2">Paso 3: Datos del Representante Legal</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Nombre(s) del Rep.</label>
+                                        <input type="text" class="form-control" name="rep_nombre" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Apellido Paterno del Rep.</label>
+                                        <input type="text" class="form-control" name="rep_apellido_paterno" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Apellido Materno del Rep.</label>
+                                        <input type="text" class="form-control" name="rep_apellido_materno">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email del Representante</label>
+                                        <input type="email" class="form-control" name="rep_email" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Teléfono del Representante</label>
+                                        <input type="tel" class="form-control" name="rep_telefono" required>
+                                    </div>
                                 </div>
                                 
-                                <div class="text-center mt-4">
-                                    <p class="text-muted">¿Ya tienes una cuenta? <a href="login.php">Inicia Sesión</a></p>
+                                <div class="form-check my-4">
+                                    <input class="form-check-input" type="checkbox" id="terms" required>
+                                    <label class="form-check-label" for="terms">Acepto los <a href="#">Términos y Condiciones</a>.</label>
                                 </div>
+                                <div class="d-grid"><button type="submit" class="btn btn-primary btn-lg">Registrar Empresa</button></div>
                             </form>
                         </div>
                     </div>
@@ -173,13 +178,10 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
             </div>
         </div>
     </div>
-    <!-- Registration Form End -->
-        
-    <!-- Footer Start -->
+
     <div class="container-fluid bg-dark text-light footer pt-5 wow fadeIn" data-wow-delay="0.2s">
         <div class="container py-5">
             <div class="row g-5">
-                <!-- Legal Information -->
                 <div class="col-xl-4 col-lg-4 col-md-6">
                     <div class="footer-item">
                         <h4 class="text-white mb-4">Información Legal</h4>
@@ -188,7 +190,6 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                         <a class="btn-link" href="#"><i class="fas fa-angle-right me-2"></i> Aviso Legal</a>
                     </div>
                 </div>
-                <!-- Quick Links -->
                 <div class="col-xl-4 col-lg-4 col-md-6">
                     <div class="footer-item">
                         <h4 class="text-white mb-4">Enlaces Rápidos</h4>
@@ -199,7 +200,6 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                         <a class="btn-link" href="C-Nuestro_Equipo.html"><i class="fas fa-angle-right me-2"></i> Nuestro Equipo</a>
                     </div>
                 </div>
-                <!-- Contact -->
                 <div class="col-xl-4 col-lg-4 col-md-6">
                     <div class="footer-item">
                         <h4 class="text-white mb-4">Contáctanos</h4>
@@ -211,24 +211,9 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                 </div>
             </div>
         </div>
-        <!-- Copyright Section -->
-         <div class="container-fluid">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12 text-center text-white" style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding: 25px 0;">
-                        <p class="mb-2">Copyright © 2024 DoSys</p>
-                        <p class="small mb-0">El presente sitio web es operado por DoSys S. de R.L. de C.V. Todos los derechos reservados. El uso de esta plataforma está sujeto a nuestros Términos y Condiciones y Política de Privacidad.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-    <!-- Footer End -->
-
-
-    <!-- Back to Top -->
+    
     <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
-
     
     <!-- JavaScript Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>

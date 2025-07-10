@@ -1,13 +1,8 @@
 <?php
-// Incluye el archivo de configuración para la BASE_URL y otras constantes.
+// Incluye la configuración y inicia la sesión.
 require_once 'config.php';
 // Inicia la sesión para que el navbar funcione correctamente.
 session_start();
-
-// Muestra una alerta si hay un error en el inicio de sesión.
-if (isset($_GET['error']) && $_GET['error'] == 1) {
-    echo "<script>alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');</script>";
-}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -87,7 +82,6 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
         <?php require_once 'templates/navbar.php'; ?>
         <!-- Navbar End -->
 
-    <!-- Registration Form Start -->
     <div class="container-fluid py-5 bg-light">
         <div class="container">
             <div class="row justify-content-center">
@@ -95,79 +89,57 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                     <div class="card border-0 shadow-lg">
                         <div class="card-body p-4 p-md-5">
                             <div class="text-center mb-4">
-                                <i class="fa fa-user fa-3x text-primary mb-3"></i>
-                                <h2 class="card-title mb-2">Registro de Persona</h2>
-                                <p class="text-muted">Crea tu cuenta para donar o solicitar ayuda.</p>
+                                <i class="fa fa-user-plus fa-3x text-primary mb-3"></i>
+                                <h2 class="card-title mb-2">Crear Cuenta Personal</h2>
+                                <p class="text-muted">Es rápido y fácil. Podrás completar tu perfil más tarde.</p>
                             </div>
                             
                             <form action="<?php echo BASE_URL; ?>auth/register_process.php" method="POST">
-                                
                                 <input type="hidden" name="user_type" value="persona">
-                                
-                                <div class="row">
-                                    <div class="col-md-4 mb-3">
+
+                                <h5 class="mb-3">Datos Esenciales</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-4">
                                         <label for="nombre" class="form-label">Nombre(s)</label>
                                         <input type="text" class="form-control" id="nombre" name="nombre" required>
                                     </div>
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-md-4">
                                         <label for="apellido_paterno" class="form-label">Apellido Paterno</label>
                                         <input type="text" class="form-control" id="apellido_paterno" name="apellido_paterno" required>
                                     </div>
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-md-4">
                                         <label for="apellido_materno" class="form-label">Apellido Materno</label>
                                         <input type="text" class="form-control" id="apellido_materno" name="apellido_materno">
                                     </div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Correo Electrónico</label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
-                                </div>
+                                <hr class="my-4">
 
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
+                                <h5 class="mb-3">Credenciales de Acceso</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-12">
+                                        <label for="email" class="form-label">Correo Electrónico</label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                    </div>
+                                    <div class="col-md-6">
                                         <label for="password" class="form-label">Contraseña</label>
                                         <input type="password" class="form-control" id="password" name="password" required>
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-6">
                                         <label for="password_confirm" class="form-label">Confirmar Contraseña</label>
                                         <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
                                     </div>
                                 </div>
-
-                                <div class="row">
-                                     <div class="col-md-6 mb-3">
-                                        <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
-                                        <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="sexo" class="form-label">Sexo al nacer</label>
-                                        <select class="form-select" id="sexo" name="sexo" required>
-                                            <option selected disabled value="">Seleccionar...</option>
-                                            <option value="Masculino">Masculino</option>
-                                            <option value="Femenino">Femenino</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="telefono" class="form-label">Teléfono</label>
-                                    <input type="tel" class="form-control" id="telefono" name="telefono" required>
-                                </div>
-
-                                <div class="form-check mb-4">
+                                
+                                <div class="form-check my-4">
                                     <input class="form-check-input" type="checkbox" id="terms" required>
                                     <label class="form-check-label" for="terms">
-                                        Acepto los <a href="#">Términos y Condiciones</a> y la <a href="#">Política de Privacidad</a>.
+                                        Acepto los <a href="#">Términos y Condiciones</a>.
                                     </label>
                                 </div>
 
                                 <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary btn-lg">Crear Cuenta</button>
-                                </div>
-                                
-                                <div class="text-center mt-4">
-                                    <p class="text-muted">¿Ya tienes una cuenta? <a href="<?php echo BASE_URL; ?>login.php">Inicia Sesión</a></p>
+                                    <button type="submit" class="btn btn-primary btn-lg">Crear Mi Cuenta</button>
                                 </div>
                             </form>
                         </div>
@@ -245,7 +217,6 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
-    
 </body>
 
 </html>

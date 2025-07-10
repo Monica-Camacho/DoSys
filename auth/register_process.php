@@ -1,98 +1,80 @@
 <?php
-// Incluimos los archivos de configuración y conexión.
-// La ruta usa '../' porque estamos subiendo un nivel desde la carpeta 'auth'.
+// Incluimos archivos y configuramos errores
 require_once '../config.php';
 require_once '../conexion_local.php';
-
-// Iniciamos la sesión para poder crear las variables del usuario.
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 session_start();
 
-// 1. Verificamos que los datos lleguen por el método POST.
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    // --- Recolección de Datos del Formulario ---
-    // Credenciales
+    $user_type = $_POST['user_type'];
     $email = $_POST['email'];
     $password = $_POST['password'];
     $password_confirm = $_POST['password_confirm'];
-    
-    // Datos Personales
-    $nombre = $_POST['nombre'];
-    $apellido_paterno = $_POST['apellido_paterno'];
-    $apellido_materno = $_POST['apellido_materno'];
-    $apellidos = trim($apellido_paterno . ' ' . $apellido_materno);
-    $fecha_nacimiento = $_POST['fecha_nacimiento'];
-    $sexo = $_POST['sexo'];
-    $telefono = $_POST['telefono'];
 
-    // --- Validación de Datos ---
-
-    if ($password !== $password_confirm) {
-        die("Error: Las contraseñas no coinciden. Por favor, vuelve atrás e inténtalo de nuevo.");
-    }
-
-    $stmt = $conexion->prepare("SELECT id FROM usuarios WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $stmt->store_result();
-
-    if ($stmt->num_rows > 0) {
-        die("Error: El correo electrónico ya está registrado. Por favor, utiliza otro.");
-    }
-    $stmt->close();
-
-    $password_hash = password_hash($password, PASSWORD_DEFAULT);
-    
-    // --- Inserción en la Base de Datos (Transacción) ---
-    $conexion->begin_transaction();
+    if ($password !== $password_confirm) die("Error: Las contraseñas no coinciden.");
 
     try {
-        // 2. Insertar en la tabla `usuarios`
-        $tipo_usuario_id = 1; // 1 = Persona
-        $rol_id = 3; // 3 = Visualizador (rol por defecto para personas)
-        $estado = 'Activo';
+        // Verificar que el email no exista
+        $stmt_check = $conexion->prepare("SELECT id FROM usuarios WHERE email = ?");
+        $stmt_check->bind_param("s", $email);
+        $stmt_check->execute();
+        $stmt_check->store_result();
+        if ($stmt_check->num_rows > 0) die("Error: El correo ya está registrado.");
+        $stmt_check->close();
 
-        $sql_user = "INSERT INTO usuarios (email, password_hash, tipo_usuario_id, rol_id, estado) VALUES (?, ?, ?, ?, ?)";
-        $stmt_user = $conexion->prepare($sql_user);
-        $stmt_user->bind_param("ssiis", $email, $password_hash, $tipo_usuario_id, $rol_id, $estado);
-        $stmt_user->execute();
+        $password_hash = password_hash($password, PASSWORD_DEFAULT);
         
-        $usuario_id = $conexion->insert_id;
-        $stmt_user->close();
+        $conexion->begin_transaction();
+        
+        $nombre_para_sesion = '';
+        $redirect_url = '';
 
-        // 3. Insertar en la tabla `personas_perfil`
-        $sql_perfil = "INSERT INTO personas_perfil (usuario_id, nombre, apellidos, fecha_nacimiento, telefono) VALUES (?, ?, ?, ?, ?)";
-        $stmt_perfil = $conexion->prepare($sql_perfil);
-        $stmt_perfil->bind_param("issss", $usuario_id, $nombre, $apellidos, $fecha_nacimiento, $telefono);
-        $stmt_perfil->execute();
-        $stmt_perfil->close();
+        // --- LÓGICA PARA REGISTRO DE PERSONA (SIMPLIFICADA) ---
+        if ($user_type === 'persona') {
+            
+            $nombre = $_POST['nombre'];
+            $apellido_paterno = $_POST['apellido_paterno'];
+            $apellido_materno = $_POST['apellido_materno'];
+            $nombre_para_sesion = $nombre;
 
+            // 1. Insertar en `usuarios`
+            $stmt_user = $conexion->prepare("INSERT INTO usuarios (email, password_hash, tipo_usuario_id, rol_id) VALUES (?, ?, 1, 3)");
+            $stmt_user->bind_param("ss", $email, $password_hash);
+            $stmt_user->execute();
+            $usuario_id = $conexion->insert_id;
+            $stmt_user->close();
+
+            // 2. Insertar en `personas_perfil` solo los campos esenciales
+            $stmt_perfil = $conexion->prepare("INSERT INTO personas_perfil (usuario_id, nombre, apellido_paterno, apellido_materno) VALUES (?, ?, ?, ?)");
+            $stmt_perfil->bind_param("isss", $usuario_id, $nombre, $apellido_paterno, $apellido_materno);
+            $stmt_perfil->execute();
+            $stmt_perfil->close();
+            
+            // Redirigimos al perfil para que lo complete.
+            $redirect_url = BASE_URL . "persona_perfil.php";
+        } 
+        // --- LÓGICA PARA EMPRESA Y ORGANIZACIÓN (A FUTURO) ---
+        elseif ($user_type === 'empresa') {
+            // Aquí irá la lógica simplificada para empresa
+        }
+        
         $conexion->commit();
         
-        // 4. Iniciar sesión automáticamente
+        // Iniciar sesión y redirigir
         $_SESSION['loggedin'] = true;
         $_SESSION['id'] = $usuario_id;
         $_SESSION['email'] = $email;
-        $_SESSION['nombre_usuario'] = $nombre;
-        $_SESSION['tipo_usuario_id'] = $tipo_usuario_id;
-        $_SESSION['rol_id'] = $rol_id;
+        $_SESSION['nombre_usuario'] = $nombre_para_sesion;
+        $_SESSION['tipo_usuario_id'] = 1; // Asumimos persona por ahora
         
-        // =============================================
-        //           MODIFICACIÓN IMPORTANTE
-        // =============================================
-        // 5. Redirigir al perfil del usuario usando solo BASE_URL
-        header("Location: " . BASE_URL . "persona_perfil.php");
+        header("Location: " . $redirect_url);
         exit();
 
     } catch (mysqli_sql_exception $e) {
         $conexion->rollback();
-        die("Error en el registro: No se pudo guardar la información. Por favor, intenta de nuevo más tarde. Error: " . $e->getMessage());
+        // Te recuerdo que la siguiente línea es para depuración. ¡No olvides quitarla!
+        die("Error en el registro: No se pudo guardar la información. <br><b>Detalle del error:</b> " . $e->getMessage());
     }
-
-    $conexion->close();
-} else {
-    // Si no es una solicitud POST, redirigir a la página de selección.
-    header("Location: " . BASE_URL . "r_seleccionar_tipo.php");
-    exit();
 }
 ?>
