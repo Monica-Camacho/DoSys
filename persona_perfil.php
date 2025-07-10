@@ -322,8 +322,8 @@ $conexion->close();
 
                         <!-- Botones de Acción -->
                         <div class="mt-4 text-end">
-                            <button type="button" class="btn btn-secondary">Editar Perfil</button>
-                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                            <button type="button" class="btn btn-secondary" id="edit-button">Editar Perfil</button>
+                            <button type="submit" class="btn btn-primary" id="save-button" style="display:none;">Guardar Cambios</button>
                         </div>
                     </form>
                     </div>
@@ -445,30 +445,57 @@ $conexion->close();
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWXq_cevVYbU88p2xYuVUMOWpHctcDlE8&libraries=places&callback=initMap" async defer></script>
 
     <script>
+        // Espera a que todo el contenido de la página se cargue antes de ejecutar el script
+        document.addEventListener('DOMContentLoaded', function() {
+            const editButton = document.getElementById('edit-button');
+            const saveButton = document.getElementById('save-button');
+            const form = document.querySelector('form');
+
+            if (editButton) {
+                editButton.addEventListener('click', function() {
+                    // Seleccionamos todos los inputs, selects y textareas dentro del formulario que no sean de solo lectura
+                    const formElements = form.querySelectorAll('input:not([readonly]), select, textarea');
+                    
+                    // Quitamos el atributo 'disabled' a cada elemento para hacerlo editable
+                    formElements.forEach(element => {
+                        element.removeAttribute('disabled');
+                    });
+
+                    // Hacemos el marcador del mapa arrastrable
+                    if (window.marker) {
+                        window.marker.setDraggable(true);
+                    }
+
+                    // Ocultamos el botón de "Editar" y mostramos el de "Guardar"
+                    editButton.style.display = 'none';
+                    saveButton.style.display = 'inline-block';
+                });
+            }
+        });
+
+        // La función initMap y las demás funciones de Google Maps se quedan como estaban
         let map;
         let marker;
 
         // Función para inicializar el mapa y el autocompletado
         function initMap() {
-            // Lee las coordenadas iniciales desde los campos ocultos
-            const initialLat = parseFloat(document.getElementById('lat-input').value) || 17.9869;
-            const initialLng = parseFloat(document.getElementById('lng-input').value) || -92.9303;
+            const latInput = document.getElementById('lat-input');
+            const lngInput = document.getElementById('lng-input');
+            const initialLat = parseFloat(latInput.value) || 17.9869;
+            const initialLng = parseFloat(lngInput.value) || -92.9303;
             const initialPosition = { lat: initialLat, lng: initialLng };
 
-            // Crea el mapa centrado en la posición inicial
             map = new google.maps.Map(document.getElementById('map-canvas'), {
                 center: initialPosition,
                 zoom: 16
             });
 
-            // Crea el marcador en la posición inicial
             marker = new google.maps.Marker({
                 position: initialPosition,
                 map: map,
-                draggable: false // Inicialmente no se puede arrastrar
+                draggable: false 
             });
 
-            // --- Lógica de Autocompletado ---
             const addressInput = document.getElementById('address-input');
             const autocomplete = new google.maps.places.Autocomplete(addressInput, {
                 fields: ["address_components", "geometry", "name", "formatted_address"],
@@ -478,25 +505,16 @@ $conexion->close();
 
             autocomplete.addListener('place_changed', () => {
                 const place = autocomplete.getPlace();
-                if (!place.geometry || !place.geometry.location) {
-                    return;
-                }
-
-                // Mueve el mapa y el marcador a la nueva dirección
+                if (!place.geometry || !place.geometry.location) return;
                 map.setCenter(place.geometry.location);
                 map.setZoom(18);
                 marker.setPosition(place.geometry.location);
-                
-                // Rellena los campos del formulario con los datos de la dirección
                 fillInAddress(place);
             });
 
-            // --- Lógica de arrastrar el marcador ---
             marker.addListener('dragend', () => {
                 const newPosition = marker.getPosition();
                 updateCoordinates(newPosition.lat(), newPosition.lng());
-                
-                // Realiza geocodificación inversa para obtener la dirección del punto arrastrado
                 const geocoder = new google.maps.Geocoder();
                 geocoder.geocode({ 'location': newPosition }, (results, status) => {
                     if (status === 'OK' && results[0]) {
@@ -507,50 +525,25 @@ $conexion->close();
             });
         }
 
-        // Función para rellenar los campos del formulario de forma robusta
         function fillInAddress(place) {
             const components = place.address_components;
             if (!components) return;
-
             const get = (type) => components.find(c => c.types.includes(type))?.long_name || '';
-            
-            let streetName = get('route');
-            let streetNumber = get('street_number');
-
-            document.getElementById('dir_calle').value = streetName;
-            document.getElementById('dir_num_ext').value = streetNumber;
+            document.getElementById('dir_calle').value = get('route');
+            document.getElementById('dir_num_ext').value = get('street_number');
             document.getElementById('dir_colonia').value = get('sublocality_level_1') || get('locality');
             document.getElementById('dir_municipio').value = get('administrative_area_level_2') || get('locality');
             document.getElementById('dir_estado').value = get('administrative_area_level_1');
             document.getElementById('dir_cp').value = get('postal_code');
-            
-            // Actualiza los campos ocultos de latitud y longitud
             if (place.geometry) {
                 updateCoordinates(place.geometry.location.lat(), place.geometry.location.lng());
             }
         }
 
-        // Función para actualizar los campos ocultos de latitud y longitud
         function updateCoordinates(lat, lng) {
             document.getElementById('lat-input').value = lat;
             document.getElementById('lng-input').value = lng;
         }
-
-        // Script para habilitar/deshabilitar la edición de campos
-        document.getElementById('edit-button').addEventListener('click', function() {
-            const form = this.closest('form');
-            const inputs = form.querySelectorAll('input:not([readonly]), select, textarea');
-            inputs.forEach(input => {
-                input.removeAttribute('disabled');
-            });
-            
-            if(marker) {
-                marker.setDraggable(true); // Hacer el marcador arrastrable
-            }
-            
-            this.style.display = 'none';
-            document.getElementById('save-button').style.display = 'inline-block';
-        });
     </script>
 
 </body>
