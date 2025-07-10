@@ -445,6 +445,10 @@ $conexion->close();
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWXq_cevVYbU88p2xYuVUMOWpHctcDlE8&libraries=places&callback=initMap" async defer></script>
 
     <script>
+        // Declaramos las variables del mapa globalmente para que sean accesibles por todas las funciones
+        let map;
+        let marker;
+
         // Espera a que todo el contenido de la página se cargue antes de ejecutar el script
         document.addEventListener('DOMContentLoaded', function() {
             const editButton = document.getElementById('edit-button');
@@ -453,20 +457,17 @@ $conexion->close();
 
             if (editButton) {
                 editButton.addEventListener('click', function() {
-                    // Seleccionamos todos los inputs, selects y textareas dentro del formulario que no sean de solo lectura
                     const formElements = form.querySelectorAll('input:not([readonly]), select, textarea');
                     
-                    // Quitamos el atributo 'disabled' a cada elemento para hacerlo editable
                     formElements.forEach(element => {
                         element.removeAttribute('disabled');
                     });
 
                     // Hacemos el marcador del mapa arrastrable
-                    if (window.marker) {
-                        window.marker.setDraggable(true);
+                    if (marker) { // Usamos la variable global 'marker'
+                        marker.setDraggable(true);
                     }
 
-                    // Ocultamos el botón de "Editar" y mostramos el de "Guardar"
                     editButton.style.display = 'none';
                     saveButton.style.display = 'inline-block';
                 });
@@ -474,10 +475,6 @@ $conexion->close();
         });
 
         // La función initMap y las demás funciones de Google Maps se quedan como estaban
-        let map;
-        let marker;
-
-        // Función para inicializar el mapa y el autocompletado
         function initMap() {
             const latInput = document.getElementById('lat-input');
             const lngInput = document.getElementById('lng-input');
