@@ -31,11 +31,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $redirect_url = '';
         $tipo_usuario_id_sesion = 0;
 
-        // --- LÓGICA PARA PERSONA ---
+        // --- LÓGICA PARA REGISTRO DE PERSONA (AHORA COMPLETA) ---
         if ($user_type === 'persona') {
-            // ... (La lógica de persona se queda como estaba)
+            
+            $nombre = $_POST['nombre'];
+            $apellido_paterno = $_POST['apellido_paterno'];
+            $apellido_materno = $_POST['apellido_materno'];
+            $nombre_para_sesion = $nombre;
+            $tipo_usuario_id_sesion = 1;
+
+            // 1. Insertar en `usuarios`
+            $stmt_user = $conexion->prepare("INSERT INTO usuarios (email, password_hash, tipo_usuario_id, rol_id) VALUES (?, ?, 1, 3)");
+            $stmt_user->bind_param("ss", $email, $password_hash);
+            $stmt_user->execute();
+            $usuario_id = $conexion->insert_id;
+            $stmt_user->close();
+
+            // 2. Insertar en `personas_perfil`
+            $stmt_perfil = $conexion->prepare("INSERT INTO personas_perfil (usuario_id, nombre, apellido_paterno, apellido_materno) VALUES (?, ?, ?, ?)");
+            $stmt_perfil->bind_param("isss", $usuario_id, $nombre, $apellido_paterno, $apellido_materno);
+            $stmt_perfil->execute();
+            $stmt_perfil->close();
+            
+            $redirect_url = BASE_URL . "persona_perfil.php";
         } 
-        // --- LÓGICA PARA EMPRESA (CORREGIDA) ---
+        // --- LÓGICA PARA REGISTRO DE EMPRESA (CORREGIDA) ---
         elseif ($user_type === 'empresa') {
             
             $operador_nombre = $_POST['operador_nombre'];
@@ -52,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $usuario_id = $conexion->insert_id;
             $stmt_user->close();
 
-            // 2. Insertar en `personas_perfil` (operador con apellidos separados)
+            // 2. Insertar en `personas_perfil` (operador)
             $stmt_persona = $conexion->prepare("INSERT INTO personas_perfil (usuario_id, nombre, apellido_paterno, apellido_materno) VALUES (?, ?, ?, ?)");
             $stmt_persona->bind_param("isss", $usuario_id, $operador_nombre, $operador_ap_paterno, $operador_ap_materno);
             $stmt_persona->execute();
@@ -70,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $representante_id = $conexion->insert_id;
             $stmt_rep->close();
 
-            // 4. Insertar en `empresas_perfil` (con campos obligatorios)
+            // 4. Insertar en `empresas_perfil`
             $empresa_razon_social = $_POST['empresa_razon_social'];
             $empresa_rfc = $_POST['empresa_rfc'];
             $stmt_empresa = $conexion->prepare("INSERT INTO empresas_perfil (usuario_id, nombre_comercial, razon_social, rfc, representante_id) VALUES (?, ?, ?, ?, ?)");
@@ -95,8 +115,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     } catch (mysqli_sql_exception $e) {
         $conexion->rollback();
+        // Te recuerdo que la siguiente línea es para depuración. ¡No olvides quitarla!
         die("Error en el registro: No se pudo guardar la información. <br><b>Detalle del error:</b> " . $e->getMessage());
     }
 }
-?>
 ?>
