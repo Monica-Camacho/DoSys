@@ -98,7 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt_empresa->execute();
             $stmt_empresa->close();
 
-            $redirect_url = BASE_URL . "empresa_dashboard.php";
+            $redirect_url = BASE_URL . "empresa_perfil.php";
         }
         // --- LÓGICA PARA REGISTRO DE ORGANIZACIÓN ---
         elseif ($user_type === 'organizacion') {
@@ -142,7 +142,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt_org->execute();
             $stmt_org->close();
 
-            $redirect_url = BASE_URL . "organizacion_dashboard.php";
+            $redirect_url = BASE_URL . "organizacion_perfil.php";
         }
         
         $conexion->commit();
