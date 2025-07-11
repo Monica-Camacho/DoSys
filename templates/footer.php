@@ -16,8 +16,8 @@
                         <a class="btn-link" href="index.php"><i class="fas fa-angle-right me-2"></i> Inicio</a>
                         <a class="btn-link" href="avisos.php"><i class="fas fa-angle-right me-2"></i> Avisos de Donación</a>
                         <a class="btn-link" href="mapa.php"><i class="fas fa-angle-right me-2"></i> Mapa</a>
-                        <a class="btn-link" href="C-Sobre_Nosotros.php"><i class="fas fa-angle-right me-2"></i> Sobre Nosotros</a>
-                        <a class="btn-link" href="C-Nuestro_Equipo.php"><i class="fas fa-angle-right me-2"></i> Nuestro Equipo</a>
+                        <a class="btn-link" href="c-sobre_nosotros.php"><i class="fas fa-angle-right me-2"></i> Sobre Nosotros</a>
+                        <a class="btn-link" href="c-nuestro_equipo.php"><i class="fas fa-angle-right me-2"></i> Nuestro Equipo</a>
                     </div>
                 </div>
                 <div class="col-xl-4 col-lg-4 col-md-6">
