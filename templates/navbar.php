@@ -46,12 +46,13 @@ $user_name = ($is_logged_in && isset($_SESSION['nombre_usuario'])) ? $_SESSION['
                             <div class="dropdown-menu dropdown-menu-end">
                                 <?php switch ($user_type):
                                     case 1: // Menú Persona ?>
+                                        <a href="<?php echo BASE_URL; ?>persona_perfil.php" class="dropdown-item">Mi Perfil</a>
                                         <a href="<?php echo BASE_URL; ?>persona_dashboard.php" class="dropdown-item">Mi Panel</a>
                                         <a href="<?php echo BASE_URL; ?>persona_beneficios.php" class="dropdown-item">Mis Beneficios</a>
-                                        <a href="<?php echo BASE_URL; ?>persona_perfil.php" class="dropdown-item">Mi Perfil</a>
                                         <a href="<?php echo BASE_URL; ?>persona_configuracion.php" class="dropdown-item">Configuración</a>
                                         <?php break; ?>
                                     <?php case 2: // Menú Empresa ?>
+                                        <a href="<?php echo BASE_URL; ?>persona_perfil.php" class="dropdown-item">Mi Perfil</a>                                        
                                         <a href="<?php echo BASE_URL; ?>empresa_dashboard.php" class="dropdown-item">Panel de Empresa</a>
                                         <a href="<?php echo BASE_URL; ?>empresa_perfil.php" class="dropdown-item">Perfil de la Empresa</a>
                                         <a href="<?php echo BASE_URL; ?>empresa_beneficios.php" class="dropdown-item">Beneficios</a>
@@ -60,6 +61,7 @@ $user_name = ($is_logged_in && isset($_SESSION['nombre_usuario'])) ? $_SESSION['
                                         <a href="<?php echo BASE_URL; ?>empresa_configuracion.php" class="dropdown-item">Configuración</a>
                                         <?php break; ?>
                                     <?php case 3: // Menú Organización ?>
+                                        <a href="<?php echo BASE_URL; ?>persona_perfil.php" class="dropdown-item">Mi Perfil</a>                                
                                         <a href="<?php echo BASE_URL; ?>organizacion_dashboard.php" class="dropdown-item">Panel de Organización</a>
                                         <a href="<?php echo BASE_URL; ?>organizacion_solicitudes.php" class="dropdown-item">Solicitudes</a>
                                         <a href="<?php echo BASE_URL; ?>organizacion_donantes.php" class="dropdown-item">Donantes</a>
