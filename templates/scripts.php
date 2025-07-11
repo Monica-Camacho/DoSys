@@ -6,3 +6,5 @@
 <script src="lib/owlcarousel/owl.carousel.min.js"></script>
 
 <script src="js/main.js"></script>
+
+<script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
