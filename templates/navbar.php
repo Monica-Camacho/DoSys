@@ -36,9 +36,9 @@ $user_name = ($is_logged_in && isset($_SESSION['nombre_usuario'])) ? $_SESSION['
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle text-primary" data-bs-toggle="dropdown">
                                 <?php
-                                $icon_class = 'fa-user-circle';
+                                $icon_class = 'fa-user';
                                 if ($user_type == 2) $icon_class = 'fa-building';
-                                if ($user_type == 3) $icon_class = 'fa-sitemap';
+                                if ($user_type == 3) $icon_class = 'fa-hands-helping';
                                 ?>
                                 <i class="fas <?php echo $icon_class; ?> fa-2x me-2"></i>
                                 <?php echo htmlspecialchars($user_name); ?>

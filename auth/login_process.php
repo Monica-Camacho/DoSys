@@ -46,29 +46,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     // ===========================================================
                     // NUEVO: OBTENER Y GUARDAR EL NOMBRE DEL USUARIO EN LA SESIÓN
                     // ===========================================================
-                    $nombre_usuario = "Usuario"; // Valor por defecto.
+                    $nombre_usuario = 'Usuario'; // Valor por defecto
+                    $sql_nombre = "SELECT nombre, apellido_paterno FROM personas_perfil WHERE usuario_id = ?";
 
-                    // Adaptamos la consulta según el tipo de usuario.
-                    if ($tipo_usuario_id == 1) { // Persona
-                        $sql_nombre = "SELECT nombre FROM personas_perfil WHERE usuario_id = ?";
-                    } elseif ($tipo_usuario_id == 2) { // Empresa
-                        $sql_nombre = "SELECT nombre_comercial FROM empresas_perfil WHERE usuario_id = ?";
-                    } elseif ($tipo_usuario_id == 3) { // Organización
-                        $sql_nombre = "SELECT nombre_organizacion FROM organizaciones_perfil WHERE usuario_id = ?";
-                    } else {
-                        $sql_nombre = null;
-                    }
-
-                    if ($sql_nombre && $stmt_nombre = $conexion->prepare($sql_nombre)) {
+                    if ($stmt_nombre = $conexion->prepare($sql_nombre)) {
                         $stmt_nombre->bind_param("i", $id);
                         $stmt_nombre->execute();
-                        $stmt_nombre->bind_result($nombre);
+                        $stmt_nombre->bind_result($nombre, $apellido_paterno);
+
                         if ($stmt_nombre->fetch()) {
-                            $nombre_usuario = $nombre;
+                            // Unimos el nombre y el apellido para guardarlo en la sesión
+                            $nombre_usuario = $nombre . " " . $apellido_paterno;
+                        } else {
+                            // Si no se encuentra un perfil de persona (podría ser un SuperAdmin)
+                            // O si la empresa/org no tiene un perfil de persona asociado directamente
+                            // se usará un nombre genérico.
+                            if ($tipo_usuario_id == 4) { // SuperAdmin
+                                $nombre_usuario = 'Super Administrador';
+                            } else {
+                                // Para depuración: si no encuentra perfil, lo puedes ver en los logs
+                                error_log("Alerta: No se encontró un perfil de persona para el usuario_id: " . $id);
+                            }
                         }
                         $stmt_nombre->close();
                     }
-
+                    
                     // Guardamos el nombre encontrado en la sesión.
                     $_SESSION['nombre_usuario'] = $nombre_usuario;
                     
