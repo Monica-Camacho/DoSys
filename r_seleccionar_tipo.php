@@ -180,13 +180,13 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
     <!-- Selection End -->
         
 
-        <!-- Navbar Start -->
+        <!-- Footer Start -->
         <?php require_once 'templates/footer.php'; ?>
-        <!-- Navbar End -->
+        <!-- Footer End -->
          
         <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a> 
         
-        <?php require_once 'templates/scripts.php'; ?>  
+        <?php require_once 'templates/scripts.php'; ?>
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
