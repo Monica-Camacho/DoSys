@@ -1,3 +1,4 @@
+$(document).ready(function() {
 (function ($) {
   "use strict";
 
@@ -151,3 +152,4 @@
     return false;
   });
 })(jQuery);
+});
