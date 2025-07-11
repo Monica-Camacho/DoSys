@@ -53,6 +53,10 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
         </div>
     </div>
     <!-- Spinner End -->
+    
+        <!-- Topbar Start -->
+        <?php require_once 'templates/topbar.php'; ?>
+        <!-- Topbar End -->
 
         <!-- Navbar Start -->
         <?php require_once 'templates/navbar.php'; ?>
