@@ -1,50 +1,85 @@
 <?php
-// 1. Carga la configuración e inicia la sesión
+// 1. Incluimos los archivos necesarios y iniciamos la sesión
 require_once 'config.php';
 require_once 'conexion_local.php';
 session_start();
 
-// 2. Seguridad: Redirige si no hay sesión o el usuario no es de tipo "Empresa"
-if (!isset($_SESSION['loggedin']) || $_SESSION['tipo_usuario_id'] != 2) {
-    header("Location: " . BASE_URL . "login.php");
+// 2. Verificación de Seguridad
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    header('Location: ' . BASE_URL . 'login.php');
     exit;
 }
 
-// 3. Obtiene el ID de usuario de la sesión
+// 3. Obtener el ID del usuario de la sesión
 $usuario_id = $_SESSION['id'];
-$empresa_perfil = []; 
+$empresa = []; // Inicializamos el array
 
-// 4. CONSULTA SQL CORREGIDA Y VERIFICADA
-$sql = "SELECT 
+// 4. Consulta Principal Corregida
+$sql = "SELECT
+            -- Datos de la empresa
+            ep.id AS empresa_id,
             ep.nombre_comercial,
             ep.razon_social,
             ep.rfc,
+            ep.telefono_empresa,
             ep.descripcion,
-            u.email,
-            u.rol_id,
-            (SELECT ruta_archivo FROM documentos WHERE propietario_id = u.id AND tipo_documento_id = 2 ORDER BY fecha_subida DESC LIMIT 1) as logo_url
+            
+            -- Datos del rol del usuario que inició sesión
+            r.nombre AS rol_usuario,
+            
+            -- Datos de la dirección comercial
+            d.calle, d.numero_exterior, d.numero_interior, d.colonia, 
+            d.codigo_postal, d.municipio, d.estado,
+            
+            -- Datos del representante legal
+            rep.nombre AS representante_nombre,
+            rep.apellido_paterno AS representante_ap,
+            rep.apellido_materno AS representante_am,
+            rep.email AS representante_email,
+            rep.telefono AS representante_telefono,
+            
+            -- Rutas a los documentos
+            (SELECT ruta_archivo FROM documentos WHERE id = ep.logo_documento_id) AS logo_url,
+            -- ESTA ES LA LÍNEA CORREGIDA --
+            (SELECT ruta_archivo FROM documentos WHERE propietario_id = u.id AND tipo_documento_id = 4 ORDER BY fecha_carga DESC LIMIT 1) AS documento_url
+
         FROM usuarios u
-        LEFT JOIN empresas_perfil ep ON u.id = ep.usuario_id
+        JOIN usuarios_x_empresas uxe ON u.id = uxe.usuario_id
+        JOIN empresas_perfil ep ON uxe.empresa_id = ep.id
+        JOIN roles r ON u.rol_id = r.id
+        LEFT JOIN direcciones d ON ep.direccion_comercial_id = d.id
+        LEFT JOIN representantes rep ON ep.representante_id = rep.id
+        
         WHERE u.id = ?";
 
 if ($stmt = $conexion->prepare($sql)) {
     $stmt->bind_param("i", $usuario_id);
     $stmt->execute();
     $resultado = $stmt->get_result();
-
+    
     if ($resultado->num_rows === 1) {
-        $empresa_perfil = $resultado->fetch_assoc();
-        echo "<pre>";
-print_r($empresa_perfil);
-echo "</pre>";
-
+        $empresa = $resultado->fetch_assoc();
+    } else {
+        // Esta parte es importante si no devuelve filas.
+        die("Error: La consulta no encontró un perfil de empresa para el usuario con ID: " . htmlspecialchars($usuario_id) . ". Por favor, verifica en la base de datos que el usuario esté correctamente asociado a una empresa en la tabla 'usuarios_x_empresas'.");
     }
-    echo "DEBUG: usuario_id de sesión = " . $usuario_id . "<br>";
-
     $stmt->close();
+} else {
+    // Si hay un error al preparar, lo mostrará aquí.
+    die("Error al preparar la consulta: " . $conexion->error);
 }
+
+// 5. Cerramos la conexión a la base de datos
 $conexion->close();
 
+/*
+ * Te recomiendo quitar estas líneas de depuración una vez que confirmes que todo funciona.
+ */
+// echo "<pre>";
+// print_r($empresa);
+// echo "</pre>";
+
+// Aquí comienza tu código HTML para mostrar los datos...
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -111,48 +146,27 @@ $conexion->close();
     <div class="container-fluid py-5">
         <div class="container">
             <div class="row g-5">
-                <!-- Columna de la Foto -->
+
                 <div class="col-lg-4">
-    <div class="d-flex flex-column text-center align-items-center bg-white p-4 rounded shadow-sm">
+                    <div class="d-flex flex-column text-center align-items-center bg-white p-4 rounded shadow-sm">
         
-        <div style="border: 2px dashed red; padding: 10px; margin-bottom: 15px; text-align: left; background-color: #fff0f0; width: 100%;">
-            <strong style="color: red;">DEBUG EN VIVO:</strong><br>
-            <?php 
-                // 1. ¿Existe el array principal?
-                if (isset($empresa_perfil) && is_array($empresa_perfil)) {
-                    echo "✔️ El array \$empresa_perfil existe.<br>";
-                } else {
-                    echo "❌ <strong>ERROR: El array \$empresa_perfil NO existe o no es un array.</strong><br>";
-                }
+                        <img id="profileImage" class="img-fluid rounded-circle mb-3" 
+                            src="<?php echo !empty($empresa['logo_url']) ? BASE_URL . htmlspecialchars($empresa['logo_url']) : BASE_URL . 'img/logo.jpg'; ?>" 
+                            alt="Logo de la Empresa" 
+                            style="width: 150px; height: 150px; object-fit: cover;">
+                        
+                        <h4 class="mb-1">
+                            <?php echo htmlspecialchars($empresa['nombre_comercial'] ?? 'Nombre de la Empresa'); ?>
+                        </h4>
+                        
+                        <button type="button" class="btn btn-outline-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#changeLogoModal">
+                            <i class="fas fa-camera me-2"></i>Cambiar Logo
+                        </button>
+                        
+                    </div>
+                </div>
 
-                // 2. ¿Existe la clave 'nombre_comercial' dentro del array?
-                if (isset($empresa_perfil['nombre_comercial'])) {
-                    echo "✔️ La clave 'nombre_comercial' existe.<br>";
-                    echo "✔️ Valor: <strong>" . htmlspecialchars($empresa_perfil['nombre_comercial']) . "</strong>";
-                } else {
-                    echo "❌ <strong>ERROR: La clave 'nombre_comercial' NO existe en el array.</strong>";
-                }
-            ?>
-        </div>
-        <img id="profileImage" class="img-fluid rounded-circle mb-3" 
-             src="<?php echo !empty($empresa_perfil['logo_url']) ? BASE_URL . htmlspecialchars($empresa_perfil['logo_url']) : BASE_URL . 'img/building.png'; ?>" 
-             alt="Logo de la Empresa" 
-             style="width: 150px; height: 150px; object-fit: cover;">
-        
-        <h4 class="mb-1">
-            <?php echo htmlspecialchars($empresa_perfil['nombre_comercial'] ?? 'Nombre de la Empresa'); ?>
-        </h4>
-        
-        <button type="button" class="btn btn-outline-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#changeLogoModal">
-            <i class="fas fa-camera me-2"></i>Cambiar Logo
-        </button>
-        
-    </div>
-</div>
-
-                <!-- Profile Tabs Column -->
                 <div class="col-lg-8">
-                    <!-- Nav Tabs -->
                     <ul class="nav nav-tabs nav-pills nav-fill mb-4" id="profileTabs" role="tablist">
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="company-tab" data-bs-toggle="tab" data-bs-target="#company" type="button" role="tab" aria-controls="company" aria-selected="true">
@@ -171,9 +185,7 @@ $conexion->close();
                         </li>
                     </ul>
 
-                    <!-- Tab Content -->
                     <div class="tab-content" id="profileTabsContent">
-                        <!-- Company Info Tab -->
                         <div class="tab-pane fade show active" id="company" role="tabpanel" aria-labelledby="company-tab">
                             <div class="card border-0 shadow-sm">
                                 <div class="card-body p-4">
@@ -200,7 +212,7 @@ $conexion->close();
                                                 <label for="direccion_empresa" class="form-label">Dirección Fiscal</label>
                                                 <textarea class="form-control" id="direccion_empresa" rows="2" disabled>Av. Principal 456, Col. Industrial, Villahermosa, Tabasco.</textarea>
                                             </div>
-                                             <div class="col-12">
+                                            <div class="col-12">
                                                 <label for="ubicacion_comercial" class="form-label">Ubicación Comercial (Sucursal Principal)</label>
                                                 <textarea class="form-control" id="ubicacion_comercial" rows="2" disabled>Plaza Las Américas, Local 25, Villahermosa, Tabasco.</textarea>
                                             </div>
@@ -214,7 +226,6 @@ $conexion->close();
                             </div>
                         </div>
 
-                        <!-- Legal Representative Tab -->
                         <div class="tab-pane fade" id="representative" role="tabpanel" aria-labelledby="representative-tab">
                             <div class="card border-0 shadow-sm">
                                 <div class="card-body p-4">
@@ -233,7 +244,7 @@ $conexion->close();
                                                 <label for="rep_email" class="form-label">Correo Electrónico</label>
                                                 <input type="email" class="form-control" id="rep_email" value="ana.lopez@miempresa.com" disabled>
                                             </div>
-                                             <div class="col-md-6">
+                                            <div class="col-md-6">
                                                 <label for="rep_telefono" class="form-label">Teléfono</label>
                                                 <input type="tel" class="form-control" id="rep_telefono" value="993-111-2233" disabled>
                                             </div>
@@ -243,7 +254,6 @@ $conexion->close();
                             </div>
                         </div>
 
-                        <!-- Security Tab -->
                         <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
                             <div class="card border-0 shadow-sm">
                                 <div class="card-body p-4">
@@ -270,16 +280,15 @@ $conexion->close();
                         </div>
                     </div>
                     
-                    <!-- Action Buttons -->
                     <div class="mt-4 text-end">
                         <button type="button" class="btn btn-secondary">Editar Perfil</button>
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                     </div>
-                </div>
-            </div>
+                </div> 
+            </div> 
         </div>
     </div>
-    <!-- Profile Content End -->
+     <!-- Profile Content End -->
  
     <!-- Ventana Modal para Subir el logo -->
     </div>
