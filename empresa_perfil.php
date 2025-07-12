@@ -1,12 +1,50 @@
 <?php
-require_once 'config.php'; // Incluye la configuración y la URL base.
-// Inicia la sesión.
+// 1. Carga la configuración e inicia la sesión
+require_once 'config.php';
+require_once 'conexion_local.php';
 session_start();
 
-// Muestra una alerta si hay un error en el inicio de sesión.
-if (isset($_GET['error']) && $_GET['error'] == 1) {
-    echo "<script>alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');</script>";
+// 2. Seguridad: Redirige si no hay sesión o el usuario no es de tipo "Empresa"
+if (!isset($_SESSION['loggedin']) || $_SESSION['tipo_usuario_id'] != 2) {
+    header("Location: " . BASE_URL . "login.php");
+    exit;
 }
+
+// 3. Obtiene el ID de usuario de la sesión
+$usuario_id = $_SESSION['id'];
+$empresa_perfil = []; 
+
+// 4. CONSULTA SQL CORREGIDA Y VERIFICADA
+$sql = "SELECT 
+            ep.nombre_comercial,
+            ep.razon_social,
+            ep.rfc,
+            ep.descripcion,
+            u.email,
+            u.rol_id,
+            (SELECT ruta_archivo FROM documentos WHERE propietario_id = u.id AND tipo_documento_id = 2 ORDER BY fecha_subida DESC LIMIT 1) as logo_url
+        FROM usuarios u
+        LEFT JOIN empresas_perfil ep ON u.id = ep.usuario_id
+        WHERE u.id = ?";
+
+if ($stmt = $conexion->prepare($sql)) {
+    $stmt->bind_param("i", $usuario_id);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+
+    if ($resultado->num_rows === 1) {
+        $empresa_perfil = $resultado->fetch_assoc();
+        echo "<pre>";
+print_r($empresa_perfil);
+echo "</pre>";
+
+    }
+    echo "DEBUG: usuario_id de sesión = " . $usuario_id . "<br>";
+
+    $stmt->close();
+}
+$conexion->close();
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -73,15 +111,44 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
     <div class="container-fluid py-5">
         <div class="container">
             <div class="row g-5">
-                <!-- Profile Picture Column -->
+                <!-- Columna de la Foto -->
                 <div class="col-lg-4">
-                    <div class="card border-0 shadow-sm text-center p-4 h-100">
-                        <img src="https://via.placeholder.com/150" class="img-fluid rounded-circle mx-auto mb-3" alt="Logo de la Empresa" style="width: 150px; height: 150px; object-fit: cover;">
-                        <h4 class="mb-1">Nombre de la Empresa</h4>
-                        <p class="text-muted">Empresa Aliada</p>
-                        <button class="btn btn-primary btn-sm mt-2">Cambiar Logo</button>
-                    </div>
-                </div>
+    <div class="d-flex flex-column text-center align-items-center bg-white p-4 rounded shadow-sm">
+        
+        <div style="border: 2px dashed red; padding: 10px; margin-bottom: 15px; text-align: left; background-color: #fff0f0; width: 100%;">
+            <strong style="color: red;">DEBUG EN VIVO:</strong><br>
+            <?php 
+                // 1. ¿Existe el array principal?
+                if (isset($empresa_perfil) && is_array($empresa_perfil)) {
+                    echo "✔️ El array \$empresa_perfil existe.<br>";
+                } else {
+                    echo "❌ <strong>ERROR: El array \$empresa_perfil NO existe o no es un array.</strong><br>";
+                }
+
+                // 2. ¿Existe la clave 'nombre_comercial' dentro del array?
+                if (isset($empresa_perfil['nombre_comercial'])) {
+                    echo "✔️ La clave 'nombre_comercial' existe.<br>";
+                    echo "✔️ Valor: <strong>" . htmlspecialchars($empresa_perfil['nombre_comercial']) . "</strong>";
+                } else {
+                    echo "❌ <strong>ERROR: La clave 'nombre_comercial' NO existe en el array.</strong>";
+                }
+            ?>
+        </div>
+        <img id="profileImage" class="img-fluid rounded-circle mb-3" 
+             src="<?php echo !empty($empresa_perfil['logo_url']) ? BASE_URL . htmlspecialchars($empresa_perfil['logo_url']) : BASE_URL . 'img/building.png'; ?>" 
+             alt="Logo de la Empresa" 
+             style="width: 150px; height: 150px; object-fit: cover;">
+        
+        <h4 class="mb-1">
+            <?php echo htmlspecialchars($empresa_perfil['nombre_comercial'] ?? 'Nombre de la Empresa'); ?>
+        </h4>
+        
+        <button type="button" class="btn btn-outline-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#changeLogoModal">
+            <i class="fas fa-camera me-2"></i>Cambiar Logo
+        </button>
+        
+    </div>
+</div>
 
                 <!-- Profile Tabs Column -->
                 <div class="col-lg-8">
@@ -213,7 +280,33 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
         </div>
     </div>
     <!-- Profile Content End -->
-        
+ 
+    <!-- Ventana Modal para Subir el logo -->
+    </div>
+    <div class="modal fade" id="changeLogoModal" tabindex="-1" aria-labelledby="changeLogoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changeLogoModalLabel">Cambiar Logo de la Empresa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="uploadLogoForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="logoFile" class="form-label">Selecciona una imagen (JPG, PNG, GIF - Máx 5MB)</label>
+                            <input class="form-control" type="file" id="logoFile" name="logoFile" accept="image/jpeg, image/png, image/gif">
+                        </div>
+                        <div id="uploadLogoMessage" class="mt-3"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="submitLogoButton">Subir Logo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
         <!-- Footer Start -->
         <?php require_once 'templates/footer.php'; ?>
         <!-- Footer End -->
@@ -221,6 +314,44 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
         <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a> 
         
         <?php require_once 'templates/scripts.php'; ?>
+
+        <script>
+        $(document).ready(function() {
+            // Cuando se hace clic en "Subir Logo"
+            $('#submitLogoButton').on('click', function() {
+                var formData = new FormData($('#uploadLogoForm')[0]);
+                var messageDiv = $('#uploadLogoMessage');
+
+                messageDiv.html('<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>');
+
+                $.ajax({
+                    url: '<?php echo BASE_URL; ?>auth/upload_logo_process.php',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            messageDiv.html('<div class="alert alert-success">' + response.message + '</div>');
+                            // Actualizar la imagen del perfil en la página
+                            $('#profileImage').attr('src', response.new_logo_url + '?t=' + new Date().getTime());
+                            // Cerrar la modal después de 2 segundos
+                            setTimeout(function() {
+                                $('#changeLogoModal').modal('hide');
+                                messageDiv.html(''); // Limpiar mensaje
+                            }, 2000);
+                        } else {
+                            messageDiv.html('<div class="alert alert-danger">' + response.message + '</div>');
+                        }
+                    },
+                    error: function() {
+                        messageDiv.html('<div class="alert alert-danger">Error de conexión. Inténtalo de nuevo.</div>');
+                    }
+                });
+            });
+        });
+        </script>
           
 </body>
 
