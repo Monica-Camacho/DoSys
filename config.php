@@ -23,6 +23,20 @@ error_reporting(E_ALL);
 // -> Si tu proyecto se accede desde http://localhost/dosys/
 //    Usa: define('BASE_URL', '/dosys/');
 // ==================================================================
-define('BASE_URL', '/Dosys/');
+define('BASE_URL', 'http://localhost/Dosys/');
+
+/*
+|--------------------------------------------------------------------------
+| CONFIGURACIÓN DE SERVIDOR DE CORREO (SMTP)
+|--------------------------------------------------------------------------
+|
+| Credenciales para el envío de correos a través de PHPMailer.
+| Es una buena práctica mantenerlas aquí en lugar de directamente en el script.
+|
+*/
+define('SMTP_HOST', 'smtp.hostinger.com');
+define('SMTP_USER', 'contacto@dosys.mx');
+define('SMTP_PASS', 'wg=WO24L49_R'); // ¡Considera usar variables de entorno para esto en producción!
+define('SMTP_PORT', 465);
 
 ?>

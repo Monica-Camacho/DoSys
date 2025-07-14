@@ -18,12 +18,14 @@ require_once 'config.php';
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:slnt,wght@-10..0,100..900&display=swap"
+        rel="stylesheet">
 
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="lib/animate/animate.min.css"/>
+    <link rel="stylesheet" href="lib/animate/animate.min.css" />
     <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
     <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 
@@ -33,7 +35,8 @@ require_once 'config.php';
 </head>
 
 <body>
-    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+    <div id="spinner"
+        class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
         <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
             <span class="sr-only">Cargando...</span>
         </div>
@@ -49,14 +52,27 @@ require_once 'config.php';
                             <h4 class="mb-0">Recuperar Contraseña</h4>
                         </div>
                         <div class="card-body p-4">
-                            <p class="text-center text-muted mb-4">Ingresa tu correo electrónico y te enviaremos un enlace para que puedas restablecer tu contraseña.</p>
+                            <?php
+                            if (isset($_SESSION['user_message'])) {
+                                echo '<div class="alert alert-success" role="alert">' . htmlspecialchars($_SESSION['user_message']) . '</div>';
+                                unset($_SESSION['user_message']); // Limpiar el mensaje para que no se muestre de nuevo
+                            }
+                            if (isset($_SESSION['error_message'])) {
+                                echo '<div class="alert alert-danger" role="alert">' . htmlspecialchars($_SESSION['error_message']) . '</div>';
+                                unset($_SESSION['error_message']); // Limpiar el mensaje
+                            }
+                            ?>
+                            <p class="text-center text-muted mb-4">Ingresa tu correo electrónico y te enviaremos un
+                                enlace para que puedas restablecer tu contraseña.</p>
                             <form action="request_reset.php" method="POST">
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Correo Electrónico:</label>
-                                    <input type="email" class="form-control" id="email" name="email" placeholder="tu.correo@ejemplo.com" required>
+                                    <input type="email" class="form-control" id="email" name="email"
+                                        placeholder="tu.correo@ejemplo.com" required>
                                 </div>
                                 <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary btn-lg">Enviar Enlace de Recuperación</button>
+                                    <button type="submit" class="btn btn-primary btn-lg">Enviar Enlace de
+                                        Recuperación</button>
                                 </div>
                             </form>
                         </div>
@@ -66,8 +82,9 @@ require_once 'config.php';
         </div>
     </div>
     <?php require_once 'templates/footer.php'; ?>
-    <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a> 
-    
+    <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>
+
     <?php require_once 'templates/scripts.php'; ?>
 </body>
+
 </html>
