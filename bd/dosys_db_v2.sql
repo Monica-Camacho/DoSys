@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 12-07-2025 a las 03:26:37
+-- Tiempo de generación: 14-07-2025 a las 06:35:48
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.0.30
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -29,18 +29,39 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `alergias` (
   `id` int(11) NOT NULL,
-  `nombre` varchar(100) NOT NULL
+  `nombre` varchar(100) NOT NULL,
+  `categoria` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `alergias`
 --
 
-INSERT INTO `alergias` (`id`, `nombre`) VALUES
-(4, 'Fresas'),
-(2, 'Mariscos'),
-(1, 'Penicilina'),
-(3, 'Polen');
+INSERT INTO `alergias` (`id`, `nombre`, `categoria`) VALUES
+(6, 'Leche', 'Alergias Alimentarias'),
+(7, 'Huevos', 'Alergias Alimentarias'),
+(8, 'Cacahuates (Maní)', 'Alergias Alimentarias'),
+(9, 'Frutos Secos de Árbol', 'Alergias Alimentarias'),
+(10, 'Soja (Soy)', 'Alergias Alimentarias'),
+(11, 'Trigo', 'Alergias Alimentarias'),
+(12, 'Pescado', 'Alergias Alimentarias'),
+(13, 'Mariscos Crustáceos', 'Alergias Alimentarias'),
+(14, 'Sésamo (Ajonjolí)', 'Alergias Alimentarias'),
+(15, 'Polen', 'Alergias Ambientales'),
+(16, 'Caspa de Animales', 'Alergias Ambientales'),
+(17, 'Ácaros del Polvo', 'Alergias Ambientales'),
+(18, 'Moho', 'Alergias Ambientales'),
+(19, 'Penicilina', 'Alergias a Medicamentos'),
+(20, 'AINE (Aspirina, Ibuprofeno)', 'Alergias a Medicamentos'),
+(21, 'Sulfamidas (Sulfas)', 'Alergias a Medicamentos'),
+(22, 'Fármacos de Quimioterapia', 'Alergias a Medicamentos'),
+(23, 'Medios de Contraste para Rayos X', 'Alergias a Medicamentos'),
+(24, 'Abejas', 'Alergias a Picaduras de Insectos'),
+(25, 'Avispas / Avispones', 'Alergias a Picaduras de Insectos'),
+(26, 'Hormigas Rojas (de Fuego)', 'Alergias a Picaduras de Insectos'),
+(27, 'Látex', 'Alergias de Contacto'),
+(28, 'Metales (Níquel)', 'Alergias de Contacto'),
+(29, 'Hiedra Venenosa', 'Alergias de Contacto');
 
 -- --------------------------------------------------------
 
@@ -159,7 +180,8 @@ INSERT INTO `direcciones` (`id`, `calle`, `numero_exterior`, `numero_interior`, 
 (3, 'Blvd. Adolfo Ruiz Cortines', '1800', NULL, 'Atasta de Serra', '86100', 'Centro', 'Tabasco', 17.99500000, -92.94800000),
 (4, 'Paseo Tabasco', '1504', NULL, 'Lindia Vista', '86050', 'Centro', 'Tabasco', 18.00100000, -92.94200000),
 (5, 'Insurgentes Sur', '2021', NULL, 'Florida', '01030', 'Álvaro Obregón', 'Ciudad de México', 19.34500000, -99.17800000),
-(7, '', '', '', '', '', '', '', 17.98687959, -92.92666292);
+(7, '', '', '', '', '', '', '', 17.98687959, -92.92666292),
+(8, 'Ignacio Rámirez', '200', '200', 'Centro', '86220', 'Nacajuca', 'Tabasco', 18.17799248, -93.01589197);
 
 -- --------------------------------------------------------
 
@@ -188,7 +210,8 @@ INSERT INTO `documentos` (`id`, `propietario_id`, `tipo_documento_id`, `ruta_arc
 (5, 13, 1, 'uploads/profile_pictures/user_13_687053a8e8395.jpg', 'team-4.jpg', 'image/jpeg', '2025-07-10 23:58:32'),
 (6, 15, 1, 'uploads/profile_pictures/user_15_6871791bc1670.jpg', 'monicaicon.jpg', 'image/jpeg', '2025-07-11 20:50:35'),
 (7, 18, 1, 'uploads/profile_pictures/user_18_6871aa5e0a8a1.jpg', 'user_1_68701a59105ed.jpg', 'image/jpeg', '2025-07-12 00:20:46'),
-(8, 18, 2, 'uploads/logos/logo_18_6871b60631c23.png', 'unnamed.png', NULL, '2025-07-12 01:10:30');
+(8, 18, 2, 'uploads/logos/logo_18_6871b60631c23.png', 'unnamed.png', NULL, '2025-07-12 01:10:30'),
+(10, 29, 1, 'uploads/profile_pictures/user_29_6873e2d1e7a3c.png', 'Untitled422_20240810000735.png', 'image/png', '2025-07-13 16:46:09');
 
 -- --------------------------------------------------------
 
@@ -297,18 +320,32 @@ INSERT INTO `empresas_perfil` (`id`, `nombre_comercial`, `razon_social`, `rfc`, 
 
 CREATE TABLE `enfermedades` (
   `id` int(11) NOT NULL,
-  `nombre` varchar(100) NOT NULL
+  `nombre` varchar(100) NOT NULL,
+  `categoria` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `enfermedades`
 --
 
-INSERT INTO `enfermedades` (`id`, `nombre`) VALUES
-(3, 'Asma'),
-(2, 'Diabetes Tipo 2'),
-(1, 'Hipertensión'),
-(4, 'Obesidad');
+INSERT INTO `enfermedades` (`id`, `nombre`, `categoria`) VALUES
+(5, 'Hipertensión Arterial', 'Enfermedades Cardiovasculares'),
+(6, 'Enfermedad de las Arterias Coronarias', 'Enfermedades Cardiovasculares'),
+(7, 'Insuficiencia Cardíaca', 'Enfermedades Cardiovasculares'),
+(8, 'Fibrilación Auricular', 'Enfermedades Cardiovasculares'),
+(9, 'Accidente Cerebrovascular', 'Enfermedades Cardiovasculares'),
+(10, 'Diabetes Mellitus Tipo 1', 'Enfermedades Metabólicas'),
+(11, 'Diabetes Mellitus Tipo 2', 'Enfermedades Metabólicas'),
+(12, 'Obesidad', 'Enfermedades Metabólicas'),
+(13, 'Dislipidemia (Colesterol Alto)', 'Enfermedades Metabólicas'),
+(14, 'Asma', 'Enfermedades Respiratorias Crónicas'),
+(15, 'Enfermedad Pulmonar Obstructiva Crónica (EPOC)', 'Enfermedades Respiratorias Crónicas'),
+(16, 'Artritis', 'Condiciones Musculoesqueléticas'),
+(17, 'Depresión', 'Condiciones de Salud Mental'),
+(18, 'Trastornos de Ansiedad', 'Condiciones de Salud Mental'),
+(19, 'Cáncer (General)', 'Otras Condiciones Prevalentes'),
+(20, 'Enfermedad Renal Crónica (ERC)', 'Otras Condiciones Prevalentes'),
+(21, 'Enfermedad Hepática Crónica / Cirrosis', 'Otras Condiciones Prevalentes');
 
 -- --------------------------------------------------------
 
@@ -412,7 +449,8 @@ INSERT INTO `personas_perfil` (`usuario_id`, `nombre`, `apellido_paterno`, `apel
 (18, 'Juan', 'Perez', 'Perez', NULL, NULL, NULL, NULL, NULL),
 (20, '1', '1', '1', NULL, NULL, NULL, NULL, NULL),
 (21, '2', '2', '2', NULL, NULL, NULL, NULL, NULL),
-(28, '32', '32', '22', NULL, NULL, NULL, NULL, NULL);
+(28, '32', '32', '22', NULL, NULL, NULL, NULL, NULL),
+(29, 'Jesus Gabriel', 'De la cruz', 'Zárate', '2002-08-04', 'Masculino', '9222835441', 8, 1);
 
 -- --------------------------------------------------------
 
@@ -425,16 +463,6 @@ CREATE TABLE `personas_x_alergias` (
   `alergia_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `personas_x_alergias`
---
-
-INSERT INTO `personas_x_alergias` (`usuario_id`, `alergia_id`) VALUES
-(1, 1),
-(1, 2),
-(1, 3),
-(13, 4);
-
 -- --------------------------------------------------------
 
 --
@@ -445,16 +473,6 @@ CREATE TABLE `personas_x_enfermedades` (
   `usuario_id` int(11) NOT NULL,
   `enfermedad_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `personas_x_enfermedades`
---
-
-INSERT INTO `personas_x_enfermedades` (`usuario_id`, `enfermedad_id`) VALUES
-(1, 1),
-(1, 2),
-(1, 4),
-(13, 4);
 
 -- --------------------------------------------------------
 
@@ -767,7 +785,8 @@ INSERT INTO `usuarios` (`id`, `email`, `password_hash`, `tipo_usuario_id`, `rol_
 (18, 'juan.perez@email.com', '$2y$10$./ouqUHnyzRldz9bCpNDm.mhzdaU01XegYrdtztwgBnGj56F45Ida', 2, 2, '2025-07-11 21:35:10', 'Pendiente', NULL, NULL),
 (20, '1@persona.com', '$2y$10$OTmZVcE07K7MwOSXkx2hAu.OsMhg9z8akBTaDM/UDNc76I0ecF6ZG', 1, 3, '2025-07-12 01:12:48', 'Pendiente', NULL, NULL),
 (21, '2@empresa.com', '$2y$10$k2igfSaoDaWpvVJ/2dCAmOlq6HNGHuUEo8zK4FHrenWE/H5KJu1by', 2, 2, '2025-07-12 01:13:30', 'Pendiente', NULL, NULL),
-(28, 'mihoyo@organizacion.com', '$2y$10$j8dcwAKBwNAuH6IE9QTf9eU6xXIlmFjRQ3F3n1buBf72VlOzSPtT2', 3, 2, '2025-07-12 01:22:47', 'Pendiente', NULL, NULL);
+(28, 'mihoyo@organizacion.com', '$2y$10$j8dcwAKBwNAuH6IE9QTf9eU6xXIlmFjRQ3F3n1buBf72VlOzSPtT2', 3, 2, '2025-07-12 01:22:47', 'Pendiente', NULL, NULL),
+(29, 'realloyal1a@gmail.com', '$2y$10$t1RiGqp.sYkedLGSE3okL.Eyf/jUJ.vMC8hO//K/5ktuyeSw39t9a', 1, 3, '2025-07-13 16:45:31', 'Pendiente', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1068,7 +1087,7 @@ ALTER TABLE `usuarios_x_organizaciones`
 -- AUTO_INCREMENT de la tabla `alergias`
 --
 ALTER TABLE `alergias`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT de la tabla `avisos`
@@ -1098,13 +1117,13 @@ ALTER TABLE `categorias_donacion`
 -- AUTO_INCREMENT de la tabla `direcciones`
 --
 ALTER TABLE `direcciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `documentos`
 --
 ALTER TABLE `documentos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `donaciones`
@@ -1134,7 +1153,7 @@ ALTER TABLE `empresas_perfil`
 -- AUTO_INCREMENT de la tabla `enfermedades`
 --
 ALTER TABLE `enfermedades`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de la tabla `estatus_aviso`
@@ -1224,7 +1243,7 @@ ALTER TABLE `urgencia_niveles`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- Restricciones para tablas volcadas
