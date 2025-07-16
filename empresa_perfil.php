@@ -186,45 +186,41 @@ $conexion->close();
                     </ul>
 
                     <div class="tab-content" id="profileTabsContent">
-                        <div class="tab-pane fade show active" id="company" role="tabpanel" aria-labelledby="company-tab">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body p-4">
-                                    <h5 class="card-title mb-4">Datos de la Empresa</h5>
-                                    <form>
-                                        <div class="row g-3">
-                                            <div class="col-md-6">
-                                                <label for="nombre_empresa" class="form-label">Nombre Comercial</label>
-                                                <input type="text" class="form-control" id="nombre_empresa" value="Mi Empresa S.A. de C.V." disabled>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="razon_social" class="form-label">Razón Social</label>
-                                                <input type="text" class="form-control" id="razon_social" value="Mi Empresa S.A. de C.V." disabled>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="rfc" class="form-label">RFC</label>
-                                                <input type="text" class="form-control" id="rfc" value="MEM123456XYZ" disabled>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="telefono_empresa" class="form-label">Teléfono de Contacto</label>
-                                                <input type="tel" class="form-control" id="telefono_empresa" value="993-987-6543" disabled>
-                                            </div>
-                                            <div class="col-12">
-                                                <label for="direccion_empresa" class="form-label">Dirección Fiscal</label>
-                                                <textarea class="form-control" id="direccion_empresa" rows="2" disabled>Av. Principal 456, Col. Industrial, Villahermosa, Tabasco.</textarea>
-                                            </div>
-                                            <div class="col-12">
-                                                <label for="ubicacion_comercial" class="form-label">Ubicación Comercial (Sucursal Principal)</label>
-                                                <textarea class="form-control" id="ubicacion_comercial" rows="2" disabled>Plaza Las Américas, Local 25, Villahermosa, Tabasco.</textarea>
-                                            </div>
-                                            <div class="col-12">
-                                                <label for="descripcion_empresa" class="form-label">Descripción de la Empresa</label>
-                                                <textarea class="form-control" id="descripcion_empresa" rows="3" disabled>Somos una empresa comprometida con el apoyo a la comunidad.</textarea>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+<div class="tab-pane fade show active" id="company" role="tabpanel" aria-labelledby="company-tab">
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+            <h5 class="card-title mb-4">Datos de la Empresa</h5>
+            <form>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="nombre_empresa" class="form-label">Nombre Comercial</label>
+                        <input type="text" class="form-control" id="nombre_empresa" 
+                               value="<?php echo htmlspecialchars($empresa['nombre_comercial'] ?? ''); ?>" disabled>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="razon_social" class="form-label">Razón Social</label>
+                        <input type="text" class="form-control" id="razon_social" 
+                               value="<?php echo htmlspecialchars($empresa['razon_social'] ?? ''); ?>" disabled>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="rfc" class="form-label">RFC</label>
+                        <input type="text" class="form-control" id="rfc" 
+                               value="<?php echo htmlspecialchars($empresa['rfc'] ?? ''); ?>" disabled>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="telefono_empresa" class="form-label">Teléfono de Contacto</label>
+                        <input type="tel" class="form-control" id="telefono_empresa" 
+                               value="<?php echo htmlspecialchars($empresa['telefono_empresa'] ?? ''); ?>" disabled>
+                    </div>
+                    <div class="col-12">
+                        <label for="descripcion_empresa" class="form-label">Descripción de la Empresa</label>
+                        <textarea class="form-control" id="descripcion_empresa" rows="4" disabled><?php echo htmlspecialchars($empresa['descripcion'] ?? ''); ?></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
                         <div class="tab-pane fade" id="representative" role="tabpanel" aria-labelledby="representative-tab">
                             <div class="card border-0 shadow-sm">
