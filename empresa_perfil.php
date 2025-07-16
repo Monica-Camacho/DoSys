@@ -14,7 +14,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 $usuario_id = $_SESSION['id'];
 $empresa = []; // Inicializamos el array
 
-// 4. Consulta Principal Corregida
+// 4. --- CONSULTA CORREGIDA (SOLO DIRECCIÓN COMERCIAL) ---
 $sql = "SELECT
             -- Datos de la empresa
             ep.id AS empresa_id,
@@ -24,30 +24,28 @@ $sql = "SELECT
             ep.telefono_empresa,
             ep.descripcion,
             
-            -- Datos del rol del usuario que inició sesión
+            -- Datos del rol del usuario
             r.nombre AS rol_usuario,
             
-            -- Datos de la dirección comercial
-            d.calle, d.numero_exterior, d.numero_interior, d.colonia, 
-            d.codigo_postal, d.municipio, d.estado,
+            -- Dirección Comercial
+            d_com.calle, d_com.numero_exterior, d_com.numero_interior, d_com.colonia, 
+            d_com.codigo_postal, d_com.municipio, d_com.estado,
+            d_com.latitud, d_com.longitud,
             
             -- Datos del representante legal
-            rep.nombre AS representante_nombre,
-            rep.apellido_paterno AS representante_ap,
-            rep.apellido_materno AS representante_am,
-            rep.email AS representante_email,
+            rep.nombre AS representante_nombre, rep.apellido_paterno AS representante_ap,
+            rep.apellido_materno AS representante_am, rep.email AS representante_email,
             rep.telefono AS representante_telefono,
             
             -- Rutas a los documentos
             (SELECT ruta_archivo FROM documentos WHERE id = ep.logo_documento_id) AS logo_url,
-            -- ESTA ES LA LÍNEA CORREGIDA --
             (SELECT ruta_archivo FROM documentos WHERE propietario_id = u.id AND tipo_documento_id = 4 ORDER BY fecha_carga DESC LIMIT 1) AS documento_url
 
         FROM usuarios u
         JOIN usuarios_x_empresas uxe ON u.id = uxe.usuario_id
         JOIN empresas_perfil ep ON uxe.empresa_id = ep.id
         JOIN roles r ON u.rol_id = r.id
-        LEFT JOIN direcciones d ON ep.direccion_comercial_id = d.id
+        LEFT JOIN direcciones d_com ON ep.direccion_comercial_id = d_com.id
         LEFT JOIN representantes rep ON ep.representante_id = rep.id
         
         WHERE u.id = ?";
@@ -60,27 +58,17 @@ if ($stmt = $conexion->prepare($sql)) {
     if ($resultado->num_rows === 1) {
         $empresa = $resultado->fetch_assoc();
     } else {
-        // Esta parte es importante si no devuelve filas.
-        die("Error: La consulta no encontró un perfil de empresa para el usuario con ID: " . htmlspecialchars($usuario_id) . ". Por favor, verifica en la base de datos que el usuario esté correctamente asociado a una empresa en la tabla 'usuarios_x_empresas'.");
+        die("Error: No se encontró un perfil para el usuario con ID: " . htmlspecialchars($usuario_id));
     }
     $stmt->close();
 } else {
-    // Si hay un error al preparar, lo mostrará aquí.
     die("Error al preparar la consulta: " . $conexion->error);
 }
 
 // 5. Cerramos la conexión a la base de datos
 $conexion->close();
-
-/*
- * Te recomiendo quitar estas líneas de depuración una vez que confirmes que todo funciona.
- */
-// echo "<pre>";
-// print_r($empresa);
-// echo "</pre>";
-
-// Aquí comienza tu código HTML para mostrar los datos...
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -170,7 +158,12 @@ $conexion->close();
                     <ul class="nav nav-tabs nav-pills nav-fill mb-4" id="profileTabs" role="tablist">
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="company-tab" data-bs-toggle="tab" data-bs-target="#company" type="button" role="tab" aria-controls="company" aria-selected="true">
-                                <i class="fas fa-building me-2"></i>Perfil de Empresa
+                                <i class="fas fa-building me-2"></i>Datos de la Empresa
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="direccion-tab" data-bs-toggle="tab" data-bs-target="#direccion" type="button" role="tab" aria-controls="direccion" aria-selected="false">
+                                <i class="fas fa-map-marked-alt me-2"></i>Ubicación
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
@@ -235,6 +228,32 @@ $conexion->close();
                                             </div>
                                         </div>
                                     </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dirección de la empresa -->
+                        <div class="tab-pane fade" id="direccion" role="tabpanel" aria-labelledby="direccion-tab">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body p-4">
+                                    <h5 class="card-title mb-4">Dirección Comercial Registrada</h5>
+                                    <div class="row g-3">
+                                        <div class="col-12"><label class="form-label">Calle</label><input type="text" class="form-control" value="<?php echo htmlspecialchars($empresa['calle'] ?? ''); ?>" disabled></div>
+                                        <div class="col-md-6"><label class="form-label">Número Exterior</label><input type="text" class="form-control" value="<?php echo htmlspecialchars($empresa['numero_exterior'] ?? ''); ?>" disabled></div>
+                                        <div class="col-md-6"><label class="form-label">Número Interior</label><input type="text" class="form-control" value="<?php echo htmlspecialchars($empresa['numero_interior'] ?? ''); ?>" disabled></div>
+                                        <div class="col-md-6"><label class="form-label">Colonia</label><input type="text" class="form-control" value="<?php echo htmlspecialchars($empresa['colonia'] ?? ''); ?>" disabled></div>
+                                        <div class="col-md-6"><label class="form-label">Código Postal</label><input type="text" class="form-control" value="<?php echo htmlspecialchars($empresa['codigo_postal'] ?? ''); ?>" disabled></div>
+                                        <div class="col-md-6"><label class="form-label">Municipio</label><input type="text" class="form-control" value="<?php echo htmlspecialchars($empresa['municipio'] ?? ''); ?>" disabled></div>
+                                        <div class="col-md-6"><label class="form-label">Estado</label><input type="text" class="form-control" value="<?php echo htmlspecialchars($empresa['estado'] ?? ''); ?>" disabled></div>
+                                    </div>
+                                    
+                                    <hr class="my-4">
+                                    <h6 class="mb-3">Ubicación en el Mapa</h6>
+                                    
+                                    <div id="map-canvas" style="height: 300px; width: 100%; border-radius: 0.25rem;"></div>
+                                    
+                                    <input type="hidden" id="lat-input" name="latitud" value="<?php echo htmlspecialchars($empresa['latitud'] ?? '17.9869'); ?>">
+                                    <input type="hidden" id="lng-input" name="longitud" value="<?php echo htmlspecialchars($empresa['longitud'] ?? '-92.9303'); ?>">
                                 </div>
                             </div>
                         </div>
@@ -435,6 +454,101 @@ $conexion->close();
                 });
             });
         });
+        </script>
+        <script>
+            // Declaramos las variables globales para el mapa
+            let map;
+            let marker;
+
+            // Espera a que la página se cargue
+            document.addEventListener('DOMContentLoaded', function() {
+                const editButton = document.getElementById('edit-button');
+                const saveButton = document.getElementById('save-button');
+                // Seleccionamos solo el formulario que está dentro de la pestaña de dirección
+                const form = document.querySelector('#direccion form'); 
+
+                if (editButton && form) {
+                    editButton.addEventListener('click', function() {
+                        // Habilitamos todos los campos del formulario de dirección
+                        const formElements = form.querySelectorAll('input, select, textarea');
+                        formElements.forEach(element => {
+                            element.removeAttribute('disabled');
+                        });
+
+                        // Hacemos que el marcador del mapa sea arrastrable
+                        if (marker) {
+                            marker.setDraggable(true);
+                        }
+
+                        // Ocultamos el botón de editar y mostramos el de guardar
+                        editButton.style.display = 'none';
+                        saveButton.style.display = 'inline-block';
+                    });
+                }
+            });
+
+            // La función initMap y las de Google Maps se quedan casi idénticas
+            function initMap() {
+                const latInput = document.getElementById('lat-input');
+                const lngInput = document.getElementById('lng-input');
+                const initialLat = parseFloat(latInput.value) || 17.9869;
+                const initialLng = parseFloat(lngInput.value) || -92.9303;
+                const initialPosition = { lat: initialLat, lng: initialLng };
+
+                map = new google.maps.Map(document.getElementById('map-canvas'), {
+                    center: initialPosition,
+                    zoom: 16
+                });
+
+                marker = new google.maps.Marker({
+                    position: initialPosition,
+                    map: map,
+                    draggable: false // No se puede arrastrar por defecto
+                });
+
+                // Este input es para el autocompletado de Google
+                const addressInput = document.getElementById('address-input');
+                const autocomplete = new google.maps.places.Autocomplete(addressInput);
+                autocomplete.bindTo('bounds', map);
+
+                autocomplete.addListener('place_changed', () => {
+                    const place = autocomplete.getPlace();
+                    if (!place.geometry || !place.geometry.location) return;
+                    map.setCenter(place.geometry.location);
+                    map.setZoom(18);
+                    marker.setPosition(place.geometry.location);
+                    fillInAddress(place);
+                });
+
+                marker.addListener('dragend', () => {
+                    const newPosition = marker.getPosition();
+                    updateCoordinates(newPosition.lat(), newPosition.lng());
+                    // (Opcional) Aquí podrías hacer geocodificación inversa para actualizar la dirección si arrastras el marcador
+                });
+            }
+
+            function fillInAddress(place) {
+                const components = place.address_components;
+                if (!components) return;
+                const get = (type) => components.find(c => c.types.includes(type))?.long_name || '';
+                
+                // Rellenamos los campos del formulario con los nuevos IDs
+                document.querySelector('[name="com_calle"]').value = get('route');
+                document.querySelector('[name="com_num_ext"]').value = get('street_number');
+                document.querySelector('[name="com_colonia"]').value = get('sublocality_level_1') || get('locality');
+                document.querySelector('[name="com_municipio"]').value = get('administrative_area_level_2') || get('locality');
+                document.querySelector('[name="com_estado"]').value = get('administrative_area_level_1');
+                document.querySelector('[name="com_cp"]').value = get('postal_code');
+                
+                if (place.geometry) {
+                    updateCoordinates(place.geometry.location.lat(), place.geometry.location.lng());
+                }
+            }
+
+            function updateCoordinates(lat, lng) {
+                document.getElementById('lat-input').value = lat;
+                document.getElementById('lng-input').value = lng;
+            }
         </script>
           
 </body>
