@@ -186,41 +186,58 @@ $conexion->close();
                     </ul>
 
                     <div class="tab-content" id="profileTabsContent">
-<div class="tab-pane fade show active" id="company" role="tabpanel" aria-labelledby="company-tab">
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-4">
-            <h5 class="card-title mb-4">Datos de la Empresa</h5>
-            <form>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="nombre_empresa" class="form-label">Nombre Comercial</label>
-                        <input type="text" class="form-control" id="nombre_empresa" 
-                               value="<?php echo htmlspecialchars($empresa['nombre_comercial'] ?? ''); ?>" disabled>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="razon_social" class="form-label">Razón Social</label>
-                        <input type="text" class="form-control" id="razon_social" 
-                               value="<?php echo htmlspecialchars($empresa['razon_social'] ?? ''); ?>" disabled>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="rfc" class="form-label">RFC</label>
-                        <input type="text" class="form-control" id="rfc" 
-                               value="<?php echo htmlspecialchars($empresa['rfc'] ?? ''); ?>" disabled>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="telefono_empresa" class="form-label">Teléfono de Contacto</label>
-                        <input type="tel" class="form-control" id="telefono_empresa" 
-                               value="<?php echo htmlspecialchars($empresa['telefono_empresa'] ?? ''); ?>" disabled>
-                    </div>
-                    <div class="col-12">
-                        <label for="descripcion_empresa" class="form-label">Descripción de la Empresa</label>
-                        <textarea class="form-control" id="descripcion_empresa" rows="4" disabled><?php echo htmlspecialchars($empresa['descripcion'] ?? ''); ?></textarea>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+                        <!-- Datos de la empresa -->
+                        <div class="tab-pane fade show active" id="company" role="tabpanel" aria-labelledby="company-tab">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body p-4">
+                                    <h5 class="card-title mb-4">Datos de la Empresa</h5>
+                                    <form>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label for="nombre_empresa" class="form-label">Nombre Comercial</label>
+                                                <input type="text" class="form-control" id="nombre_empresa" 
+                                                    value="<?php echo htmlspecialchars($empresa['nombre_comercial'] ?? ''); ?>" disabled>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="razon_social" class="form-label">Razón Social</label>
+                                                <input type="text" class="form-control" id="razon_social" 
+                                                    value="<?php echo htmlspecialchars($empresa['razon_social'] ?? ''); ?>" disabled>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="rfc" class="form-label">RFC</label>
+                                                <input type="text" class="form-control" id="rfc" 
+                                                    value="<?php echo htmlspecialchars($empresa['rfc'] ?? ''); ?>" disabled>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="telefono_empresa" class="form-label">Teléfono de Contacto</label>
+                                                <input type="tel" class="form-control" id="telefono_empresa" 
+                                                    value="<?php echo htmlspecialchars($empresa['telefono_empresa'] ?? ''); ?>" disabled>
+                                            </div>
+                                            <div class="col-12">
+                                                <label for="descripcion_empresa" class="form-label">Descripción de la Empresa</label>
+                                                <textarea class="form-control" id="descripcion_empresa" rows="4" disabled><?php echo htmlspecialchars($empresa['descripcion'] ?? ''); ?></textarea>
+                                            </div>
+                                            <hr class="my-4">
+                                            <h6 class="mb-3">Documento de Validación de la Empresa</h6>
+                                            <div class="d-flex justify-content-between align-items-center" id="company-document-section">
+                                                <div>
+                                                    <i class="fas fa-file-contract fa-2x text-muted me-2"></i>
+                                                    <span class="fw-bold">Acta Constitutiva / Constancia Fiscal</span>
+                                                </div>
+                                                <div>
+                                                    <?php if (!empty($empresa['documento_url'])): ?>
+                                                        <a href="<?php echo BASE_URL . htmlspecialchars($empresa['documento_url']); ?>" target="_blank" class="btn btn-success btn-sm">Ver Documento</a>
+                                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#uploadCompanyDocumentModal">Reemplazar</button>
+                                                    <?php else: ?>
+                                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#uploadCompanyDocumentModal">Subir Documento</button>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="tab-pane fade" id="representative" role="tabpanel" aria-labelledby="representative-tab">
                             <div class="card border-0 shadow-sm">
@@ -312,6 +329,30 @@ $conexion->close();
         </div>
     </div>
 
+    <!-- Ventana Modal para Subir la constancia de situacion fiscal -->
+    <div class="modal fade" id="uploadCompanyDocumentModal" tabindex="-1" aria-labelledby="uploadCompanyDocumentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadCompanyDocumentModalLabel">Documento de Validación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted small">Sube el Acta Constitutiva o la Constancia de Situación Fiscal de tu empresa (PDF, JPG, PNG - Máx 5MB).</p>
+                <form id="uploadCompanyDocumentForm" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <input class="form-control" type="file" id="company_document_file" name="company_document_file" accept=".pdf,image/jpeg,image/png">
+                    </div>
+                    <div id="uploadCompanyDocumentMessage" class="mt-3"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="submitCompanyDocumentButton">Subir Documento</button>
+            </div>
+        </div>
+    </div>
+</div>
         <!-- Footer Start -->
         <?php require_once 'templates/footer.php'; ?>
         <!-- Footer End -->
@@ -352,6 +393,44 @@ $conexion->close();
                     },
                     error: function() {
                         messageDiv.html('<div class="alert alert-danger">Error de conexión. Inténtalo de nuevo.</div>');
+                    }
+                });
+            });
+        });
+        </script>
+        <script>
+        $(document).ready(function() {
+            $('#submitCompanyDocumentButton').on('click', function() {
+                var formData = new FormData($('#uploadCompanyDocumentForm')[0]);
+                var messageDiv = $('#uploadCompanyDocumentMessage');
+
+                messageDiv.html('<div class="text-center"><div class="spinner-border text-primary" role="status"></div></div>');
+
+                $.ajax({
+                    url: '<?php echo BASE_URL; ?>auth/upload_company_document_process.php',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            messageDiv.html('<div class="alert alert-success">' + response.message + '</div>');
+                            
+                            // Actualiza los botones en la página principal
+                            setTimeout(function() {
+                                // Recargamos la sección para mostrar los nuevos botones
+                                $('#company-document-section').load(location.href + ' #company-document-section > *');
+                                $('#uploadCompanyDocumentModal').modal('hide');
+                                messageDiv.html('');
+                            }, 2000);
+
+                        } else {
+                            messageDiv.html('<div class="alert alert-danger">' + response.message + '</div>');
+                        }
+                    },
+                    error: function() {
+                        messageDiv.html('<div class="alert alert-danger">Error de conexión.</div>');
                     }
                 });
             });
