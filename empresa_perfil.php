@@ -171,11 +171,6 @@ $conexion->close();
                                 <i class="fas fa-user-tie me-2"></i>Representante Legal
                             </button>
                         </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab" aria-controls="security" aria-selected="false">
-                                <i class="fas fa-shield-alt me-2"></i>Seguridad
-                            </button>
-                        </li>
                     </ul>
 
                     <div class="tab-content" id="profileTabsContent">
@@ -258,58 +253,49 @@ $conexion->close();
                             </div>
                         </div>
 
+                        <!-- Representante de la empresa -->
                         <div class="tab-pane fade" id="representative" role="tabpanel" aria-labelledby="representative-tab">
                             <div class="card border-0 shadow-sm">
                                 <div class="card-body p-4">
                                     <h5 class="card-title mb-4">Datos del Representante Legal</h5>
+
+                                    <?php if (!empty($empresa['representante_nombre'])): ?>
                                     <form>
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-md-4">
+                                                <label for="rep_nombre" class="form-label">Nombre(s)</label>
+                                                <input type="text" class="form-control" id="rep_nombre" value="<?php echo htmlspecialchars($empresa['representante_nombre']); ?>" disabled>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="rep_apellido_p" class="form-label">Apellido Paterno</label>
+                                                <input type="text" class="form-control" id="rep_apellido_p" value="<?php echo htmlspecialchars($empresa['representante_ap']); ?>" disabled>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="rep_apellido_m" class="form-label">Apellido Materno</label>
+                                                <input type="text" class="form-control" id="rep_apellido_m" value="<?php echo htmlspecialchars($empresa['representante_am']); ?>" disabled>
+                                            </div>
+                                        </div>
                                         <div class="row g-3">
                                             <div class="col-md-6">
-                                                <label for="rep_nombre" class="form-label">Nombre(s)</label>
-                                                <input type="text" class="form-control" id="rep_nombre" value="Ana" disabled>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="rep_apellidos" class="form-label">Apellidos</label>
-                                                <input type="text" class="form-control" id="rep_apellidos" value="López Hernández" disabled>
-                                            </div>
-                                            <div class="col-md-6">
                                                 <label for="rep_email" class="form-label">Correo Electrónico</label>
-                                                <input type="email" class="form-control" id="rep_email" value="ana.lopez@miempresa.com" disabled>
+                                                <input type="email" class="form-control" id="rep_email" value="<?php echo htmlspecialchars($empresa['representante_email']); ?>" disabled>
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="rep_telefono" class="form-label">Teléfono</label>
-                                                <input type="tel" class="form-control" id="rep_telefono" value="993-111-2233" disabled>
+                                                <input type="tel" class="form-control" id="rep_telefono" value="<?php echo htmlspecialchars($empresa['representante_telefono']); ?>" disabled>
                                             </div>
                                         </div>
                                     </form>
+                                    <?php else: ?>
+                                        <div class="alert alert-info" role="alert">
+                                            No se encontraron datos del representante legal para esta empresa.
+                                        </div>
+                                    <?php endif; ?>
+
                                 </div>
                             </div>
                         </div>
 
-                        <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body p-4">
-                                    <h5 class="card-title mb-4">Cambiar Correo y Contraseña de la Cuenta</h5>
-                                    <form>
-                                        <div class="row g-3">
-                                            <div class="col-12">
-                                                <label for="email_cuenta" class="form-label">Correo de la Cuenta</label>
-                                                <input type="email" class="form-control" id="email_cuenta" value="contacto@miempresa.com" disabled>
-                                            </div>
-                                            <hr>
-                                            <div class="col-md-6">
-                                                <label for="current_password" class="form-label">Contraseña Actual</label>
-                                                <input type="password" class="form-control" id="current_password" disabled>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="new_password" class="form-label">Nueva Contraseña</label>
-                                                <input type="password" class="form-control" id="new_password" disabled>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                     
                     <div class="mt-4 text-end">
