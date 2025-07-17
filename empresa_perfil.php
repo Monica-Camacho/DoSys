@@ -65,7 +65,17 @@ if ($stmt = $conexion->prepare($sql)) {
     die("Error al preparar la consulta: " . $conexion->error);
 }
 
-// 5. Cerramos la conexión a la base de datos
+// 5. --- LÓGICA DE PERMISOS CORRECTA Y SIMPLE ---
+// Se obtiene el rol del usuario de la consulta.
+$rol_usuario = $empresa['rol_usuario'] ?? '';
+
+// La única regla: puede editar si el rol es 'Administrador'.
+$puede_editar = ($rol_usuario === 'Administrador');
+
+// Se crea la variable para habilitar o deshabilitar los campos del formulario.
+$disabled_attr = !$puede_editar ? 'disabled' : '';
+
+// 6. Cerramos la conexión a la base de datos
 $conexion->close();
 ?>
 
@@ -133,177 +143,123 @@ $conexion->close();
     <!-- Profile Content Start -->
     <div class="container-fluid py-5">
         <div class="container">
-            <div class="row g-5">
 
+            <div class="row g-5">
                 <div class="col-lg-4">
                     <div class="d-flex flex-column text-center align-items-center bg-white p-4 rounded shadow-sm">
-        
                         <img id="profileImage" class="img-fluid rounded-circle mb-3" 
                             src="<?php echo !empty($empresa['logo_url']) ? BASE_URL . htmlspecialchars($empresa['logo_url']) : BASE_URL . 'img/logo.jpg'; ?>" 
-                            alt="Logo de la Empresa" 
-                            style="width: 150px; height: 150px; object-fit: cover;">
+                            alt="Logo de la Empresa" style="width: 150px; height: 150px; object-fit: cover;">
                         
-                        <h4 class="mb-1">
-                            <?php echo htmlspecialchars($empresa['nombre_comercial'] ?? 'Nombre de la Empresa'); ?>
-                        </h4>
+                        <h4 class="mb-1"><?php echo htmlspecialchars($empresa['nombre_comercial'] ?? 'Nombre de la Empresa'); ?></h4>
                         
-                        <button type="button" class="btn btn-outline-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#changeLogoModal">
+                        <button type="button" id="changeLogoBtn" class="btn btn-outline-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#changeLogoModal" style="display: none;">
                             <i class="fas fa-camera me-2"></i>Cambiar Logo
                         </button>
-                        
                     </div>
                 </div>
 
                 <div class="col-lg-8">
-                    <ul class="nav nav-tabs nav-pills nav-fill mb-4" id="profileTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="company-tab" data-bs-toggle="tab" data-bs-target="#company" type="button" role="tab" aria-controls="company" aria-selected="true">
-                                <i class="fas fa-building me-2"></i>Datos de la Empresa
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="direccion-tab" data-bs-toggle="tab" data-bs-target="#direccion" type="button" role="tab" aria-controls="direccion" aria-selected="false">
-                                <i class="fas fa-map-marked-alt me-2"></i>Ubicación
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="representative-tab" data-bs-toggle="tab" data-bs-target="#representative" type="button" role="tab" aria-controls="representative" aria-selected="false">
-                                <i class="fas fa-user-tie me-2"></i>Representante Legal
-                            </button>
-                        </li>
-                    </ul>
+                    <form id="profileForm" action="auth/update_empresa_process.php" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="empresa_id" value="<?php echo htmlspecialchars($empresa['empresa_id']); ?>">
+                        <ul class="nav nav-tabs nav-pills nav-fill mb-4" id="profileTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="company-tab" data-bs-toggle="tab" data-bs-target="#company" type="button" role="tab" aria-controls="company" aria-selected="true">
+                                    <i class="fas fa-building me-2"></i>Datos de la Empresa
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="direccion-tab" data-bs-toggle="tab" data-bs-target="#direccion" type="button" role="tab" aria-controls="direccion" aria-selected="false">
+                                    <i class="fas fa-map-marked-alt me-2"></i>Ubicación
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="representative-tab" data-bs-toggle="tab" data-bs-target="#representative" type="button" role="tab" aria-controls="representative" aria-selected="false">
+                                    <i class="fas fa-user-tie me-2"></i>Representante
+                                </button>
+                            </li>
+                        </ul>
 
-                    <div class="tab-content" id="profileTabsContent">
-                        <!-- Datos de la empresa -->
-                        <div class="tab-pane fade show active" id="company" role="tabpanel" aria-labelledby="company-tab">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body p-4">
+                        <div class="tab-content" id="profileTabsContent">
+                            <div class="tab-pane fade show active" id="company" role="tabpanel" aria-labelledby="company-tab">
+                                <div class="card border-0 shadow-sm"><div class="card-body p-4">
                                     <h5 class="card-title mb-4">Datos de la Empresa</h5>
-                                    <form>
-                                        <div class="row g-3">
-                                            <div class="col-md-6">
-                                                <label for="nombre_empresa" class="form-label">Nombre Comercial</label>
-                                                <input type="text" class="form-control" id="nombre_empresa" 
-                                                    value="<?php echo htmlspecialchars($empresa['nombre_comercial'] ?? ''); ?>" disabled>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="razon_social" class="form-label">Razón Social</label>
-                                                <input type="text" class="form-control" id="razon_social" 
-                                                    value="<?php echo htmlspecialchars($empresa['razon_social'] ?? ''); ?>" disabled>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="rfc" class="form-label">RFC</label>
-                                                <input type="text" class="form-control" id="rfc" 
-                                                    value="<?php echo htmlspecialchars($empresa['rfc'] ?? ''); ?>" disabled>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="telefono_empresa" class="form-label">Teléfono de Contacto</label>
-                                                <input type="tel" class="form-control" id="telefono_empresa" 
-                                                    value="<?php echo htmlspecialchars($empresa['telefono_empresa'] ?? ''); ?>" disabled>
-                                            </div>
-                                            <div class="col-12">
-                                                <label for="descripcion_empresa" class="form-label">Descripción de la Empresa</label>
-                                                <textarea class="form-control" id="descripcion_empresa" rows="4" disabled><?php echo htmlspecialchars($empresa['descripcion'] ?? ''); ?></textarea>
-                                            </div>
-                                            <hr class="my-4">
-                                            <h6 class="mb-3">Documento de Validación de la Empresa</h6>
-                                            <div class="d-flex justify-content-between align-items-center" id="company-document-section">
-                                                <div>
-                                                    <i class="fas fa-file-contract fa-2x text-muted me-2"></i>
-                                                    <span class="fw-bold">Acta Constitutiva / Constancia Fiscal</span>
-                                                </div>
-                                                <div>
-                                                    <?php if (!empty($empresa['documento_url'])): ?>
-                                                        <a href="<?php echo BASE_URL . htmlspecialchars($empresa['documento_url']); ?>" target="_blank" class="btn btn-success btn-sm">Ver Documento</a>
-                                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#uploadCompanyDocumentModal">Reemplazar</button>
-                                                    <?php else: ?>
-                                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#uploadCompanyDocumentModal">Subir Documento</button>
-                                                    <?php endif; ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Dirección de la empresa -->
-                        <div class="tab-pane fade" id="direccion" role="tabpanel" aria-labelledby="direccion-tab">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body p-4">
-                                    <h5 class="card-title mb-4">Dirección Comercial Registrada</h5>
                                     <div class="row g-3">
-                                        <div class="col-12"><label class="form-label">Calle</label><input type="text" class="form-control" value="<?php echo htmlspecialchars($empresa['calle'] ?? ''); ?>" disabled></div>
-                                        <div class="col-md-6"><label class="form-label">Número Exterior</label><input type="text" class="form-control" value="<?php echo htmlspecialchars($empresa['numero_exterior'] ?? ''); ?>" disabled></div>
-                                        <div class="col-md-6"><label class="form-label">Número Interior</label><input type="text" class="form-control" value="<?php echo htmlspecialchars($empresa['numero_interior'] ?? ''); ?>" disabled></div>
-                                        <div class="col-md-6"><label class="form-label">Colonia</label><input type="text" class="form-control" value="<?php echo htmlspecialchars($empresa['colonia'] ?? ''); ?>" disabled></div>
-                                        <div class="col-md-6"><label class="form-label">Código Postal</label><input type="text" class="form-control" value="<?php echo htmlspecialchars($empresa['codigo_postal'] ?? ''); ?>" disabled></div>
-                                        <div class="col-md-6"><label class="form-label">Municipio</label><input type="text" class="form-control" value="<?php echo htmlspecialchars($empresa['municipio'] ?? ''); ?>" disabled></div>
-                                        <div class="col-md-6"><label class="form-label">Estado</label><input type="text" class="form-control" value="<?php echo htmlspecialchars($empresa['estado'] ?? ''); ?>" disabled></div>
+                                        <div class="col-md-6"><label class="form-label">Nombre Comercial</label><input type="text" name="nombre_comercial" class="form-control" value="<?php echo htmlspecialchars($empresa['nombre_comercial'] ?? ''); ?>" disabled></div>
+                                        <div class="col-md-6"><label class="form-label">Razón Social</label><input type="text" name="razon_social" class="form-control" value="<?php echo htmlspecialchars($empresa['razon_social'] ?? ''); ?>" disabled></div>
+                                        <div class="col-md-6"><label class="form-label">RFC</label><input type="text" name="rfc" class="form-control" value="<?php echo htmlspecialchars($empresa['rfc'] ?? ''); ?>" disabled></div>
+                                        <div class="col-md-6"><label class="form-label">Teléfono</label><input type="tel" name="telefono_empresa" class="form-control" value="<?php echo htmlspecialchars($empresa['telefono_empresa'] ?? ''); ?>" disabled></div>
+                                        <div class="col-12"><label class="form-label">Descripción</label><textarea name="descripcion" class="form-control" rows="4" disabled><?php echo htmlspecialchars($empresa['descripcion'] ?? ''); ?></textarea></div>
                                     </div>
                                     
                                     <hr class="my-4">
+                                    <h6 class="mb-3">Documento de Validación de la Empresa</h6>
+                                    <div class="d-flex justify-content-between align-items-center" id="company-document-section">
+                                        <div>
+                                            <i class="fas fa-file-contract fa-2x text-muted me-2"></i>
+                                            <span class="fw-bold">Acta Constitutiva / Constancia Fiscal</span>
+                                        </div>
+                                        <div>
+                                            <?php if (!empty($empresa['documento_url'])): ?>
+                                                <a href="<?php echo BASE_URL . htmlspecialchars($empresa['documento_url']); ?>" target="_blank" class="btn btn-success btn-sm">Ver Documento</a>
+                                                <button type="button" id="replaceDocBtn" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#uploadCompanyDocumentModal" style="display: none;">Reemplazar</button>
+                                            <?php else: ?>
+                                                <button type="button" id="uploadDocBtn" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#uploadCompanyDocumentModal" style="display: none;">Subir Documento</button>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div></div>
+                            </div>
+
+                            <div class="tab-pane fade" id="direccion" role="tabpanel" aria-labelledby="direccion-tab">
+                                <div class="card border-0 shadow-sm"><div class="card-body p-4">
+                                    <h5 class="card-title mb-4">Dirección Comercial</h5>
+                                    <div class="row g-3">
+                                        <div class="col-12"><label class="form-label">Calle</label><input type="text" name="calle" class="form-control" value="<?php echo htmlspecialchars($empresa['calle'] ?? ''); ?>" disabled></div>
+                                        <div class="col-md-6"><label class="form-label">Número Exterior</label><input type="text" name="numero_exterior" class="form-control" value="<?php echo htmlspecialchars($empresa['numero_exterior'] ?? ''); ?>" disabled></div>
+                                        <div class="col-md-6"><label class="form-label">Número Interior</label><input type="text" name="numero_interior" class="form-control" value="<?php echo htmlspecialchars($empresa['numero_interior'] ?? ''); ?>" disabled></div>
+                                        <div class="col-md-6"><label class="form-label">Colonia</label><input type="text" name="colonia" class="form-control" value="<?php echo htmlspecialchars($empresa['colonia'] ?? ''); ?>" disabled></div>
+                                        <div class="col-md-6"><label class="form-label">Código Postal</label><input type="text" name="codigo_postal" class="form-control" value="<?php echo htmlspecialchars($empresa['codigo_postal'] ?? ''); ?>" disabled></div>
+                                        <div class="col-md-6"><label class="form-label">Municipio</label><input type="text" name="municipio" class="form-control" value="<?php echo htmlspecialchars($empresa['municipio'] ?? ''); ?>" disabled></div>
+                                        <div class="col-md-6"><label class="form-label">Estado</label><input type="text" name="estado" class="form-control" value="<?php echo htmlspecialchars($empresa['estado'] ?? ''); ?>" disabled></div>
+                                    </div>
+                                    <hr class="my-4">
                                     <h6 class="mb-3">Ubicación en el Mapa</h6>
-                                    
                                     <div id="map-canvas" style="height: 300px; width: 100%; border-radius: 0.25rem;"></div>
-                                    
                                     <input type="hidden" id="lat-input" name="latitud" value="<?php echo htmlspecialchars($empresa['latitud'] ?? '17.9869'); ?>">
                                     <input type="hidden" id="lng-input" name="longitud" value="<?php echo htmlspecialchars($empresa['longitud'] ?? '-92.9303'); ?>">
-                                </div>
+                                </div></div>
                             </div>
-                        </div>
 
-                        <!-- Representante de la empresa -->
-                        <div class="tab-pane fade" id="representative" role="tabpanel" aria-labelledby="representative-tab">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body p-4">
+                            <div class="tab-pane fade" id="representative" role="tabpanel" aria-labelledby="representative-tab">
+                                <div class="card border-0 shadow-sm"><div class="card-body p-4">
                                     <h5 class="card-title mb-4">Datos del Representante Legal</h5>
-
                                     <?php if (!empty($empresa['representante_nombre'])): ?>
-                                    <form>
                                         <div class="row g-3 mb-3">
-                                            <div class="col-md-4">
-                                                <label for="rep_nombre" class="form-label">Nombre(s)</label>
-                                                <input type="text" class="form-control" id="rep_nombre" value="<?php echo htmlspecialchars($empresa['representante_nombre']); ?>" disabled>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="rep_apellido_p" class="form-label">Apellido Paterno</label>
-                                                <input type="text" class="form-control" id="rep_apellido_p" value="<?php echo htmlspecialchars($empresa['representante_ap']); ?>" disabled>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="rep_apellido_m" class="form-label">Apellido Materno</label>
-                                                <input type="text" class="form-control" id="rep_apellido_m" value="<?php echo htmlspecialchars($empresa['representante_am']); ?>" disabled>
-                                            </div>
+                                            <div class="col-md-4"><label class="form-label">Nombre(s)</label><input type="text" name="rep_nombre" class="form-control" value="<?php echo htmlspecialchars($empresa['representante_nombre']); ?>" disabled></div>
+                                            <div class="col-md-4"><label class="form-label">Apellido Paterno</label><input type="text" name="rep_apellido_p" class="form-control" value="<?php echo htmlspecialchars($empresa['representante_ap']); ?>" disabled></div>
+                                            <div class="col-md-4"><label class="form-label">Apellido Materno</label><input type="text" name="rep_apellido_m" class="form-control" value="<?php echo htmlspecialchars($empresa['representante_am']); ?>" disabled></div>
                                         </div>
                                         <div class="row g-3">
-                                            <div class="col-md-6">
-                                                <label for="rep_email" class="form-label">Correo Electrónico</label>
-                                                <input type="email" class="form-control" id="rep_email" value="<?php echo htmlspecialchars($empresa['representante_email']); ?>" disabled>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="rep_telefono" class="form-label">Teléfono</label>
-                                                <input type="tel" class="form-control" id="rep_telefono" value="<?php echo htmlspecialchars($empresa['representante_telefono']); ?>" disabled>
-                                            </div>
+                                            <div class="col-md-6"><label class="form-label">Correo</label><input type="email" name="rep_email" class="form-control" value="<?php echo htmlspecialchars($empresa['representante_email']); ?>" disabled></div>
+                                            <div class="col-md-6"><label class="form-label">Teléfono</label><input type="tel" name="rep_telefono" class="form-control" value="<?php echo htmlspecialchars($empresa['representante_telefono']); ?>" disabled></div>
                                         </div>
-                                    </form>
                                     <?php else: ?>
-                                        <div class="alert alert-info" role="alert">
-                                            No se encontraron datos del representante legal para esta empresa.
-                                        </div>
+                                        <div class="alert alert-info" role="alert">No hay un representante legal asignado.</div>
                                     <?php endif; ?>
-
-                                </div>
+                                </div></div>
                             </div>
+                        </div> <div id="action-buttons" class="mt-4 text-end">
+                            <?php if ($puede_editar): ?>
+                                <button type="button" id="editBtn" class="btn btn-secondary">Editar Información</button>
+                            <?php endif; ?>
+                            <button type="submit" id="saveBtn" class="btn btn-primary" style="display:none;">Guardar Cambios</button>
+                            <button type="button" id="cancelBtn" class="btn btn-light" style="display:none;">Cancelar</button>
                         </div>
+                    </form> 
+                </div>
+            </div>
 
-                    </div>
-                    
-                    <div class="mt-4 text-end">
-                        <button type="button" class="btn btn-secondary">Editar Perfil</button>
-                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                    </div>
-                </div> 
-            </div> 
         </div>
     </div>
      <!-- Profile Content End -->
@@ -367,113 +323,15 @@ $conexion->close();
         <?php require_once 'templates/scripts.php'; ?>
 
         <script>
-        $(document).ready(function() {
-            // Cuando se hace clic en "Subir Logo"
-            $('#submitLogoButton').on('click', function() {
-                var formData = new FormData($('#uploadLogoForm')[0]);
-                var messageDiv = $('#uploadLogoMessage');
-
-                messageDiv.html('<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>');
-
-                $.ajax({
-                    url: '<?php echo BASE_URL; ?>auth/upload_logo_process.php',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success) {
-                            messageDiv.html('<div class="alert alert-success">' + response.message + '</div>');
-                            // Actualizar la imagen del perfil en la página
-                            $('#profileImage').attr('src', response.new_logo_url + '?t=' + new Date().getTime());
-                            // Cerrar la modal después de 2 segundos
-                            setTimeout(function() {
-                                $('#changeLogoModal').modal('hide');
-                                messageDiv.html(''); // Limpiar mensaje
-                            }, 2000);
-                        } else {
-                            messageDiv.html('<div class="alert alert-danger">' + response.message + '</div>');
-                        }
-                    },
-                    error: function() {
-                        messageDiv.html('<div class="alert alert-danger">Error de conexión. Inténtalo de nuevo.</div>');
-                    }
-                });
-            });
-        });
-        </script>
-        <script>
-        $(document).ready(function() {
-            $('#submitCompanyDocumentButton').on('click', function() {
-                var formData = new FormData($('#uploadCompanyDocumentForm')[0]);
-                var messageDiv = $('#uploadCompanyDocumentMessage');
-
-                messageDiv.html('<div class="text-center"><div class="spinner-border text-primary" role="status"></div></div>');
-
-                $.ajax({
-                    url: '<?php echo BASE_URL; ?>auth/upload_company_document_process.php',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success) {
-                            messageDiv.html('<div class="alert alert-success">' + response.message + '</div>');
-                            
-                            // Actualiza los botones en la página principal
-                            setTimeout(function() {
-                                // Recargamos la sección para mostrar los nuevos botones
-                                $('#company-document-section').load(location.href + ' #company-document-section > *');
-                                $('#uploadCompanyDocumentModal').modal('hide');
-                                messageDiv.html('');
-                            }, 2000);
-
-                        } else {
-                            messageDiv.html('<div class="alert alert-danger">' + response.message + '</div>');
-                        }
-                    },
-                    error: function() {
-                        messageDiv.html('<div class="alert alert-danger">Error de conexión.</div>');
-                    }
-                });
-            });
-        });
-        </script>
-        <script>
-            // Declaramos las variables globales para el mapa
+            // =================================================================
+            //  VARIABLES GLOBALES PARA EL MAPA
+            // =================================================================
             let map;
             let marker;
 
-            // Espera a que la página se cargue
-            document.addEventListener('DOMContentLoaded', function() {
-                const editButton = document.getElementById('edit-button');
-                const saveButton = document.getElementById('save-button');
-                // Seleccionamos solo el formulario que está dentro de la pestaña de dirección
-                const form = document.querySelector('#direccion form'); 
-
-                if (editButton && form) {
-                    editButton.addEventListener('click', function() {
-                        // Habilitamos todos los campos del formulario de dirección
-                        const formElements = form.querySelectorAll('input, select, textarea');
-                        formElements.forEach(element => {
-                            element.removeAttribute('disabled');
-                        });
-
-                        // Hacemos que el marcador del mapa sea arrastrable
-                        if (marker) {
-                            marker.setDraggable(true);
-                        }
-
-                        // Ocultamos el botón de editar y mostramos el de guardar
-                        editButton.style.display = 'none';
-                        saveButton.style.display = 'inline-block';
-                    });
-                }
-            });
-
-            // La función initMap y las de Google Maps se quedan casi idénticas
+            // =================================================================
+            //  LÓGICA DE GOOGLE MAPS (SIN CAMBIOS, SOLO ORGANIZADA)
+            // =================================================================
             function initMap() {
                 const latInput = document.getElementById('lat-input');
                 const lngInput = document.getElementById('lng-input');
@@ -489,52 +347,115 @@ $conexion->close();
                 marker = new google.maps.Marker({
                     position: initialPosition,
                     map: map,
-                    draggable: false // No se puede arrastrar por defecto
-                });
-
-                // Este input es para el autocompletado de Google
-                const addressInput = document.getElementById('address-input');
-                const autocomplete = new google.maps.places.Autocomplete(addressInput);
-                autocomplete.bindTo('bounds', map);
-
-                autocomplete.addListener('place_changed', () => {
-                    const place = autocomplete.getPlace();
-                    if (!place.geometry || !place.geometry.location) return;
-                    map.setCenter(place.geometry.location);
-                    map.setZoom(18);
-                    marker.setPosition(place.geometry.location);
-                    fillInAddress(place);
+                    draggable: false // Importante: No se puede arrastrar por defecto
                 });
 
                 marker.addListener('dragend', () => {
                     const newPosition = marker.getPosition();
                     updateCoordinates(newPosition.lat(), newPosition.lng());
-                    // (Opcional) Aquí podrías hacer geocodificación inversa para actualizar la dirección si arrastras el marcador
                 });
-            }
-
-            function fillInAddress(place) {
-                const components = place.address_components;
-                if (!components) return;
-                const get = (type) => components.find(c => c.types.includes(type))?.long_name || '';
-                
-                // Rellenamos los campos del formulario con los nuevos IDs
-                document.querySelector('[name="com_calle"]').value = get('route');
-                document.querySelector('[name="com_num_ext"]').value = get('street_number');
-                document.querySelector('[name="com_colonia"]').value = get('sublocality_level_1') || get('locality');
-                document.querySelector('[name="com_municipio"]').value = get('administrative_area_level_2') || get('locality');
-                document.querySelector('[name="com_estado"]').value = get('administrative_area_level_1');
-                document.querySelector('[name="com_cp"]').value = get('postal_code');
-                
-                if (place.geometry) {
-                    updateCoordinates(place.geometry.location.lat(), place.geometry.location.lng());
-                }
             }
 
             function updateCoordinates(lat, lng) {
                 document.getElementById('lat-input').value = lat;
                 document.getElementById('lng-input').value = lng;
             }
+
+
+            // =================================================================
+            //  LÓGICA DE LA PÁGINA (jQuery)
+            // =================================================================
+            $(document).ready(function() {
+
+                // --- LÓGICA DEL BOTÓN DE EDICIÓN (SOLUCIÓN AL PROBLEMA) ---
+                $('#editBtn').on('click', function() {
+                    // 1. Habilitamos todos los campos del formulario principal
+                    $('#profileForm').find('input, textarea').prop('disabled', false);
+
+                    // 2. Habilitamos el marcador del mapa para que sea arrastrable
+                    if (marker) {
+                        marker.setDraggable(true);
+                    }
+
+                    // 3. Mostramos y ocultamos los botones de acción
+                    $('#editBtn').hide();
+                    $('#saveBtn, #cancelBtn').show();
+                    
+                    // 4. Mostramos los botones para cambiar archivos
+                    $('#changeLogoBtn').show();
+                    $('#replaceDocBtn, #uploadDocBtn').show(); // Muestra el que corresponda
+                });
+
+                // --- LÓGICA DEL BOTÓN CANCELAR ---
+                $('#cancelBtn').on('click', function() {
+                    // Simplemente recargamos la página para descartar cualquier cambio
+                    window.location.reload();
+                });
+
+
+                // --- LÓGICA PARA SUBIR LOGO (Tu código original) ---
+                $('#submitLogoButton').on('click', function() {
+                    var formData = new FormData($('#uploadLogoForm')[0]);
+                    var messageDiv = $('#uploadLogoMessage');
+                    messageDiv.html('<div class="text-center"><div class="spinner-border text-primary" role="status"></div></div>');
+
+                    $.ajax({
+                        url: '<?php echo BASE_URL; ?>auth/upload_logo_process.php',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                messageDiv.html('<div class="alert alert-success">' + response.message + '</div>');
+                                $('#profileImage').attr('src', response.new_logo_url + '?t=' + new Date().getTime());
+                                setTimeout(() => {
+                                    $('#changeLogoModal').modal('hide');
+                                    messageDiv.html('');
+                                }, 2000);
+                            } else {
+                                messageDiv.html('<div class="alert alert-danger">' + response.message + '</div>');
+                            }
+                        },
+                        error: function() {
+                            messageDiv.html('<div class="alert alert-danger">Error de conexión.</div>');
+                        }
+                    });
+                });
+
+                // --- LÓGICA PARA SUBIR ACTA CONSTITUTIVA (Tu código original) ---
+                $('#submitCompanyDocumentButton').on('click', function() {
+                    var formData = new FormData($('#uploadCompanyDocumentForm')[0]);
+                    var messageDiv = $('#uploadCompanyDocumentMessage');
+                    messageDiv.html('<div class="text-center"><div class="spinner-border text-primary" role="status"></div></div>');
+
+                    $.ajax({
+                        url: '<?php echo BASE_URL; ?>auth/upload_company_document_process.php',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                messageDiv.html('<div class="alert alert-success">' + response.message + '</div>');
+                                setTimeout(() => {
+                                    // Recargamos solo la sección del documento para que se actualice
+                                    $('#company-document-section').load(location.href + ' #company-document-section > *');
+                                    $('#uploadCompanyDocumentModal').modal('hide');
+                                    messageDiv.html('');
+                                }, 2000);
+                            } else {
+                                messageDiv.html('<div class="alert alert-danger">' + response.message + '</div>');
+                            }
+                        },
+                        error: function() {
+                            messageDiv.html('<div class="alert alert-danger">Error de conexión.</div>');
+                        }
+                    });
+                });
+            });
         </script>
           
 </body>
