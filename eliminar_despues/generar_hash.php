@@ -4,7 +4,7 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 // La contraseña que quieres usar para el usuario de prueba
-$password_plano = 'super123';
+$password_plano = '1234';
 
 // Generar el hash seguro
 $hash_seguro = password_hash($password_plano, PASSWORD_DEFAULT);
