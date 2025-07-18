@@ -77,8 +77,8 @@ if (isset($_FILES['org_document_file']) && $_FILES['org_document_file']['error']
     $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);
     $new_file_name = 'doc_org_' . uniqid() . '_' . time() . '.' . $file_extension;
     // Creamos un directorio específico para estos documentos
-    $upload_path = '../uploads/documents_validation/' . $new_file_name; 
-    $db_path = 'uploads/documents_validation/' . $new_file_name;
+    $upload_path = '../uploads/documents_validation/org' . $new_file_name; 
+    $db_path = 'uploads/documents_validation/org/' . $new_file_name;
 
     // Mover el archivo al directorio de destino
     if (move_uploaded_file($file_tmp, $upload_path)) {

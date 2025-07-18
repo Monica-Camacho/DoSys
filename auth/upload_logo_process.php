@@ -35,7 +35,7 @@ if (isset($_FILES['logoFile']) && $_FILES['logoFile']['error'] == 0) {
         // --- INICIO DE LA LÓGICA DE SUBIDA Y ACTUALIZACIÓN ---
 
         // Preparamos la ruta y el nombre del archivo
-        $upload_dir = '../uploads/logos/';
+        $upload_dir = '../uploads/logos/emp/';
         if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0755, true);
         }
@@ -43,7 +43,7 @@ if (isset($_FILES['logoFile']) && $_FILES['logoFile']['error'] == 0) {
         $file_extension = pathinfo($_FILES['logoFile']['name'], PATHINFO_EXTENSION);
         $new_filename = 'logo_' . $usuario_id . '_' . uniqid() . '.' . $file_extension;
         $upload_path = $upload_dir . $new_filename;
-        $db_path = 'uploads/logos/' . $new_filename; // Ruta relativa para la BD
+        $db_path = 'uploads/logos/emp/' . $new_filename; // Ruta relativa para la BD
 
         // Iniciamos la transacción para asegurar la integridad de los datos
         $conexion->begin_transaction();

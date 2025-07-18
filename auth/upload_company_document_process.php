@@ -28,7 +28,7 @@ if (isset($_FILES['company_document_file']) && $_FILES['company_document_file'][
         $response['message'] = 'Error: El archivo no debe superar los 5 MB.';
     } else {
         // 2. Procesar y guardar el archivo
-        $upload_dir = '../uploads/company_validation/';
+        $upload_dir = '../uploads/documents_validation/org/';
         if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0755, true);
         }
@@ -39,7 +39,7 @@ if (isset($_FILES['company_document_file']) && $_FILES['company_document_file'][
 
         if (move_uploaded_file($_FILES['company_document_file']['tmp_name'], $upload_path)) {
             // 3. Guardar la ruta en la base de datos
-            $db_path = 'uploads/company_validation/' . $new_filename;
+            $db_path = '/uploads/documents_validation/org/' . $new_filename;
             $tipo_documento_id = 4; // ID para "DOC_VALIDACION_EMP" de tu tabla 'tipos_documento'
 
             $sql = "INSERT INTO documentos (propietario_id, tipo_documento_id, ruta_archivo, nombre_original) VALUES (?, ?, ?, ?)";

@@ -49,7 +49,7 @@ if (isset($_FILES['document_file']) && $_FILES['document_file']['error'] === UPL
 
         // 7. Definimos la carpeta de destino y la creamos si no existe
         // Usaremos una carpeta genérica para todos los documentos de validación
-        $upload_dir = '../uploads/documents_validation/';
+        $upload_dir = '../uploads/documents_validation/user/';
         if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0755, true);
         }
@@ -58,7 +58,7 @@ if (isset($_FILES['document_file']) && $_FILES['document_file']['error'] === UPL
         // 8. Movemos el archivo a su destino final
         if (move_uploaded_file($file['tmp_name'], $destination_path)) {
             
-            $db_path = 'uploads/documents_validation/' . $new_filename;
+            $db_path = 'uploads/documents_validation/user/' . $new_filename;
 
             $conexion->begin_transaction();
             

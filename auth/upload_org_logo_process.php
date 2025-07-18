@@ -76,8 +76,8 @@ if (isset($_FILES['logoFile']) && $_FILES['logoFile']['error'] === UPLOAD_ERR_OK
     // Generar un nombre de archivo único para evitar colisiones
     $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);
     $new_file_name = 'logo_org_' . uniqid() . '_' . time() . '.' . $file_extension;
-    $upload_path = '../uploads/logos/' . $new_file_name;
-    $db_path = 'uploads/logos/' . $new_file_name; // Ruta que se guardará en la BD
+    $upload_path = '../uploads/logos/org/' . $new_file_name;
+    $db_path = 'uploads/logos/org/' . $new_file_name; // Ruta que se guardará en la BD
 
     // Mover el archivo al directorio de destino
     if (move_uploaded_file($file_tmp, $upload_path)) {
