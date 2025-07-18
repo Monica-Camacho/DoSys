@@ -271,7 +271,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                 camposDispositivos.classList.remove('d-none');
                 tituloPagina.textContent = 'Solicitud de Dispositivos';
             } else {
-                // Opcional: si no hay categoría, mostrar un mensaje o redirigir a segmentos.html
+                // Opcional: si no hay categoría, mostrar un mensaje o redirigir a segmentos.php
                 tituloPagina.textContent = 'Crear Solicitud';
                 // Podrías mostrar un mensaje pidiendo que seleccionen una categoría primero.
             }

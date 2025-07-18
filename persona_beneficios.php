@@ -195,7 +195,7 @@ $beneficios_disponibles = [
                         <h4 class="alert-heading">¡Aún no tienes beneficios!</h4>
                         <p>Realiza una donación para empezar a recibir recompensas de nuestra increíble red de empresas aliadas.</p>
                         <hr>
-                        <a href="avisos.html" class="btn btn-primary">Ver Oportunidades de Donación</a>
+                        <a href="avisos.php" class="btn btn-primary">Ver Oportunidades de Donación</a>
                     </div>
                 </div>
             <?php endif; ?>

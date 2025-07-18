@@ -66,7 +66,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                     <h1 class='display-5 mb-0'>¡Hola, Usuario de DoSys!</h1>
                     <p class="fs-5 text-muted mb-0">Bienvenido a tu panel de control.</p>
                 </div>
-                <a href="segmentos.html" class="btn btn-primary rounded-pill py-2 px-4 d-none d-lg-block"><i class="fas fa-plus me-2"></i>Crear Nueva Solicitud</a>
+                <a href="segmentos.php" class="btn btn-primary rounded-pill py-2 px-4 d-none d-lg-block"><i class="fas fa-plus me-2"></i>Crear Nueva Solicitud</a>
             </div>
         </div>
     </div>
@@ -85,10 +85,10 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                             <h4 class="card-title mb-4">Acciones Rápidas</h4>
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <a href="segmentos.html" class="btn btn-success btn-lg w-100 py-3"><i class="fas fa-bullhorn me-2"></i>Crear Solicitud</a>
+                                    <a href="segmentos.php" class="btn btn-success btn-lg w-100 py-3"><i class="fas fa-bullhorn me-2"></i>Crear Solicitud</a>
                                 </div>
                                 <div class="col-md-6">
-                                    <a href="avisos.html" class="btn btn-info btn-lg w-100 py-3 text-white"><i class="fas fa-eye me-2"></i>Ver Avisos Urgentes</a>
+                                    <a href="avisos.php" class="btn btn-info btn-lg w-100 py-3 text-white"><i class="fas fa-eye me-2"></i>Ver Avisos Urgentes</a>
                                 </div>
                             </div>
                         </div>

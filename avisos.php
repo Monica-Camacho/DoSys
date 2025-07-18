@@ -72,7 +72,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                     <p class="fs-5 text-muted mb-0">Explora las solicitudes activas y encuentra una causa a la que puedas apoyar.</p>
                 </div>
                 <div class="text-center mt-4 mt-lg-0">
-                    <a href="segmentos.html" class="btn btn-success rounded-pill py-2 px-4"><i class="fas fa-plus me-2"></i>Solicitar Donación</a>
+                    <a href="segmentos.php" class="btn btn-success rounded-pill py-2 px-4"><i class="fas fa-plus me-2"></i>Solicitar Donación</a>
                 </div>
             </div>
 
