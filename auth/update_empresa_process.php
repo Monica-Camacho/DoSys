@@ -29,14 +29,12 @@ if ($rol_usuario !== 'Administrador') {
     exit;
 }
 
-
 // 2. RECEPCIÓN DE DATOS DEL FORMULARIO (POST)
 // =================================================================
-// Verificamos que los datos lleguen por el método POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Datos de la empresa
-    $empresa_id = $_POST['empresa_id']; // Necesitarás añadir este campo oculto en tu formulario
+    $empresa_id = $_POST['empresa_id'];
     $nombre_comercial = $_POST['nombre_comercial'];
     $razon_social = $_POST['razon_social'];
     $rfc = $_POST['rfc'];
@@ -64,12 +62,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // 3. ACTUALIZACIÓN EN BASE DE DATOS (CON TRANSACCIÓN)
     // =================================================================
     
-    // Iniciamos una transacción para asegurar que todas las consultas se ejecuten correctamente
     $conexion->begin_transaction();
     $error = false;
 
     try {
-        // --- Primero, obtenemos los IDs de dirección y representante ---
+        // Obtenemos los IDs de dirección y representante
         $stmt_ids = $conexion->prepare("SELECT direccion_comercial_id, representante_id FROM empresas_perfil WHERE id = ?");
         $stmt_ids->bind_param("i", $empresa_id);
         $stmt_ids->execute();
@@ -79,7 +76,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $representante_id = $ids['representante_id'];
         $stmt_ids->close();
 
-
         // --- UPDATE 1: Tabla 'empresas_perfil' ---
         $sql1 = "UPDATE empresas_perfil SET nombre_comercial = ?, razon_social = ?, rfc = ?, telefono_empresa = ?, descripcion = ? WHERE id = ?";
         $stmt1 = $conexion->prepare($sql1);
@@ -87,14 +83,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (!$stmt1->execute()) $error = true;
         $stmt1->close();
 
-        // --- UPDATE 2: Tabla 'direcciones' ---
-        if (!$error && $direccion_id) {
-            $sql2 = "UPDATE direcciones SET calle = ?, numero_exterior = ?, numero_interior = ?, colonia = ?, codigo_postal = ?, municipio = ?, estado = ?, latitud = ?, longitud = ? WHERE id = ?";
-            $stmt2 = $conexion->prepare($sql2);
-            $stmt2->bind_param("sssssssssi", $calle, $numero_exterior, $numero_interior, $colonia, $codigo_postal, $municipio, $estado, $latitud, $longitud, $direccion_id);
-            if (!$stmt2->execute()) $error = true;
-            $stmt2->close();
+        // =========================================================
+        // === INICIO DE LA LÓGICA PARA DIRECCIÓN (INSERT/UPDATE) ===
+        // =========================================================
+        if (!$error) {
+            if ($direccion_id) {
+                // Si la empresa YA TIENE una dirección, la ACTUALIZAMOS.
+                $stmt_dir = $conexion->prepare(
+                    "UPDATE direcciones SET calle = ?, numero_exterior = ?, numero_interior = ?, colonia = ?, codigo_postal = ?, municipio = ?, estado = ?, latitud = ?, longitud = ? WHERE id = ?"
+                );
+                $stmt_dir->bind_param("sssssssssi", $calle, $numero_exterior, $numero_interior, $colonia, $codigo_postal, $municipio, $estado, $latitud, $longitud, $direccion_id);
+                if (!$stmt_dir->execute()) $error = true;
+                $stmt_dir->close();
+            } else {
+                // Si la empresa NO TIENE una dirección, INSERTAMOS una nueva.
+                $stmt_dir = $conexion->prepare(
+                    "INSERT INTO direcciones (calle, numero_exterior, numero_interior, colonia, codigo_postal, municipio, estado, latitud, longitud) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                );
+                $stmt_dir->bind_param("sssssssss", $calle, $numero_exterior, $numero_interior, $colonia, $codigo_postal, $municipio, $estado, $latitud, $longitud);
+                if (!$stmt_dir->execute()) {
+                    $error = true;
+                } else {
+                    // Obtenemos el ID de la nueva dirección
+                    $new_direccion_id = $conexion->insert_id;
+                    $stmt_dir->close();
+
+                    // Y vinculamos este nuevo ID a la empresa
+                    $stmt_link = $conexion->prepare("UPDATE empresas_perfil SET direccion_comercial_id = ? WHERE id = ?");
+                    $stmt_link->bind_param("ii", $new_direccion_id, $empresa_id);
+                    if (!$stmt_link->execute()) $error = true;
+                    $stmt_link->close();
+                }
+            }
         }
+        // =========================================================
+        // === FIN DE LA LÓGICA PARA DIRECCIÓN ===
+        // =========================================================
 
         // --- UPDATE 3: Tabla 'representantes' ---
         if (!$error && $representante_id) {
@@ -107,10 +131,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // --- Finalizamos la transacción ---
         if ($error) {
-            $conexion->rollback(); // Si algo falló, revertimos todos los cambios
+            $conexion->rollback();
             header('Location: ' . BASE_URL . 'empresa_perfil.php?status=error');
         } else {
-            $conexion->commit(); // Si todo fue exitoso, guardamos los cambios
+            $conexion->commit();
             header('Location: ' . BASE_URL . 'empresa_perfil.php?status=success');
         }
 
@@ -123,7 +147,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     exit;
 
 } else {
-    // Si alguien intenta acceder a este archivo directamente, lo redirigimos
     header('Location: ' . BASE_URL . 'empresa_perfil.php');
     exit;
 }

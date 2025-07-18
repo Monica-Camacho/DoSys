@@ -2,16 +2,15 @@
 // 1. INICIALIZACIÓN Y SEGURIDAD
 // =================================================================
 require_once '../config.php';
-require_once '../conexion_local.php'; // Usamos tu variable de conexión $conexion
+require_once '../conexion_local.php';
 session_start();
 
-// Doble verificación: que el usuario esté logueado y que sea Administrador
+// Doble verificación de seguridad (logueado y rol de Administrador)
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header('Location: ' . BASE_URL . 'login.php');
     exit;
 }
 
-// Verificamos el rol del usuario directamente en la BD para máxima seguridad
 $usuario_id = $_SESSION['id'];
 $rol_usuario = '';
 $stmt_rol = $conexion->prepare("SELECT r.nombre FROM usuarios u JOIN roles r ON u.rol_id = r.id WHERE u.id = ?");
@@ -23,19 +22,17 @@ if ($fila_rol = $resultado_rol->fetch_assoc()) {
 }
 $stmt_rol->close();
 
-// Si no es Administrador, lo expulsamos.
 if ($rol_usuario !== 'Administrador') {
     header('Location: ' . BASE_URL . 'organizacion_perfil.php?status=unauthorized');
     exit;
 }
-
 
 // 2. RECEPCIÓN DE DATOS DEL FORMULARIO (POST)
 // =================================================================
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Datos de la organización
-    $organizacion_id = $_POST['organizacion_id']; // ID oculto del formulario
+    $organizacion_id = $_POST['organizacion_id'];
     $nombre_organizacion = $_POST['nombre_organizacion'];
     $cluni = $_POST['cluni'];
     $mision = $_POST['mision'];
@@ -61,12 +58,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // 3. ACTUALIZACIÓN EN BASE DE DATOS (CON TRANSACCIÓN)
     // =================================================================
     
-    // Iniciamos una transacción
     $conexion->begin_transaction();
     $error = false;
 
     try {
-        // --- Primero, obtenemos los IDs de dirección y representante de la organización ---
+        // Obtenemos los IDs existentes
         $stmt_ids = $conexion->prepare("SELECT direccion_id, representante_id FROM organizaciones_perfil WHERE id = ?");
         $stmt_ids->bind_param("i", $organizacion_id);
         $stmt_ids->execute();
@@ -83,16 +79,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (!$stmt1->execute()) $error = true;
         $stmt1->close();
 
-        // --- UPDATE 2: Tabla 'direcciones' ---
-        if (!$error && $direccion_id) {
-            $sql2 = "UPDATE direcciones SET calle = ?, numero_exterior = ?, numero_interior = ?, colonia = ?, codigo_postal = ?, municipio = ?, estado = ?, latitud = ?, longitud = ? WHERE id = ?";
-            $stmt2 = $conexion->prepare($sql2);
-            $stmt2->bind_param("sssssssssi", $calle, $numero_exterior, $numero_interior, $colonia, $codigo_postal, $municipio, $estado, $latitud, $longitud, $direccion_id);
-            if (!$stmt2->execute()) $error = true;
-            $stmt2->close();
-        }
+        // ==============================================================
+        // === INICIO DE LA LÓGICA CORREGIDA PARA DIRECCIÓN (INSERT/UPDATE) ===
+        // ==============================================================
+        if (!$error) {
+            if ($direccion_id) {
+                // Si la organización YA TIENE una dirección (direccion_id no es NULL), la ACTUALIZAMOS.
+                $stmt_dir = $conexion->prepare(
+                    "UPDATE direcciones SET calle = ?, numero_exterior = ?, numero_interior = ?, colonia = ?, codigo_postal = ?, municipio = ?, estado = ?, latitud = ?, longitud = ? WHERE id = ?"
+                );
+                $stmt_dir->bind_param("sssssssssi", $calle, $numero_exterior, $numero_interior, $colonia, $codigo_postal, $municipio, $estado, $latitud, $longitud, $direccion_id);
+                if (!$stmt_dir->execute()) $error = true;
+                $stmt_dir->close();
+            } else {
+                // Si la organización NO TIENE una dirección, INSERTAMOS una nueva.
+                $stmt_dir = $conexion->prepare(
+                    "INSERT INTO direcciones (calle, numero_exterior, numero_interior, colonia, codigo_postal, municipio, estado, latitud, longitud) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                );
+                $stmt_dir->bind_param("sssssssss", $calle, $numero_exterior, $numero_interior, $colonia, $codigo_postal, $municipio, $estado, $latitud, $longitud);
+                if (!$stmt_dir->execute()) {
+                    $error = true;
+                } else {
+                    // Obtenemos el ID de la nueva dirección creada
+                    $new_direccion_id = $conexion->insert_id;
+                    $stmt_dir->close();
 
-        // --- UPDATE 3: Tabla 'representantes' ---
+                    // Y ahora vinculamos este nuevo ID a la organización
+                    $stmt_link = $conexion->prepare("UPDATE organizaciones_perfil SET direccion_id = ? WHERE id = ?");
+                    $stmt_link->bind_param("ii", $new_direccion_id, $organizacion_id);
+                    if (!$stmt_link->execute()) $error = true;
+                    $stmt_link->close();
+                }
+            }
+        }
+        // ==============================================================
+        // === FIN DE LA LÓGICA CORREGIDA PARA DIRECCIÓN ===
+        // ==============================================================
+
+        // --- UPDATE 3: Tabla 'representantes' (esta lógica se mantiene igual) ---
         if (!$error && $representante_id) {
             $sql3 = "UPDATE representantes SET nombre = ?, apellido_paterno = ?, apellido_materno = ?, email = ?, telefono = ? WHERE id = ?";
             $stmt3 = $conexion->prepare($sql3);
@@ -103,16 +127,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // --- Finalizamos la transacción ---
         if ($error) {
-            $conexion->rollback(); // Si algo falló, revertimos todos los cambios
+            $conexion->rollback();
             header('Location: ' . BASE_URL . 'organizacion_perfil.php?status=error');
         } else {
-            $conexion->commit(); // Si todo fue exitoso, guardamos los cambios
+            $conexion->commit();
             header('Location: ' . BASE_URL . 'organizacion_perfil.php?status=success');
         }
 
     } catch (Exception $e) {
         $conexion->rollback();
-        // Para depuración: error_log($e->getMessage());
         header('Location: ' . BASE_URL . 'organizacion_perfil.php?status=exception');
     }
 
@@ -120,7 +143,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     exit;
 
 } else {
-    // Si alguien intenta acceder a este archivo directamente
     header('Location: ' . BASE_URL . 'organizacion_perfil.php');
     exit;
 }
