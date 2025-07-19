@@ -1,0 +1,119 @@
+¡Excelente! Aquí tienes el desglose detallado de ambos escenarios, desde la creación del aviso hasta su finalización, siguiendo la lógica que hemos definido.
+
+---
+
+### **Escenario A: Usuario "Persona" crea la solicitud y la asigna a una Organización**
+
+En este caso, un ciudadano (Juan) necesita ayuda para un donatario (un familiar) y confía en la organización "Manos que Ayudan" para gestionar la solicitud.
+
+#### **Paso 1: Creación del Aviso por Juan (Usuario Persona)**
+
+Juan inicia sesión y llena el formulario de "Crear Aviso".
+
+1.  **Registro del Donatario (si es externo):**
+    * **Tabla:** `donatarios`
+    * **Acción:** Se inserta una nueva fila con los datos del paciente.
+    * **Ejemplo:** `id: 78`, `nombre: "Laura"`, `apellido_paterno: "Gomez"`
+
+2.  **Creación del Aviso:**
+    * **Tabla:** `avisos`
+    * **Acción:** Se inserta la solicitud.
+    * **Datos Clave:**
+        * `titulo`: "Apoyo con pañales para adulto mayor"
+        * `descripcion`: "Se necesita apoyo para Laura Gomez, quien requiere pañales etapa 3."
+        * `creador_id`: **30** (ID de Juan)
+        * `organizacion_id`: **500** (ID de "Manos que Ayudan", que Juan seleccionó de una lista)
+        * `donatario_id`: **78** (ID de Laura, el nuevo donatario)
+        * `categoria_id`: **3** (Dispositivos)
+        * `estatus_id`: **1** (Pendiente de Validar)
+
+3.  **Especificación del Dispositivo:**
+    * **Tabla:** `solicitudes_dispositivos`
+    * **Acción:** Se detallan los requerimientos.
+    * **Ejemplo:** `aviso_id: 126`, `nombre_dispositivo: "Pañal para Adulto"`, `especificaciones: "Etapa 3 / Grande"`
+
+4.  **Subida de Documento (Opcional):**
+    * **Tabla:** `documentos` -> `avisos_documentos`
+    * **Acción:** Se sube un justificante y se enlaza al `aviso_id: 126`.
+
+**Resultado:** El aviso `126` ya existe en el sistema y está asignado a "Manos que Ayudan", esperando que un gestor de esa organización lo valide.
+
+---
+
+#### **Paso 2: Validación por la Organización**
+
+Un gestor de "Manos que Ayudan" (Ana) ve el aviso pendiente en su panel de control.
+
+1.  **Revisión y Aprobación:**
+    * **Tabla:** `avisos`
+    * **Acción:** Ana verifica la información y cambia el estado.
+    * **Ejemplo:** Se actualiza la fila con `id = 126` a `estatus_id: 2` (Activo).
+
+**Resultado:** El aviso ahora es público.
+
+---
+
+#### **Paso 3: Un Donante se Compromete**
+
+Un usuario "Persona" (Lulu) ve el aviso y decide ayudar.
+
+1.  **Registro del Compromiso:**
+    * **Tabla:** `donaciones`
+    * **Acción:** Se crea una nueva fila que enlaza a Lulu con el aviso.
+    * **Datos Clave:**
+        * `aviso_id`: **126**
+        * `donante_id`: **26** (ID de Lulu)
+        * `cantidad`: 1 (un paquete de pañales)
+        * `estatus_id`: **4** (Pendiente de Aprobación)
+
+**Resultado:** "Manos que Ayudan" es notificada de que Lulu se ha comprometido.
+
+---
+
+#### **Paso 4: Completado de la Solicitud**
+
+1.  **Confirmación de Entrega:**
+    * **Tabla:** `donaciones`
+    * **Acción:** Lulu entrega los pañales y Ana (la gestora) lo confirma en el sistema.
+    * **Ejemplo:** Se actualiza la fila de la donación de Lulu a `estatus_id: 6` (Recibido).
+
+2.  **Cierre del Aviso:**
+    * **Tabla:** `avisos`
+    * **Acción:** Como la cantidad requerida ya se cumplió, el sistema (o Ana) cierra el aviso.
+    * **Ejemplo:** Se actualiza la fila con `id = 126` a `estatus_id: 3` (Completado).
+
+**Resultado Final:** El ciclo se ha completado. El aviso pasa al historial.
+
+---
+---
+
+### **Escenario B: Empleado de Organización crea la solicitud internamente**
+
+En este caso, Ana, la gestora de "Manos que Ayudan", crea directamente un aviso para una campaña de su propia organización.
+
+#### **Paso 1: Creación del Aviso por Ana (Empleada de Org.)**
+
+Ana inicia sesión. El sistema sabe que ella pertenece a la organización con `id = 500`.
+
+1.  **Registro del Donatario (si es necesario):**
+    * **Tabla:** `donatarios`
+    * **Acción:** Si aplica, se registra un nuevo donatario. Si la campaña es general, este paso podría omitirse o usar un donatario genérico.
+    * **Ejemplo:** `id: 79`, `nombre: "Comunidad"`, `apellido_paterno: "General"`
+
+2.  **Creación del Aviso:**
+    * **Tabla:** `avisos`
+    * **Acción:** Se inserta la solicitud.
+    * **Datos Clave:**
+        * `titulo`: "Campaña de Invierno: Cobertores"
+        * `creador_id`: **10** (ID de Ana)
+        * `organizacion_id`: **500** (Este ID se asigna **automáticamente** por el sistema, ya que Ana pertenece a esta organización)
+        * `donatario_id`: **79** (ID del donatario "Comunidad General")
+        * `categoria_id`: **3** (Dispositivos)
+        * `estatus_id`: **1** (Pendiente de Validar)
+
+3.  **Especificación del Dispositivo:**
+    * **Tabla:** `solicitudes_dispositivos`
+    * **Acción:** Se detallan los requerimientos.
+    * **Ejemplo:** `aviso_id: 127`, `nombre_dispositivo: "Cobertor"`, `especificaciones: "Individual o matrimonial"`
+
+**Resultado:** El aviso `127` ya existe y está listo para ser validado internamente por la misma organización. El resto del flujo (Validación, Compromiso y Completado) es **exactamente el mismo** que en el Escenario A.
