@@ -79,16 +79,16 @@ $conexion->close();
         <?php require_once 'templates/navbar.php'; ?>
         <!-- Navbar End -->
 
-    <!-- Header Start -->
-    <div class="container-fluid bg-light py-5">
-        <div class="container">
-            <div>
-                <h1 class='display-5 mb-0'>Mapa de Puntos de Donación</h1>
-                <p class="fs-5 text-muted mb-0">Encuentra y filtra por bancos de sangre, organizaciones altruistas y bancos de medicamentos.</p>
+        <!-- Header Start -->
+        <div class="container-fluid bg-light py-5">
+            <div class="container">
+                <div>
+                    <h1 class='display-5 mb-0'>Mapa de Puntos de Donación</h1>
+                    <p class="fs-5 text-muted mb-0">Encuentra y filtra por bancos de sangre, organizaciones altruistas y bancos de medicamentos.</p>
+                </div>
             </div>
         </div>
-    </div>
-    <!-- Header End -->
+        <!-- Header End -->
 
         <div class="container-fluid py-5">
             <div class="container">
@@ -131,59 +131,30 @@ $conexion->close();
 
         <script>
             let map;
-            let infoWindow;
-            const marcadores = []; // Array para guardar los marcadores de las organizaciones
-            let userLocationMarker; // Variable para el marcador de la ubicación del usuario
+            let todosLosPuntos = []; // Tu variable global para guardar todos los datos
+            let marcadoresActuales = []; 
+            let userLocationMarker;
+            let infoWindow; 
 
             function initMap() {
                 const initialPos = { lat: 17.9869, lng: -92.9303 }; // Villahermosa
                 
                 map = new google.maps.Map(document.getElementById("map"), {
-                    zoom: 12,
-                    center: initialPos,
-                    mapTypeControl: false,
-                    streetViewControl: false
+                    zoom: 12, center: initialPos, mapTypeControl: false, streetViewControl: false
                 });
                 
                 infoWindow = new google.maps.InfoWindow();
 
-                const organizaciones = <?php echo $organizaciones_json; ?>;
-
-                organizaciones.forEach(org => {
-                    const marker = new google.maps.Marker({
-                        position: { lat: parseFloat(org.latitud), lng: parseFloat(org.longitud) },
-                        map: map,
-                        title: org.nombre_organizacion,
-                        categorias: org.categorias_ids ? org.categorias_ids.split(',') : [] 
-                    });
-
-                    const contentString = `
-                        <div style="font-family: 'DM Sans', sans-serif; max-width: 250px;">
-                            <h6 style="margin: 0 0 5px; font-weight: bold;">${org.nombre_organizacion}</h6>
-                            <p style="margin: 0; font-size: 14px;">${org.calle || ''} ${org.numero_exterior || ''}, ${org.colonia || ''}</p>
-                        </div>`;
-
-                    marker.addListener("click", () => {
-                        infoWindow.setContent(contentString);
-                        infoWindow.open(map, marker);
-                    });
-
-                    marcadores.push(marker);
-                });
-
-                // =========================================================
-                // INICIO DE LA MODIFICACIÓN: Se llama a la función de geolocalización
-                // =========================================================
+                // Leemos los datos desde PHP y los guardamos en tu variable global
+                todosLosPuntos = <?php echo $organizaciones_json; ?>;
+                
+                // Mostramos todos los puntos al cargar el mapa por primera vez
+                mostrarPuntos(todosLosPuntos);
+                
                 geolocalizarUsuario();
-                // =========================================================
-                // FIN DE LA MODIFICACIÓN
-                // =========================================================
             }
-
-            // =========================================================
-            // FUNCIÓN AÑADIDA: Geolocaliza al usuario
-            // =========================================================
-            // (Esta es tu función original, que está muy bien hecha)
+            
+            // Tu función para geolocalizar (se mantiene intacta)
             function geolocalizarUsuario() {
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
@@ -191,60 +162,74 @@ $conexion->close();
                             const userLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
                             map.setCenter(userLocation);
                             map.setZoom(14); 
-                            
                             if (userLocationMarker) userLocationMarker.setMap(null);
-
-                            // Icono SVG para el marcador del usuario
-                            const svgIcon = `
-                            <svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                                <g>
-                                    <circle cx="24" cy="24" r="22" fill="#06A3DA" stroke="#FFFFFF" stroke-width="2"/>
-                                    <g fill="#FFFFFF">
-                                        <circle cx="24" cy="18" r="7"/>
-                                        <path d="M14 38 C14 30, 34 30, 34 38 Z"/>
-                                    </g>
-                                </g>
-                            </svg>`;
-
+                            const svgIcon = `<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><g><circle cx="24" cy="24" r="22" fill="#06A3DA" stroke="#FFFFFF" stroke-width="2"/><g fill="#FFFFFF"><circle cx="24" cy="18" r="7"/><path d="M14 38 C14 30, 34 30, 34 38 Z"/></g></g></svg>`;
                             userLocationMarker = new google.maps.Marker({
-                                position: userLocation, 
-                                map: map, 
-                                title: "¡Estás aquí!",
-                                icon: {
-                                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svgIcon),
-                                    scaledSize: new google.maps.Size(48, 48),
-                                    anchor: new google.maps.Point(24, 24)
-                                },
+                                position: userLocation, map: map, title: "¡Estás aquí!",
+                                icon: { url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svgIcon), scaledSize: new google.maps.Size(48, 48), anchor: new google.maps.Point(24, 24) },
                             });
-                        },
-                        () => { 
-                            // El usuario denegó el permiso, el mapa se queda con la vista inicial.
                         }
                     );
                 }
             }
-            // =========================================================
-            // FIN DE LA FUNCIÓN AÑADIDA
-            // =========================================================
+            
+            // Tu función para agregar marcadores (modificada para usar los nuevos nombres de campos)
+            function agregarMarcador(punto) {
+                const contenidoInfoWindow = `
+                    <div style="font-family: 'DM Sans', sans-serif; max-width: 250px;">
+                        <h6 style="margin: 0 0 5px; font-weight: bold;">${punto.nombre_organizacion}</h6>
+                        <p style="margin: 0; font-size: 14px;">${punto.calle || ''} ${punto.numero_exterior || ''}, ${punto.colonia || ''}</p>
+                    </div>`;
+                
+                const marcador = new google.maps.Marker({
+                    position: { lat: parseFloat(punto.latitud), lng: parseFloat(punto.longitud) },
+                    map: map,
+                    title: punto.nombre_organizacion,
+                });
 
-            // Función para aplicar los filtros (sin cambios)
+                marcador.addListener("click", () => {
+                    infoWindow.close(); 
+                    infoWindow.setContent(contenidoInfoWindow);
+                    infoWindow.open(map, marcador);
+                });
+                marcadoresActuales.push(marcador);
+            }
+
+            // =========================================================
+            // FUNCIÓN DE FILTRADO (CORREGIDA A TU LÓGICA ORIGINAL)
+            // =========================================================
             function aplicarFiltros() {
                 const filtrosActivos = [];
                 document.querySelectorAll('.filter-checkbox:checked').forEach(checkbox => {
                     filtrosActivos.push(checkbox.value);
                 });
 
-                marcadores.forEach(marker => {
-                    if (filtrosActivos.length === 0) {
-                        marker.setVisible(true);
-                        return;
-                    }
-                    const coincide = marker.categorias.some(cat => filtrosActivos.includes(cat));
-                    marker.setVisible(coincide);
-                });
+                // 1. Filtramos el array de datos
+                const puntosFiltrados = (filtrosActivos.length === 0)
+                    ? todosLosPuntos // Si no hay filtros, usamos todos los puntos
+                    : todosLosPuntos.filter(punto => {
+                        const categoriasDelPunto = punto.categorias_ids ? punto.categorias_ids.split(',') : [];
+                        // La función .some() devuelve true si al menos una categoría coincide
+                        return categoriasDelPunto.some(cat => filtrosActivos.includes(cat));
+                    });
+                
+                // 2. Mostramos solo los puntos que pasaron el filtro
+                mostrarPuntos(puntosFiltrados);
             }
 
-            // Función para limpiar los filtros (sin cambios)
+            // Tu función para mostrar los puntos (sin cambios)
+            function mostrarPuntos(puntos) {
+                limpiarMarcadores();
+                puntos.forEach(punto => agregarMarcador(punto));
+            }
+
+            // Tu función para limpiar marcadores (sin cambios)
+            function limpiarMarcadores() {
+                marcadoresActuales.forEach(marcador => marcador.setMap(null));
+                marcadoresActuales = [];
+            }
+
+            // Tu función para limpiar filtros (sin cambios)
             function limpiarTodosLosFiltros() {
                 document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
                     checkbox.checked = false;
@@ -252,8 +237,6 @@ $conexion->close();
                 aplicarFiltros();
             }
         </script>
-
-        <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo Maps_API_KEY; ?>&callback=initMap" async defer></script>
 
 </body>
 </html>
