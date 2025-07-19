@@ -1,0 +1,93 @@
+ALTER TABLE `beneficiarios` RENAME TO `donatarios`;
+
+-- Primero, eliminamos la vieja relación para evitar errores
+ALTER TABLE `avisos` DROP FOREIGN KEY `fk_avisos_beneficiarios`;
+
+-- Luego, renombramos la columna
+ALTER TABLE `avisos` CHANGE `beneficiario_id` `donatario_id` INT(11) NOT NULL;
+
+-- Finalmente, creamos la nueva relación con la tabla 'donatarios'
+ALTER TABLE `avisos` ADD CONSTRAINT `fk_avisos_donatarios` FOREIGN KEY (`donatario_id`) REFERENCES `donatarios` (`id`);
+
+ALTER TABLE `donatarios`
+ADD COLUMN `usuario_id` INT(11) NULL DEFAULT NULL AFTER `id`,
+ADD INDEX `fk_donatarios_usuarios_idx` (`usuario_id` ASC);
+
+ALTER TABLE `donatarios`
+ADD CONSTRAINT `fk_donatarios_usuarios`
+  FOREIGN KEY (`usuario_id`)
+  REFERENCES `usuarios` (`id`)
+  ON DELETE SET NULL
+  ON UPDATE NO ACTION;
+
+ALTER TABLE `donaciones`
+ADD COLUMN `cantidad` INT NOT NULL DEFAULT 1 AFTER `donante_id`;
+
+¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡
+
+
+
+-- Iniciamos la transacción para asegurar que todo se guarde correctamente.
+START TRANSACTION;
+
+-- =================================================================
+-- PASO 1: CREACIÓN DE LA SOLICITUD
+-- =================================================================
+
+-- 1.1 Se registra el donatario externo.
+INSERT INTO `donatarios` (`usuario_id`, `nombre`, `apellido_paterno`, `apellido_materno`)
+VALUES (NULL, 'Ricardo', 'Montalban', 'Gomez');
+SET @nuevo_donatario_id = LAST_INSERT_ID();
+
+-- 1.2 Se crea el aviso.
+INSERT INTO `avisos` (`titulo`, `descripcion`, `creador_id`, `organizacion_id`, `donatario_id`, `contacto_responsable_id`, `categoria_id`, `urgencia_id`, `estatus_id`, `fecha_creacion`)
+VALUES ('URGENTE - Donadores O+ para Ricardo Montalban', 'Se solicitan 4 unidades de sangre O+.', 3, 3, @nuevo_donatario_id, 3, 1, 4, 1, NOW());
+SET @nuevo_aviso_id = LAST_INSERT_ID();
+
+-- 1.3 Se especifican las 4 unidades de sangre requeridas.
+INSERT INTO `solicitudes_sangre` (`aviso_id`, `tipo_sangre_id`, `unidades_requeridas`)
+VALUES (@nuevo_aviso_id, 7, 4);
+
+-- =================================================================
+-- PASO 2: VALIDACIÓN DEL AVISO
+-- =================================================================
+
+UPDATE `avisos` SET `estatus_id` = 2 WHERE `id` = @nuevo_aviso_id;
+
+-- =================================================================
+-- PASO 3: LOS DONANTES SE COMPROMETEN
+-- =================================================================
+
+-- El usuario ID=20 se compromete a donar 2 unidades.
+-- CORRECCIÓN: 'estatus_id' ahora es 1 (Pendiente de Aprobación).
+INSERT INTO `donaciones` (`aviso_id`, `donante_id`, `cantidad`, `estatus_id`, `fecha_compromiso`)
+VALUES (@nuevo_aviso_id, 20, 2, 1, NOW());
+SET @donacion1_id = LAST_INSERT_ID();
+
+-- El usuario ID=21 se compromete a donar las otras 2 unidades.
+-- CORRECCIÓN: 'estatus_id' ahora es 1 (Pendiente de Aprobación).
+INSERT INTO `donaciones` (`aviso_id`, `donante_id`, `cantidad`, `estatus_id`, `fecha_compromiso`)
+VALUES (@nuevo_aviso_id, 21, 2, 1, NOW());
+SET @donacion2_id = LAST_INSERT_ID();
+
+-- =================================================================
+-- PASO 4: SE COMPLETA LA SOLICITUD
+-- =================================================================
+
+-- La organización confirma la recepción de ambas donaciones.
+-- CORRECCIÓN: 'estatus_id' ahora es 3 (Recibido).
+UPDATE `donaciones` SET `estatus_id` = 3 WHERE `id` IN (@donacion1_id, @donacion2_id);
+
+-- El aviso se marca como completado.
+UPDATE `avisos` SET `estatus_id` = 3 WHERE `id` = @nuevo_aviso_id;
+
+-- Guardamos todos los cambios.
+COMMIT;
+
+
+
+
+
+
+
+
