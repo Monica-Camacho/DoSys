@@ -1,25 +1,39 @@
 <?php
-require_once 'config.php'; // Incluye la configuración y la URL base.
-require_once 'conexion_local.php'; 
-// Inicia la sesión.
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/conexion_local.php';
+// Incluimos el archivo que contiene la función
+require_once __DIR__ . '/auth/ubicaciones_handler.php'; 
+
 session_start();
 
-// Muestra una alerta si hay un error en el inicio de sesión.
 if (isset($_GET['error']) && $_GET['error'] == 1) {
     echo "<script>alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');</script>";
 }
 
-// 1. Obtener la lista de organizaciones para que el usuario elija quién gestionará su aviso
-$organizaciones = [];
-$sql_orgs = "SELECT id, nombre_organizacion FROM organizaciones_perfil ORDER BY nombre_organizacion ASC";
-$resultado_orgs = $conexion->query($sql_orgs);
-if ($resultado_orgs) {
-    while ($fila = $resultado_orgs->fetch_assoc()) {
-        $organizaciones[] = $fila;
+// =========================================================
+// INICIO DE LA CORRECCIÓN
+// =========================================================
+
+// 1. Llamamos a la función con su NOMBRE CORRECTO para obtener TODAS las organizaciones
+$todas_las_organizaciones = obtener_organizaciones_con_categorias($conexion);
+
+// 2. Filtramos la lista en PHP para quedarnos solo con las de SANGRE (categoría 1)
+$organizaciones_filtradas = [];
+foreach ($todas_las_organizaciones as $org) {
+    // Convertimos el string de categorías (ej: "1,3") en un array (ej: [1, 3])
+    $categorias_de_la_org = explode(',', $org['categorias_ids']);
+    
+    // Si el '1' está en el array de categorías de la organización, la añadimos a nuestra lista filtrada
+    if (in_array('1', $categorias_de_la_org)) {
+        $organizaciones_filtradas[] = $org;
     }
 }
+// =========================================================
+// FIN DE LA CORRECCIÓN
+// =========================================================
 
-// 2. Obtener los tipos de sangre
+
+// Obtenemos los tipos de sangre (esta parte no cambia)
 $tipos_sangre = [];
 $sql_sangre = "SELECT id, nombre FROM tipos_sangre ORDER BY nombre ASC";
 $resultado_sangre = $conexion->query($sql_sangre);
@@ -28,8 +42,6 @@ if ($resultado_sangre) {
         $tipos_sangre[] = $fila;
     }
 }
-$conexion->close();
-
 ?>
 
 <!DOCTYPE html>
@@ -82,126 +94,151 @@ $conexion->close();
         <?php require_once 'templates/navbar.php'; ?>
         <!-- Navbar End -->
 
-    <!-- Header Start -->
-    <div class="container-fluid bg-light py-5">
-        <div class="container">
-            <div>
-                <h1 class='display-5 mb-0'>Crear Solicitud</h1>
-                <p class="fs-5 text-muted mb-0">Completa la siguiente información para validar tu caso.</p>
+        <!-- Header Start -->
+        <div class="container-fluid bg-light py-5">
+            <div class="container">
+                <div>
+                    <h1 class='display-5 mb-0'>Crear Solicitud</h1>
+                    <p class="fs-5 text-muted mb-0">Completa la siguiente información para validar tu caso.</p>
+                </div>
             </div>
         </div>
-    </div>
-    <!-- Header End -->
+        <!-- Header End -->
 
-    <!-- Request Form Content Start -->
-    <div class="container-fluid py-5">
-        <div class="container">
-<form class="row g-5" action="auth/crear_aviso_process.php" method="POST" enctype="multipart/form-data">
-    <div class="col-lg-7">
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body p-4">
-                <h5 class="card-title mb-4">1. ¿Qué se necesita?</h5>
-                <div class="row g-3">
-                    <div class="col-12">
-                        <label for="titulo" class="form-label">Título del Aviso</label>
-                        <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Ej: Donadores de Sangre O+ para cirugía" required>
+        <!-- Request Form Content Start -->
+        <div class="container-fluid py-5">
+            <div class="container">
+                <form class="row g-5" action="auth/crear_aviso_process.php" method="POST" enctype="multipart/form-data">
+                    <div class="col-lg-7">
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-body p-4">
+                                <h5 class="card-title mb-4">1. ¿Qué se necesita?</h5>
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label for="titulo" class="form-label">Título del Aviso</label>
+                                        <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Ej: Donadores de Sangre O+ para cirugía" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="urgencia" class="form-label">Nivel de Urgencia</label>
+                                        <select id="urgencia" name="urgencia_id" class="form-select" required>
+                                            <option value="1">Baja</option>
+                                            <option value="2">Media</option>
+                                            <option value="3">Alta</option>
+                                            <option value="4">Crítica</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div id="campos-sangre" class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="tipoSangre" class="form-label">Tipo de Sangre</label>
+                                            <select id="tipoSangre" name="tipo_sangre_id" class="form-select" required>
+                                                <option value="">Selecciona un tipo...</option>
+                                                <?php foreach ($tipos_sangre as $tipo): ?>
+                                                    <option value="<?php echo $tipo['id']; ?>"><?php echo htmlspecialchars($tipo['nombre']); ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="unidades" class="form-label">Unidades Requeridas</label>
+                                            <input type="number" class="form-control" id="unidades" name="unidades_requeridas" placeholder="Ej: 4" min="1" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-body p-4">
+                                <h5 class="card-title mb-4">2. ¿Para quién es la ayuda?</h5>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="soy_donatario">
+                                    <label class="form-check-label" for="soy_donatario">
+                                        La ayuda es para mí (el donatario soy yo).
+                                    </label>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="donatario_nombre" class="form-label">Nombre(s) del Donatario</label>
+                                        <input type="text" class="form-control" id="donatario_nombre" name="donatario_nombre" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="donatario_apellidos" class="form-label">Apellidos del Donatario</label>
+                                        <input type="text" class="form-control" id="donatario_apellidos" name="donatario_apellidos" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body p-4">
+                                <h5 class="card-title mb-4">3. Justificación</h5>
+                                <div class="col-12">
+                                    <label for="descripcion" class="form-label">Descripción Detallada de la Situación</label>
+                                    <textarea class="form-control" id="descripcion" name="descripcion" rows="4" placeholder="Explica brevemente por qué necesitas la ayuda..." required></textarea>
+                                </div>
+                                <div class="col-12 mt-3">
+                                    <label for="documento" class="form-label">Documento Médico de Soporte (Indispensable)</label>
+                                    <input type="file" class="form-control" id="documento" name="documento" required accept="application/pdf,image/jpeg,image/png">
+                                    <small class="form-text text-muted">Sube la solicitud del hospital o la receta médica.</small>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label for="urgencia" class="form-label">Nivel de Urgencia</label>
-                        <select id="urgencia" name="urgencia_id" class="form-select" required>
-                            <option value="1">Baja</option>
-                            <option value="2">Media</option>
-                            <option value="3">Alta</option>
-                            <option value="4">Crítica</option>
-                        </select>
+
+<div class="col-lg-5">
+    <div class="card border-0 shadow-sm" style="position: sticky; top: 20px;">
+        <div class="card-body p-4">
+            <h5 class="card-title mb-4">4. Organización Gestora</h5>
+            <p class="text-muted">Selecciona la organización de confianza que se encargará de validar y gestionar tu solicitud.</p>
+            <div class="mb-3">
+                <label for="organizacion" class="form-label">Organización Responsable</label>
+                <select id="organizacion" name="organizacion_id" class="form-select" required>
+                    <option value="">Selecciona una organización...</option>
+                    
+                    <?php foreach ($organizaciones_filtradas as $org): ?>
+                        <option value="<?php echo $org['id']; ?>"><?php echo htmlspecialchars($org['nombre_organizacion']); ?></option>
+                    <?php endforeach; ?>
+                    </select>
+            </div>
+            <hr>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="terminos" required>
+                <label class="form-check-label" for="terminos">
+                    Acepto los <a href="#">términos y condiciones</a> y confirmo que la información es verídica.
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 p-3">Enviar Solicitud para Validación</button>
+        </div>
+    </div>
+</div>                        <div class="card border-0 shadow-sm" style="position: sticky; top: 20px;">
+                            <div class="card-body p-4">
+                                <h5 class="card-title mb-4">4. Organización Gestora</h5>
+                                <p class="text-muted">Selecciona la organización de confianza que se encargará de validar y gestionar tu solicitud.</p>
+                                <div class="mb-3">
+                                    <label for="organizacion" class="form-label">Organización Responsable</label>
+                                    <select id="organizacion" name="organizacion_id" class="form-select" required>
+                                        <option value="">Selecciona una organización...</option>
+                                        <?php foreach ($organizaciones as $org): ?>
+                                            <option value="<?php echo $org['id']; ?>"><?php echo htmlspecialchars($org['nombre_organizacion']); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <hr>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="terminos" required>
+                                    <label class="form-check-label" for="terminos">
+                                        Acepto los <a href="#">términos y condiciones</a> y confirmo que la información es verídica.
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 p-3">Enviar Solicitud para Validación</button>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div id="campos-sangre" class="row g-3">
-                        <div class="col-md-6">
-                            <label for="tipoSangre" class="form-label">Tipo de Sangre</label>
-                            <select id="tipoSangre" name="tipo_sangre_id" class="form-select" required>
-                                <option value="">Selecciona un tipo...</option>
-                                <?php foreach ($tipos_sangre as $tipo): ?>
-                                    <option value="<?php echo $tipo['id']; ?>"><?php echo htmlspecialchars($tipo['nombre']); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="unidades" class="form-label">Unidades Requeridas</label>
-                            <input type="number" class="form-control" id="unidades" name="unidades_requeridas" placeholder="Ej: 4" min="1" required>
-                        </div>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
-
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body p-4">
-                <h5 class="card-title mb-4">2. ¿Para quién es la ayuda?</h5>
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" id="soy_donatario">
-                    <label class="form-check-label" for="soy_donatario">
-                        La ayuda es para mí (el donatario soy yo).
-                    </label>
-                </div>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="donatario_nombre" class="form-label">Nombre(s) del Donatario</label>
-                        <input type="text" class="form-control" id="donatario_nombre" name="donatario_nombre" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="donatario_apellidos" class="form-label">Apellidos del Donatario</label>
-                        <input type="text" class="form-control" id="donatario_apellidos" name="donatario_apellidos" required>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-         <div class="card border-0 shadow-sm">
-            <div class="card-body p-4">
-                <h5 class="card-title mb-4">3. Justificación</h5>
-                 <div class="col-12">
-                    <label for="descripcion" class="form-label">Descripción Detallada de la Situación</label>
-                    <textarea class="form-control" id="descripcion" name="descripcion" rows="4" placeholder="Explica brevemente por qué necesitas la ayuda..." required></textarea>
-                </div>
-                <div class="col-12 mt-3">
-                    <label for="documento" class="form-label">Documento Médico de Soporte (Indispensable)</label>
-                    <input type="file" class="form-control" id="documento" name="documento" required accept="application/pdf,image/jpeg,image/png">
-                    <small class="form-text text-muted">Sube la solicitud del hospital o la receta médica.</small>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-5">
-        <div class="card border-0 shadow-sm" style="position: sticky; top: 20px;">
-            <div class="card-body p-4">
-                <h5 class="card-title mb-4">4. Organización Gestora</h5>
-                <p class="text-muted">Selecciona la organización de confianza que se encargará de validar y gestionar tu solicitud.</p>
-                <div class="mb-3">
-                    <label for="organizacion" class="form-label">Organización Responsable</label>
-                    <select id="organizacion" name="organizacion_id" class="form-select" required>
-                        <option value="">Selecciona una organización...</option>
-                        <?php foreach ($organizaciones as $org): ?>
-                            <option value="<?php echo $org['id']; ?>"><?php echo htmlspecialchars($org['nombre_organizacion']); ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <hr>
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" id="terminos" required>
-                    <label class="form-check-label" for="terminos">
-                        Acepto los <a href="#">términos y condiciones</a> y confirmo que la información es verídica.
-                    </label>
-                </div>
-                <button type="submit" class="btn btn-primary w-100 p-3">Enviar Solicitud para Validación</button>
-            </div>
-        </div>
-    </div>
-</form>
-        </div>
-    </div>
-    <!-- Request Form Content End -->
+        <!-- Request Form Content End -->
         
         <!-- Footer Start -->
         <?php require_once 'templates/footer.php'; ?>
