@@ -120,7 +120,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                             <p class="fs-5 fw-medium text-white mb-4 pb-2">Tu donación puede salvar vidas. Ayuda a quienes más lo necesitan.</p>
                             <div class="d-flex gap-4 justify-content-center">
                                 <a href="crear_donacion_persona.php?categoria=sangre" class="btn btn-primary btn-lg rounded-pill px-4">Ser Donante</a>
-                                <a href="crear_aviso_persona.php?categoria=sangre" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Donante</a>
+                                <a href="avisos_crear.php?categoria=sangre" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Donante</a>
                             </div>
                         </div>
                     </div>
@@ -137,7 +137,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                             <p class="fs-5 fw-medium text-white mb-4 pb-2">Dona medicamentos que ya no necesites y ayuda a un tratamiento.</p>
                             <div class="d-flex gap-4 justify-content-center">
                                 <a href="crear_donacion_persona.php?categoria=medicamentos" class="btn btn-primary btn-lg rounded-pill px-4">Donar Medicamentos</a>
-                                <a href="crear_aviso_persona.php?categoria=medicamentos" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Medicamentos</a>
+                                <a href="avisos_crear.php?categoria=medicamentos" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Medicamentos</a>
                             </div>
                         </div>
                     </div>
@@ -154,7 +154,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                             <p class="fs-5 fw-medium text-white mb-4 pb-2">Mejora la calidad de vida de alguien donando un dispositivo médico.</p>
                             <div class="d-flex gap-4 justify-content-center">
                                 <a href="crear_donacion_persona.php?categoria=dispositivos" class="btn btn-primary btn-lg rounded-pill px-4">Donar Dispositivo</a>
-                                <a href="crear_aviso_persona.php?categoria=dispositivos" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Dispositivo</a>
+                                <a href="avisos_crear.php?categoria=dispositivos" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Dispositivo</a>
                             </div>
                         </div>
                     </div>

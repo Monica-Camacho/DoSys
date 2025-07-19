@@ -1,0 +1,30 @@
+-- =================================================================
+-- PASO 1: CREAR LA NUEVA TABLA INTERMEDIA
+-- =================================================================
+-- Esta tabla actuará como un puente entre las organizaciones y las
+-- categorías de donación que manejan.
+CREATE TABLE `organizaciones_x_categorias` (
+  `organizacion_id` INT(11) NOT NULL,
+  `categoria_id` INT(11) NOT NULL,
+  PRIMARY KEY (`organizacion_id`, `categoria_id`),
+  INDEX `fk_org_cat_categorias_idx` (`categoria_id` ASC),
+  CONSTRAINT `fk_org_cat_organizaciones`
+    FOREIGN KEY (`organizacion_id`)
+    REFERENCES `organizaciones_perfil` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_org_cat_categorias`
+    FOREIGN KEY (`categoria_id`)
+    REFERENCES `categorias_donacion` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION
+);
+
+-- =================================================================
+-- PASO 2: CREAR UN SOLO REGISTRO DE EJEMPLO
+-- =================================================================
+-- Aquí vinculamos a la organización "Cruz Verde" (que tiene el ID 3)
+-- con la categoría "Sangre" (que tiene el ID 1).
+-- Esto "etiqueta" a Cruz Verde como una organización que gestiona donaciones de sangre.
+INSERT INTO `organizaciones_x_categorias` (`organizacion_id`, `categoria_id`)
+VALUES (3, 1);
