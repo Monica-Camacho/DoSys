@@ -15,7 +15,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
 // Obtenemos TODAS las organizaciones con sus categorías
 $todas_las_organizaciones = obtener_organizaciones_con_categorias($conexion);
 
-// Filtramos solo las de SANGRE (categoría 1) para el menú y el mapa
+// Filtramos solo las de MEDICAMENTOS (categoría 2) para el menú y el mapa
 $organizaciones_filtradas = [];
 foreach ($todas_las_organizaciones as $org) {
     $categorias_de_la_org = explode(',', $org['categorias_ids']);

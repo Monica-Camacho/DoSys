@@ -154,7 +154,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                             <p class="fs-5 fw-medium text-white mb-4 pb-2">Mejora la calidad de vida de alguien donando un dispositivo médico.</p>
                             <div class="d-flex gap-4 justify-content-center">
                                 <a href="crear_donacion_persona.php?categoria=dispositivos" class="btn btn-primary btn-lg rounded-pill px-4">Donar Dispositivo</a>
-                                <a href="avisos_crear_dispositivos.php" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Dispositivo</a>
+                                <a href="avisos_crear_dispositivo.php" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Dispositivo</a>
                             </div>
                         </div>
                     </div>

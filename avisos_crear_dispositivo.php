@@ -15,11 +15,11 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
 // Obtenemos TODAS las organizaciones con sus categorías
 $todas_las_organizaciones = obtener_organizaciones_con_categorias($conexion);
 
-// Filtramos solo las de SANGRE (categoría 1) para el menú y el mapa
+// Filtramos solo las de DISPOSITIVOS (categoría 3) para el menú y el mapa
 $organizaciones_filtradas = [];
 foreach ($todas_las_organizaciones as $org) {
     $categorias_de_la_org = explode(',', $org['categorias_ids']);
-    if (in_array('2', $categorias_de_la_org)) {
+    if (in_array('3', $categorias_de_la_org)) {
         $organizaciones_filtradas[] = $org;
     }
 }
@@ -83,7 +83,7 @@ if ($resultado_urgencia) {
     <div class="container-fluid bg-light py-5">
         <div class="container">
             <div>
-                <h1 class='display-5 mb-0'>Crear Solicitud de Medicamentos</h1>
+                <h1 class='display-5 mb-0'>Crear Solicitud de Dispositivo de Asistencia</h1>
                 <p class="fs-5 text-muted mb-0">Completa la siguiente información para validar tu caso.</p>
             </div>
         </div>
@@ -92,7 +92,7 @@ if ($resultado_urgencia) {
     <!-- Contenido del Formulario -->
     <div class="container-fluid py-5">
         <div class="container">
-            <form class="row g-5" action="auth/crear_aviso_medicamento_process.php" method="POST" enctype="multipart/form-data">
+            <form class="row g-5" action="auth/crear_aviso_dispositivo_process.php" method="POST" enctype="multipart/form-data">
                 
                 <!-- Columna Izquierda: Datos del Paciente y de la Solicitud -->
                 <div class="col-lg-6">
@@ -129,7 +129,7 @@ if ($resultado_urgencia) {
                         <div class="card-body p-4">
                             <h5 class="card-title mb-4">2. Datos de la Solicitud</h5>
                             <div class="row g-3">
-                                <div class="col-12"><label for="titulo" class="form-label">Título del Aviso</label><input type="text" class="form-control" id="titulo" name="titulo" placeholder="Ej: Solicitud de Insulina" required></div>
+                                <div class="col-12"><label for="titulo" class="form-label">Título del Aviso</label><input type="text" class="form-control" id="titulo" name="titulo" placeholder="Ej: Solicitud de Silla de Ruedas" required></div>
                                 <div class="col-12"><label for="descripcion" class="form-label">Descripción Breve</label><textarea class="form-control" id="descripcion" name="descripcion" rows="3" placeholder="Explica brevemente la situación y para qué se necesita la ayuda." required></textarea></div>
                                 <div class="col-md-6"><label for="urgencia" class="form-label">Nivel de Urgencia</label><select id="urgencia" name="urgencia_id" class="form-select" required><option value="">Selecciona un nivel...</option><?php foreach ($urgencia_niveles as $nivel): ?><option value="<?php echo $nivel['id']; ?>"><?php echo htmlspecialchars($nivel['nombre']); ?></option><?php endforeach; ?></select></div>
                             </div>
@@ -143,29 +143,24 @@ if ($resultado_urgencia) {
                             <div class="row g-3">
 
                                 <div class="col-md-6">
-                                    <label for="nombre_medicamento" class="form-label">Nombre del Medicamento</label>
-                                    <input type="text" class="form-control" id="nombre_medicamento" name="nombre_medicamento" placeholder="Ej: Paracetamol" required>
+                                    <label for="nombre_dispositivo" class="form-label">Nombre del Dispositivo</label>
+                                    <input type="text" class="form-control" id="nombre_dispositivo" name="nombre_dispositivo" placeholder="Ej: Silla de ruedas" required>
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label for="dosis" class="form-label">Dosis</label>
-                                    <input type="text" class="form-control" id="dosis" name="dosis" placeholder="Ej: 500 mg" required>
+                                    <label for="especificaciones" class="form-label">Especificaciones</label>
+                                    <input type="text" class="form-control" id="especificaciones" name="especificaciones" placeholder="Ej: Pediátrica, plegable" required>
                                 </div>
 
-                                <div class="col-md-6">
-                                    <label for="presentacion" class="form-label">Presentación</label>
-                                    <input type="text" class="form-control" id="presentacion" name="presentacion" placeholder="Ej: Caja con 20 tabletas" required>
-                                </div>
-
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <label for="cantidad_requerida" class="form-label">Cantidad Requerida</label>
-                                    <input type="number" class="form-control" id="cantidad_requerida" name="cantidad_requerida" placeholder="Ej: 2" min="1" required>
+                                    <input type="number" class="form-control" id="cantidad_requerida" name="cantidad_requerida" placeholder="Ej: 1" min="1" required>
                                 </div>
                                 
                                 <div class="col-12 mt-3">
-                                    <label for="documento" class="form-label">Receta Médica (Indispensable)</label>
+                                    <label for="documento" class="form-label">Receta o Justificación Médica (Indispensable)</label>
                                     <input type="file" class="form-control" id="documento" name="documento" required accept="application/pdf,image/jpeg,image/png">
-                                    <small class="form-text text-muted">Sube la receta que valide la solicitud.</small>
+                                    <small class="form-text text-muted">Sube el documento que valide la solicitud del dispositivo.</small>
                                 </div>
 
                             </div>

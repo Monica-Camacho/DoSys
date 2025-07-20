@@ -29,7 +29,7 @@ $titulo = trim($_POST['titulo']);
 $descripcion = trim($_POST['descripcion']);
 $urgencia_id = (int)$_POST['urgencia_id'];
 $organizacion_id = (int)$_POST['organizacion_id'];
-$categoria_id = 2; // Fijo para Medicamentos en este formulario.
+$categoria_id = 3; // Fijo para DISPOSITIVOS en este formulario.
 
 // --- Datos específicos de la Solicitud de Medicamento ---
 $nombre_medicamento = trim($_POST['nombre_medicamento']);
@@ -59,8 +59,8 @@ try {
             $donatario_id = $res_find->fetch_assoc()['id'];
         } else {
             // --- INICIO DE LA CORRECCIÓN ---
-            // Buscamos el perfil de persona del usuario que está creando el aviso.
-            $stmt_get_user = $conexion->prepare("SELECT nombre, apellido_paterno, apellido_materno, fecha_nacimiento, sexo FROM personas_perfil WHERE usuario_id = ?");
+            // Buscamos el perfil de persona del usuario, incluyendo el tipo de sangre.
+            $stmt_get_user = $conexion->prepare("SELECT nombre, apellido_paterno, apellido_materno, fecha_nacimiento, sexo, tipo_sangre_id FROM personas_perfil WHERE usuario_id = ?");
             $stmt_get_user->bind_param("i", $creador_id);
             $stmt_get_user->execute();
             $user_data = $stmt_get_user->get_result()->fetch_assoc();
@@ -71,8 +71,12 @@ try {
             }
             // --- FIN DE LA CORRECCIÓN ---
 
-            $stmt_insert_don = $conexion->prepare("INSERT INTO donatarios (usuario_id, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, sexo) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt_insert_don->bind_param("isssss", $creador_id, $user_data['nombre'], $user_data['apellido_paterno'], $user_data['apellido_materno'], $user_data['fecha_nacimiento'], $user_data['sexo']);
+            // Preparamos la inserción en la tabla 'donatarios', incluyendo el nuevo campo.
+            $stmt_insert_don = $conexion->prepare("INSERT INTO donatarios (usuario_id, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, sexo, tipo_sangre_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            
+            // Vinculamos todos los parámetros, incluyendo tipo_sangre_id (asumiendo que es un entero 'i').
+            $stmt_insert_don->bind_param("isssssi", $creador_id, $user_data['nombre'], $user_data['apellido_paterno'], $user_data['apellido_materno'], $user_data['fecha_nacimiento'], $user_data['sexo'], $user_data['tipo_sangre_id']);
+            
             $stmt_insert_don->execute();
             $donatario_id = $conexion->insert_id;
         }
