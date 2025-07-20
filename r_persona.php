@@ -38,6 +38,27 @@ session_start();
 
         <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
+        
+        <!-- Estilos para el icono del ojo y mensaje de error -->
+        <style>
+            .password-container {
+                position: relative;
+            }
+            .toggle-password {
+                position: absolute;
+                top: 50%;
+                right: 15px;
+                transform: translateY(-50%);
+                cursor: pointer;
+                color: #6c757d;
+            }
+            /* Estilo para el mensaje de error de contraseña */
+            .password-error-message {
+                color: #dc3545; /* Color rojo de Bootstrap para peligro */
+                font-size: 0.875em; /* Un poco más pequeño que el texto normal */
+                display: none; /* Oculto por defecto */
+            }
+        </style>
 
     </head>
 
@@ -71,7 +92,7 @@ session_start();
                                 <p class="text-muted">Es rápido y fácil. Podrás completar tu perfil más tarde.</p>
                             </div>
                             
-                            <form action="<?php echo BASE_URL; ?>auth/register_process.php" method="POST">
+                            <form action="<?php echo BASE_URL; ?>auth/register_process.php" method="POST" id="registrationForm">
                                 <input type="hidden" name="user_type" value="persona">
 
                                 <h5 class="mb-3">Datos Esenciales</h5>
@@ -100,11 +121,20 @@ session_start();
                                     </div>
                                     <div class="col-md-6">
                                         <label for="password" class="form-label">Contraseña</label>
-                                        <input type="password" class="form-control" id="password" name="password" required>
+                                        <div class="password-container">
+                                            <input type="password" class="form-control" id="password" name="password" required>
+                                            <i class="fa fa-eye toggle-password" id="togglePassword"></i>
+                                        </div>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="password_confirm" class="form-label">Confirmar Contraseña</label>
-                                        <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+                                        <div class="password-container">
+                                            <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+                                            <i class="fa fa-eye toggle-password" id="togglePasswordConfirm"></i>
+                                        </div>
+                                        <div id="passwordMatchError" class="password-error-message mt-1">
+                                            Las contraseñas no coinciden.
+                                        </div>
                                     </div>
                                 </div>
                                 
@@ -134,6 +164,60 @@ session_start();
         <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a> 
         
         <?php require_once 'templates/scripts.php'; ?>
+        
+        <!-- Script para funcionalidades del formulario -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // --- LÓGICA PARA MOSTRAR/OCULTAR CONTRASEÑAS ---
+                function togglePasswordVisibility(inputId, toggleId) {
+                    const passwordInput = document.getElementById(inputId);
+                    const toggleIcon = document.getElementById(toggleId);
+                    
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    
+                    toggleIcon.classList.toggle('fa-eye-slash');
+                }
+
+                document.getElementById('togglePassword').addEventListener('click', function() {
+                    togglePasswordVisibility('password', 'togglePassword');
+                });
+
+                document.getElementById('togglePasswordConfirm').addEventListener('click', function() {
+                    togglePasswordVisibility('password_confirm', 'togglePasswordConfirm');
+                });
+
+                // --- LÓGICA PARA VALIDAR QUE LAS CONTRASEÑAS COINCIDAN ---
+                const passwordInput = document.getElementById('password');
+                const passwordConfirmInput = document.getElementById('password_confirm');
+                const errorMessage = document.getElementById('passwordMatchError');
+                const form = document.getElementById('registrationForm');
+
+                function validatePasswords() {
+                    if (passwordInput.value !== passwordConfirmInput.value) {
+                        errorMessage.style.display = 'block'; // Muestra el mensaje de error
+                        passwordConfirmInput.classList.add('is-invalid'); // Añade borde rojo
+                        return false;
+                    } else {
+                        errorMessage.style.display = 'none'; // Oculta el mensaje de error
+                        passwordConfirmInput.classList.remove('is-invalid'); // Quita el borde rojo
+                        return true;
+                    }
+                }
+
+                // Validar mientras el usuario escribe en cualquiera de los dos campos
+                passwordInput.addEventListener('keyup', validatePasswords);
+                passwordConfirmInput.addEventListener('keyup', validatePasswords);
+
+                // Prevenir el envío del formulario si las contraseñas no coinciden
+                form.addEventListener('submit', function(event) {
+                    if (!validatePasswords()) {
+                        event.preventDefault(); // Detiene el envío del formulario
+                        alert('Las contraseñas no coinciden. Por favor, corrígelas.');
+                    }
+                });
+            });
+        </script>
           
 </body>
 

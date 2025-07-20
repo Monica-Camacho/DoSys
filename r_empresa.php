@@ -22,7 +22,26 @@ session_start();
     <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    
+    <!-- Estilos para el icono del ojo y mensaje de error -->
+    <style>
+        .password-container {
+            position: relative;
+        }
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+        }
+        .password-error-message {
+            color: #dc3545;
+            font-size: 0.875em;
+            display: none;
+        }
+    </style>
 </head>
 
     <body>
@@ -56,7 +75,7 @@ session_start();
                                 <p class="text-muted">Completa todos los datos para crear la cuenta de tu empresa.</p>
                             </div>
                             
-                            <form action="<?php echo BASE_URL; ?>auth/register_process.php" method="POST">
+                            <form action="<?php echo BASE_URL; ?>auth/register_process.php" method="POST" id="registrationForm">
                                 <input type="hidden" name="user_type" value="empresa">
 
                                 <h5 class="mb-3 border-bottom pb-2">Paso 1: Tus Datos (Operador de la cuenta)</h5>
@@ -65,8 +84,21 @@ session_start();
                                     <div class="col-md-4"><label class="form-label">Tu Apellido Paterno</label><input type="text" class="form-control" name="operador_apellido_paterno" required></div>
                                     <div class="col-md-4"><label class="form-label">Tu Apellido Materno</label><input type="text" class="form-control" name="operador_apellido_materno"></div>
                                     <div class="col-md-12"><label class="form-label">Tu Correo (para iniciar sesión)</label><input type="email" class="form-control" name="email" required></div>
-                                    <div class="col-md-6"><label class="form-label">Crea una Contraseña</label><input type="password" class="form-control" name="password" required></div>
-                                    <div class="col-md-6"><label class="form-label">Confirma la Contraseña</label><input type="password" class="form-control" name="password_confirm" required></div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Crea una Contraseña</label>
+                                        <div class="password-container">
+                                            <input type="password" class="form-control" id="password" name="password" required>
+                                            <i class="fa fa-eye toggle-password" id="togglePassword"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Confirma la Contraseña</label>
+                                        <div class="password-container">
+                                            <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+                                            <i class="fa fa-eye toggle-password" id="togglePasswordConfirm"></i>
+                                        </div>
+                                        <div id="passwordMatchError" class="password-error-message mt-1">Las contraseñas no coinciden.</div>
+                                    </div>
                                 </div>
 
                                 <h5 class="mb-3 border-bottom pb-2">Paso 2: Datos Fiscales de la Empresa</h5>
@@ -106,8 +138,57 @@ session_start();
         
         <?php require_once 'templates/scripts.php'; ?>
           
-    <!-- Template Javascript -->
-    <script src="js/main.js"></script>
+        <!-- Script para funcionalidades del formulario -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // --- LÓGICA PARA MOSTRAR/OCULTAR CONTRASEÑAS ---
+                function togglePasswordVisibility(inputId, toggleId) {
+                    const passwordInput = document.getElementById(inputId);
+                    const toggleIcon = document.getElementById(toggleId);
+                    
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    
+                    toggleIcon.classList.toggle('fa-eye-slash');
+                }
+
+                document.getElementById('togglePassword').addEventListener('click', function() {
+                    togglePasswordVisibility('password', 'togglePassword');
+                });
+
+                document.getElementById('togglePasswordConfirm').addEventListener('click', function() {
+                    togglePasswordVisibility('password_confirm', 'togglePasswordConfirm');
+                });
+
+                // --- LÓGICA PARA VALIDAR QUE LAS CONTRASEÑAS COINCIDAN ---
+                const passwordInput = document.getElementById('password');
+                const passwordConfirmInput = document.getElementById('password_confirm');
+                const errorMessage = document.getElementById('passwordMatchError');
+                const form = document.getElementById('registrationForm');
+
+                function validatePasswords() {
+                    if (passwordInput.value !== passwordConfirmInput.value) {
+                        errorMessage.style.display = 'block';
+                        passwordConfirmInput.classList.add('is-invalid');
+                        return false;
+                    } else {
+                        errorMessage.style.display = 'none';
+                        passwordConfirmInput.classList.remove('is-invalid');
+                        return true;
+                    }
+                }
+
+                passwordInput.addEventListener('keyup', validatePasswords);
+                passwordConfirmInput.addEventListener('keyup', validatePasswords);
+
+                form.addEventListener('submit', function(event) {
+                    if (!validatePasswords()) {
+                        event.preventDefault();
+                        alert('Las contraseñas no coinciden. Por favor, corrígelas.');
+                    }
+                });
+            });
+        </script>
     
 </body>
 </html>

@@ -37,6 +37,26 @@ session_start();
 
         <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
+        
+        <!-- Estilos para el icono del ojo y mensaje de error -->
+        <style>
+            .password-container {
+                position: relative;
+            }
+            .toggle-password {
+                position: absolute;
+                top: 50%;
+                right: 15px;
+                transform: translateY(-50%);
+                cursor: pointer;
+                color: #6c757d;
+            }
+            .password-error-message {
+                color: #dc3545;
+                font-size: 0.875em;
+                display: none;
+            }
+        </style>
 
     </head>
 
@@ -70,7 +90,7 @@ session_start();
                                 <p class="text-muted">Inscribe a tu fundación, hospital u OSC para gestionar ayuda.</p>
                             </div>
                             
-                            <form action="<?php echo BASE_URL; ?>auth/register_process.php" method="POST">
+                            <form action="<?php echo BASE_URL; ?>auth/register_process.php" method="POST" id="registrationForm">
                                 <input type="hidden" name="user_type" value="organizacion">
 
                                 <h5 class="mb-3 border-bottom pb-2">Paso 1: Tus Datos (Operador de la cuenta)</h5>
@@ -79,8 +99,21 @@ session_start();
                                     <div class="col-md-4"><label class="form-label">Tu Apellido Paterno</label><input type="text" class="form-control" name="operador_apellido_paterno" required></div>
                                     <div class="col-md-4"><label class="form-label">Tu Apellido Materno</label><input type="text" class="form-control" name="operador_apellido_materno"></div>
                                     <div class="col-md-12"><label class="form-label">Tu Correo (para iniciar sesión)</label><input type="email" class="form-control" name="email" required></div>
-                                    <div class="col-md-6"><label class="form-label">Crea una Contraseña</label><input type="password" class="form-control" name="password" required></div>
-                                    <div class="col-md-6"><label class="form-label">Confirma la Contraseña</label><input type="password" class="form-control" name="password_confirm" required></div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Crea una Contraseña</label>
+                                        <div class="password-container">
+                                            <input type="password" class="form-control" id="password" name="password" required>
+                                            <i class="fa fa-eye toggle-password" id="togglePassword"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Confirma la Contraseña</label>
+                                        <div class="password-container">
+                                            <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+                                            <i class="fa fa-eye toggle-password" id="togglePasswordConfirm"></i>
+                                        </div>
+                                        <div id="passwordMatchError" class="password-error-message mt-1">Las contraseñas no coinciden.</div>
+                                    </div>
                                 </div>
 
                                 <h5 class="mb-3 border-bottom pb-2">Paso 2: Datos de la Organización</h5>
@@ -120,5 +153,67 @@ session_start();
         
         <?php require_once 'templates/scripts.php'; ?>
 
+        <!-- Script para funcionalidades del formulario -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // IDs de los campos de contraseña en este formulario
+                const passwordField = document.querySelector('input[name="password"]');
+                const passwordConfirmField = document.querySelector('input[name="password_confirm"]');
+                
+                // Asignar IDs para poder seleccionarlos fácilmente
+                if (!passwordField.id) passwordField.id = 'password_field';
+                if (!passwordConfirmField.id) passwordConfirmField.id = 'password_confirm_field';
+
+                // --- LÓGICA PARA MOSTRAR/OCULTAR CONTRASEÑAS ---
+                function togglePasswordVisibility(inputId, toggleIcon) {
+                    const passwordInput = document.getElementById(inputId);
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    toggleIcon.classList.toggle('fa-eye-slash');
+                }
+                
+                // Crear y añadir los iconos y el mensaje de error dinámicamente
+                const toggleIcon1 = document.createElement('i');
+                toggleIcon1.className = 'fa fa-eye toggle-password';
+                passwordField.parentElement.classList.add('password-container');
+                passwordField.parentElement.appendChild(toggleIcon1);
+                
+                const toggleIcon2 = document.createElement('i');
+                toggleIcon2.className = 'fa fa-eye toggle-password';
+                passwordConfirmField.parentElement.classList.add('password-container');
+                passwordConfirmField.parentElement.appendChild(toggleIcon2);
+
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'password-error-message mt-1';
+                errorMessage.textContent = 'Las contraseñas no coinciden.';
+                passwordConfirmField.parentElement.insertAdjacentElement('afterend', errorMessage);
+
+                toggleIcon1.addEventListener('click', () => togglePasswordVisibility(passwordField.id, toggleIcon1));
+                toggleIcon2.addEventListener('click', () => togglePasswordVisibility(passwordConfirmField.id, toggleIcon2));
+
+                // --- LÓGICA PARA VALIDAR QUE LAS CONTRASEÑAS COINCIDAN ---
+                function validatePasswords() {
+                    if (passwordField.value !== passwordConfirmField.value) {
+                        errorMessage.style.display = 'block';
+                        passwordConfirmField.classList.add('is-invalid');
+                        return false;
+                    } else {
+                        errorMessage.style.display = 'none';
+                        passwordConfirmField.classList.remove('is-invalid');
+                        return true;
+                    }
+                }
+
+                passwordField.addEventListener('keyup', validatePasswords);
+                passwordConfirmField.addEventListener('keyup', validatePasswords);
+
+                document.getElementById('registrationForm').addEventListener('submit', function(event) {
+                    if (!validatePasswords()) {
+                        event.preventDefault();
+                        alert('Las contraseñas no coinciden. Por favor, corrígelas.');
+                    }
+                });
+            });
+        </script>
 </body>
 </html>

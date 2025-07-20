@@ -38,6 +38,21 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <link href="css/style.css" rel="stylesheet">
+    
+    <!-- Estilos para el icono del ojo -->
+    <style>
+        .password-container {
+            position: relative;
+        }
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+        }
+    </style>
 
 </head>
 
@@ -89,9 +104,13 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                                     <input type="email" class="form-control" id="email" name="email" required>
                                 </div>
 
+                                <!-- CAMBIO: Campo de contraseña con icono -->
                                 <div class="mb-3">
                                     <label for="password" class="form-label">Contraseña</label>
-                                    <input type="password" class="form-control" id="password" name="password" required>
+                                    <div class="password-container">
+                                        <input type="password" class="form-control" id="password" name="password" required>
+                                        <i class="fa fa-eye toggle-password" id="togglePassword"></i>
+                                    </div>
                                 </div>
 
                                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -128,17 +147,18 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
 
     <?php require_once 'templates/scripts.php'; ?>
 
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/wow/wow.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/counterup/counterup.min.js"></script>
-    <script src="lib/lightbox/js/lightbox.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-
-    <script src="js/main.js"></script>
+    <!-- CAMBIO: Script para mostrar/ocultar contraseña -->
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function (e) {
+            // Obtenemos el input de la contraseña
+            const password = document.getElementById('password');
+            // Cambiamos el tipo de input
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            // Cambiamos el icono del ojo
+            this.classList.toggle('fa-eye-slash');
+        });
+    </script>
 
 </body>
 
