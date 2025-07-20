@@ -131,13 +131,13 @@ $conexion->close();
 
         <script>
             let map;
-            let todosLosPuntos = []; // Tu variable global para guardar todos los datos
-            let marcadoresActuales = []; 
+            let infoWindow;
+            const marcadores = [];
             let userLocationMarker;
-            let infoWindow; 
+            const organizaciones = <?php echo $organizaciones_json; ?>;
 
             function initMap() {
-                const initialPos = { lat: 17.9869, lng: -92.9303 }; // Villahermosa
+                const initialPos = { lat: 17.9869, lng: -92.9303 };
                 
                 map = new google.maps.Map(document.getElementById("map"), {
                     zoom: 12, center: initialPos, mapTypeControl: false, streetViewControl: false
@@ -145,98 +145,96 @@ $conexion->close();
                 
                 infoWindow = new google.maps.InfoWindow();
 
-                // Leemos los datos desde PHP y los guardamos en tu variable global
-                todosLosPuntos = <?php echo $organizaciones_json; ?>;
-                
-                // Mostramos todos los puntos al cargar el mapa por primera vez
-                mostrarPuntos(todosLosPuntos);
-                
+                organizaciones.forEach(org => {
+                    const marker = new google.maps.Marker({
+                        position: { lat: parseFloat(org.latitud), lng: parseFloat(org.longitud) },
+                        map: map,
+                        title: org.nombre_organizacion,
+                        categorias: org.categorias_ids ? org.categorias_ids.split(',') : [],
+                        // Guardamos los datos adicionales para usarlos en el InfoWindow
+                        org_calle: org.calle,
+                        org_num_ext: org.numero_exterior,
+                        org_colonia: org.colonia,
+                        org_municipio: org.municipio
+                    });
+
+                    // =========================================================
+                    // INICIO DE LA MODIFICACIÓN: Nuevo diseño para InfoWindow
+                    // =========================================================
+                    marker.addListener("click", (e) => {
+                        // Detenemos la propagación para que el clic no cierre la ventana inmediatamente
+                        e.domEvent.stopPropagation(); 
+
+                        const contentString = `
+                            <div style="font-family: 'DM Sans', sans-serif; max-width: 280px; font-size: 14px;">
+                                <h6 style="margin: 0 0 8px; font-weight: bold; font-size: 16px; color: #16243D;">
+                                    ${marker.title}
+                                </h6>
+                                <div style="border-left: 3px solid #06A3DA; padding-left: 12px;">
+                                    <p style="margin: 0 0 2px;"><strong>Dirección:</strong></p>
+                                    <p style="margin: 0; color: #6c757d;">
+                                        ${marker.org_calle || ''} ${marker.org_num_ext || ''}, ${marker.org_colonia || ''}
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+                        // =========================================================
+                        // FIN DE LA MODIFICACIÓN
+                        // =========================================================
+
+                        infoWindow.setContent(contentString);
+                        infoWindow.open(map, marker);
+                    });
+
+                    marcadores.push(marker);
+                });
+
                 geolocalizarUsuario();
             }
-            
-            // Tu función para geolocalizar (se mantiene intacta)
+
             function geolocalizarUsuario() {
                 if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        (position) => {
-                            const userLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
-                            map.setCenter(userLocation);
-                            map.setZoom(14); 
-                            if (userLocationMarker) userLocationMarker.setMap(null);
-                            const svgIcon = `<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><g><circle cx="24" cy="24" r="22" fill="#06A3DA" stroke="#FFFFFF" stroke-width="2"/><g fill="#FFFFFF"><circle cx="24" cy="18" r="7"/><path d="M14 38 C14 30, 34 30, 34 38 Z"/></g></g></svg>`;
-                            userLocationMarker = new google.maps.Marker({
-                                position: userLocation, map: map, title: "¡Estás aquí!",
-                                icon: { url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svgIcon), scaledSize: new google.maps.Size(48, 48), anchor: new google.maps.Point(24, 24) },
-                            });
-                        }
-                    );
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        const userLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
+                        map.setCenter(userLocation);
+                        map.setZoom(14);
+                        if (userLocationMarker) userLocationMarker.setMap(null);
+                        const svgIcon = `<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><g><circle cx="24" cy="24" r="22" fill="#06A3DA" stroke="#FFFFFF" stroke-width="2"/><g fill="#FFFFFF"><circle cx="24" cy="18" r="7"/><path d="M14 38 C14 30, 34 30, 34 38 Z"/></g></g></svg>`;
+                        userLocationMarker = new google.maps.Marker({
+                            position: userLocation, map: map, title: "¡Estás aquí!",
+                            icon: { url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svgIcon), scaledSize: new google.maps.Size(48, 48), anchor: new google.maps.Point(24, 24) },
+                        });
+                    });
                 }
             }
-            
-            // Tu función para agregar marcadores (modificada para usar los nuevos nombres de campos)
-            function agregarMarcador(punto) {
-                const contenidoInfoWindow = `
-                    <div style="font-family: 'DM Sans', sans-serif; max-width: 250px;">
-                        <h6 style="margin: 0 0 5px; font-weight: bold;">${punto.nombre_organizacion}</h6>
-                        <p style="margin: 0; font-size: 14px;">${punto.calle || ''} ${punto.numero_exterior || ''}, ${punto.colonia || ''}</p>
-                    </div>`;
-                
-                const marcador = new google.maps.Marker({
-                    position: { lat: parseFloat(punto.latitud), lng: parseFloat(punto.longitud) },
-                    map: map,
-                    title: punto.nombre_organizacion,
-                });
 
-                marcador.addListener("click", () => {
-                    infoWindow.close(); 
-                    infoWindow.setContent(contenidoInfoWindow);
-                    infoWindow.open(map, marcador);
-                });
-                marcadoresActuales.push(marcador);
-            }
-
-            // =========================================================
-            // FUNCIÓN DE FILTRADO (CORREGIDA A TU LÓGICA ORIGINAL)
-            // =========================================================
             function aplicarFiltros() {
                 const filtrosActivos = [];
-                document.querySelectorAll('.filter-checkbox:checked').forEach(checkbox => {
-                    filtrosActivos.push(checkbox.value);
+                document.querySelectorAll('.filter-checkbox:checked').forEach(checkbox => filtrosActivos.push(checkbox.value));
+                marcadores.forEach(marker => {
+                    if (filtrosActivos.length === 0) { marker.setVisible(true); return; }
+                    const coincide = marker.categorias.some(cat => filtrosActivos.includes(cat));
+                    marker.setVisible(coincide);
                 });
-
-                // 1. Filtramos el array de datos
-                const puntosFiltrados = (filtrosActivos.length === 0)
-                    ? todosLosPuntos // Si no hay filtros, usamos todos los puntos
-                    : todosLosPuntos.filter(punto => {
-                        const categoriasDelPunto = punto.categorias_ids ? punto.categorias_ids.split(',') : [];
-                        // La función .some() devuelve true si al menos una categoría coincide
-                        return categoriasDelPunto.some(cat => filtrosActivos.includes(cat));
-                    });
-                
-                // 2. Mostramos solo los puntos que pasaron el filtro
-                mostrarPuntos(puntosFiltrados);
             }
 
-            // Tu función para mostrar los puntos (sin cambios)
-            function mostrarPuntos(puntos) {
-                limpiarMarcadores();
-                puntos.forEach(punto => agregarMarcador(punto));
-            }
-
-            // Tu función para limpiar marcadores (sin cambios)
-            function limpiarMarcadores() {
-                marcadoresActuales.forEach(marcador => marcador.setMap(null));
-                marcadoresActuales = [];
-            }
-
-            // Tu función para limpiar filtros (sin cambios)
             function limpiarTodosLosFiltros() {
-                document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
-                    checkbox.checked = false;
-                });
+                document.querySelectorAll('.filter-checkbox').forEach(checkbox => checkbox.checked = false);
                 aplicarFiltros();
             }
-        </script>
 
+            // =========================================================
+            // INICIO DE LA MODIFICACIÓN: Evento de clic global para cerrar
+            // =========================================================
+            window.addEventListener("click", () => {
+                if (infoWindow) {
+                    infoWindow.close();
+                }
+            });
+            // =========================================================
+            // FIN DE LA MODIFICACIÓN
+            // =========================================================
+        </script>
+        
 </body>
 </html>

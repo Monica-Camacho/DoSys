@@ -106,6 +106,7 @@ if ($resultado_sangre) {
         <div class="container-fluid py-5">
             <div class="container">
                 <form class="row g-5" action="auth/crear_aviso_process.php" method="POST" enctype="multipart/form-data">
+                    
                     <div class="col-lg-6">
                         
                         <div class="card border-0 shadow-sm mb-4">
@@ -216,8 +217,6 @@ if ($resultado_sangre) {
                         </div>
                     </div>     
                                      
-
-                    </div>
                     
                 </form>
             </div>
