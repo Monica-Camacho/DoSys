@@ -30,13 +30,14 @@ $organizaciones_para_mapa_json = json_encode($organizaciones_filtradas);
 // FIN DE LA MODIFICACIÓN
 // =========================================================
 
-// Obtenemos los tipos de sangre (Tu código funcional)
+// Obtenemos los tipos de sangre usando el nombre de columna correcto ('tipo')
 $tipos_sangre = [];
-$sql_sangre = "SELECT id, nombre FROM tipos_sangre ORDER BY nombre ASC";
+$sql_sangre = "SELECT id, tipo FROM tipos_sangre ORDER BY id ASC"; // <--- CAMBIO AQUÍ
 $resultado_sangre = $conexion->query($sql_sangre);
 if ($resultado_sangre) {
     while ($fila = $resultado_sangre->fetch_assoc()) {
-        $tipos_sangre[] = $fila;
+        // Para mantener la consistencia, renombramos 'tipo' a 'nombre' en el array
+        $tipos_sangre[] = ['id' => $fila['id'], 'nombre' => $fila['tipo']];
     }
 }
 ?>
@@ -109,42 +110,63 @@ if ($resultado_sangre) {
                     
                     <div class="col-lg-6">
                         
-                        <div class="card border-0 shadow-sm mb-4">
-                            <div class="card-body p-4">
-                                <h5 class="card-title mb-4">1. ¿Qué se necesita?</h5>
-                                <div class="row g-3">
-                                    <div class="col-12">
-                                        <label for="titulo" class="form-label">Título del Aviso</label>
-                                        <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Ej: Donadores de Sangre O+ para cirugía" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="urgencia" class="form-label">Nivel de Urgencia</label>
-                                        <select id="urgencia" name="urgencia_id" class="form-select" required>
-                                            <option value="1">Baja</option>
-                                            <option value="2">Media</option>
-                                            <option value="3">Alta</option>
-                                            <option value="4">Crítica</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <div id="campos-sangre" class="row g-3">
-                                        <div class="col-md-6">
-                                            <label for="tipoSangre" class="form-label">Tipo de Sangre</label>
-                                            <select id="tipoSangre" name="tipo_sangre_id" class="form-select" required>
-                                                <option value="">Selecciona un tipo...</option>
-                                                <?php foreach ($tipos_sangre as $tipo): ?>
-                                                    <option value="<?php echo $tipo['id']; ?>"><?php echo htmlspecialchars($tipo['nombre']); ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="unidades" class="form-label">Unidades Requeridas</label>
-                                            <input type="number" class="form-control" id="unidades" name="unidades_requeridas" placeholder="Ej: 4" min="1" required>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <!-- Datos del donatario -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
+        <h5 class="card-title mb-4">Datos del Donatario</h5>
+        
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="soy_donatario" name="es_para_mi">
+            <label class="form-check-label" for="soy_donatario">
+                La ayuda es para mí (el donatario soy yo).
+            </label>
+        </div>
+
+        <div id="datos-donatario-externo">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="donatario_nombre" class="form-label">Nombre(s)</label>
+                    <input type="text" class="form-control" id="donatario_nombre" name="donatario_nombre" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="donatario_paterno" class="form-label">Apellido Paterno</label>
+                    <input type="text" class="form-control" id="donatario_paterno" name="donatario_paterno" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="donatario_materno" class="form-label">Apellido Materno</label>
+                    <input type="text" class="form-control" id="donatario_materno" name="donatario_materno">
+                </div>
+                <div class="col-md-6">
+                    <label for="donatario_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                    <input type="date" class="form-control" id="donatario_nacimiento" name="donatario_nacimiento" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Sexo</label>
+                    <div class="d-flex pt-2">
+                        <div class="form-check me-3">
+                            <input class="form-check-input" type="radio" name="donatario_sexo" id="masculino" value="Masculino" required>
+                            <label class="form-check-label" for="masculino">Masculino</label>
                         </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="donatario_sexo" id="femenino" value="Femenino" required>
+                            <label class="form-check-label" for="femenino">Femenino</label>
+                        </div>
+                    </div>
+                </div>
+                 <div class="col-md-6">
+                    <label for="donatario_tipoSangre" class="form-label">Tipo de Sangre del Donatario</label>
+                    <select id="donatario_tipoSangre" name="donatario_tipo_sangre_id" class="form-select" required>
+                        <option value="">Selecciona un tipo...</option>
+                        
+                        <?php foreach ($tipos_sangre as $tipo): ?>
+                            <option value="<?php echo $tipo['id']; ?>"><?php echo htmlspecialchars($tipo['nombre']); ?></option>
+                        <?php endforeach; ?>
+                        </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
                         <div class="card border-0 shadow-sm mb-4">
                             <div class="card-body p-4">
@@ -231,6 +253,24 @@ if ($resultado_sangre) {
         
         <?php require_once 'templates/scripts.php'; ?>
 
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkbox = document.getElementById('soy_donatario');
+            const datosExterno = document.getElementById('datos-donatario-externo');
+            const inputsExterno = datosExterno.querySelectorAll('input, select');
+
+            checkbox.addEventListener('change', function() {
+                const esParaMi = this.checked;
+                
+                // Si la ayuda es para mí, OCULTAMOS y DESACTIVAMOS los inputs
+                datosExterno.style.display = esParaMi ? 'none' : 'block';
+                inputsExterno.forEach(input => {
+                    input.required = !esParaMi;
+                });
+            });
+        });
+    </script>
 
     <script>
         let map;

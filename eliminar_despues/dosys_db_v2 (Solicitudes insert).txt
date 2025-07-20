@@ -84,7 +84,22 @@ UPDATE `avisos` SET `estatus_id` = 3 WHERE `id` = @nuevo_aviso_id;
 -- Guardamos todos los cambios.
 COMMIT;
 
+-- =================================================================
+-- AÑADIR COLUMNA Y RELACIÓN PARA TIPO DE SANGRE EN DONATARIOS
+-- =================================================================
 
+-- Primero, añadimos la nueva columna 'tipo_sangre_id' a la tabla
+ALTER TABLE `donatarios`
+ADD COLUMN `tipo_sangre_id` INT(11) NULL DEFAULT NULL AFTER `sexo`,
+ADD INDEX `fk_donatarios_tipos_sangre_idx` (`tipo_sangre_id` ASC);
+
+-- Ahora, creamos la relación (Foreign Key) con la tabla 'tipos_sangre'
+ALTER TABLE `donatarios`
+ADD CONSTRAINT `fk_donatarios_tipos_sangre`
+  FOREIGN KEY (`tipo_sangre_id`)
+  REFERENCES `tipos_sangre` (`id`)
+  ON DELETE SET NULL
+  ON UPDATE NO ACTION;
 
 
 
