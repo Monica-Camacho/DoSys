@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/conexion_local.php';
-// Incluimos el archivo que contiene la función
 require_once __DIR__ . '/auth/ubicaciones_handler.php'; 
 
 session_start();
@@ -10,30 +9,28 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
     echo "<script>alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');</script>";
 }
 
-// =========================================================
-// INICIO DE LA CORRECCIÓN
-// =========================================================
-
-// 1. Llamamos a la función con su NOMBRE CORRECTO para obtener TODAS las organizaciones
+// 1. Obtenemos TODAS las organizaciones (Tu código funcional)
 $todas_las_organizaciones = obtener_organizaciones_con_categorias($conexion);
 
-// 2. Filtramos la lista en PHP para quedarnos solo con las de SANGRE (categoría 1)
+// 2. Filtramos solo las de SANGRE (Tu código funcional)
 $organizaciones_filtradas = [];
 foreach ($todas_las_organizaciones as $org) {
-    // Convertimos el string de categorías (ej: "1,3") en un array (ej: [1, 3])
     $categorias_de_la_org = explode(',', $org['categorias_ids']);
-    
-    // Si el '1' está en el array de categorías de la organización, la añadimos a nuestra lista filtrada
     if (in_array('1', $categorias_de_la_org)) {
         $organizaciones_filtradas[] = $org;
     }
 }
+
 // =========================================================
-// FIN DE LA CORRECCIÓN
+// INICIO DE LA MODIFICACIÓN
+// =========================================================
+// 3. Preparamos la lista filtrada para que el mapa la pueda usar
+$organizaciones_para_mapa_json = json_encode($organizaciones_filtradas);
+// =========================================================
+// FIN DE LA MODIFICACIÓN
 // =========================================================
 
-
-// Obtenemos los tipos de sangre (esta parte no cambia)
+// Obtenemos los tipos de sangre (Tu código funcional)
 $tipos_sangre = [];
 $sql_sangre = "SELECT id, nombre FROM tipos_sangre ORDER BY nombre ASC";
 $resultado_sangre = $conexion->query($sql_sangre);
@@ -109,7 +106,8 @@ if ($resultado_sangre) {
         <div class="container-fluid py-5">
             <div class="container">
                 <form class="row g-5" action="auth/crear_aviso_process.php" method="POST" enctype="multipart/form-data">
-                    <div class="col-lg-7">
+                    <div class="col-lg-6">
+                        
                         <div class="card border-0 shadow-sm mb-4">
                             <div class="card-body p-4">
                                 <h5 class="card-title mb-4">1. ¿Qué se necesita?</h5>
@@ -185,44 +183,27 @@ if ($resultado_sangre) {
                         </div>
                     </div>
 
-<div class="col-lg-5">
-    <div class="card border-0 shadow-sm" style="position: sticky; top: 20px;">
-        <div class="card-body p-4">
-            <h5 class="card-title mb-4">4. Organización Gestora</h5>
-            <p class="text-muted">Selecciona la organización de confianza que se encargará de validar y gestionar tu solicitud.</p>
-            <div class="mb-3">
-                <label for="organizacion" class="form-label">Organización Responsable</label>
-                <select id="organizacion" name="organizacion_id" class="form-select" required>
-                    <option value="">Selecciona una organización...</option>
-                    
-                    <?php foreach ($organizaciones_filtradas as $org): ?>
-                        <option value="<?php echo $org['id']; ?>"><?php echo htmlspecialchars($org['nombre_organizacion']); ?></option>
-                    <?php endforeach; ?>
-                    </select>
-            </div>
-            <hr>
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="terminos" required>
-                <label class="form-check-label" for="terminos">
-                    Acepto los <a href="#">términos y condiciones</a> y confirmo que la información es verídica.
-                </label>
-            </div>
-            <button type="submit" class="btn btn-primary w-100 p-3">Enviar Solicitud para Validación</button>
-        </div>
-    </div>
-</div>                        <div class="card border-0 shadow-sm" style="position: sticky; top: 20px;">
+                    <!-- Lateral Seleccionar ubicacion -->
+                    <div class="col-lg-6">
+                        <div class="card border-0 shadow-sm" style="position: sticky; top: 20px;">
                             <div class="card-body p-4">
                                 <h5 class="card-title mb-4">4. Organización Gestora</h5>
-                                <p class="text-muted">Selecciona la organización de confianza que se encargará de validar y gestionar tu solicitud.</p>
+                                <p class="text-muted">Selecciona una organización para que gestione tu solicitud. Puedes usar el menú o hacer clic en el mapa.</p>
+                                
                                 <div class="mb-3">
                                     <label for="organizacion" class="form-label">Organización Responsable</label>
                                     <select id="organizacion" name="organizacion_id" class="form-select" required>
                                         <option value="">Selecciona una organización...</option>
-                                        <?php foreach ($organizaciones as $org): ?>
-                                            <option value="<?php echo $org['id']; ?>"><?php echo htmlspecialchars($org['nombre_organizacion']); ?></option>
+                                        <?php foreach ($organizaciones_filtradas as $org): ?>
+                                            <option value="<?php echo $org['id']; ?>" data-lat="<?php echo $org['latitud']; ?>" data-lng="<?php echo $org['longitud']; ?>">
+                                                <?php echo htmlspecialchars($org['nombre_organizacion']); ?>
+                                            </option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
+
+                                <div id="map-canvas-organizaciones" class="mb-3" style="height: 250px; width: 100%; border-radius: .25rem; background-color: #f8f9fa;">
+                                    </div>
                                 <hr>
                                 <div class="form-check mb-3">
                                     <input class="form-check-input" type="checkbox" id="terminos" required>
@@ -233,6 +214,9 @@ if ($resultado_sangre) {
                                 <button type="submit" class="btn btn-primary w-100 p-3">Enviar Solicitud para Validación</button>
                             </div>
                         </div>
+                    </div>     
+                                     
+
                     </div>
                     
                 </form>
@@ -248,37 +232,124 @@ if ($resultado_sangre) {
         
         <?php require_once 'templates/scripts.php'; ?>
 
-    <!-- Dynamic Form Script -->
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 1. Obtener el parámetro 'categoria' de la URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const categoria = urlParams.get('categoria');
+        let map;
+        let infoWindow;
+        const marcadores = [];
+        let userLocationMarker; // Variable para el marcador del usuario
 
-            // 2. Seleccionar los contenedores de los campos
-            const camposSangre = document.getElementById('campos-sangre');
-            const camposMedicamentos = document.getElementById('campos-medicamentos');
-            const camposDispositivos = document.getElementById('campos-dispositivos');
-            const tituloPagina = document.querySelector('.display-5'); // El H1 del encabezado
+        function initMap() {
+            const initialPos = { lat: 17.9869, lng: -92.9303 }; // Villahermosa
+            
+            map = new google.maps.Map(document.getElementById("map-canvas-organizaciones"), {
+                zoom: 12,
+                center: initialPos,
+                mapTypeControl: false,
+                streetViewControl: false
+            });
+            
+            infoWindow = new google.maps.InfoWindow();
+            map.addListener("click", () => infoWindow.close());
 
-            // 3. Mostrar solo el grupo que corresponde a la categoría
-            if (categoria === 'sangre') {
-                camposSangre.classList.remove('d-none');
-                tituloPagina.textContent = 'Solicitud de Sangre';
-            } else if (categoria === 'medicamentos') {
-                camposMedicamentos.classList.remove('d-none');
-                tituloPagina.textContent = 'Solicitud de Medicamentos';
-            } else if (categoria === 'dispositivos') {
-                camposDispositivos.classList.remove('d-none');
-                tituloPagina.textContent = 'Solicitud de Dispositivos';
-            } else {
-                // Opcional: si no hay categoría, mostrar un mensaje o redirigir a segmentos.php
-                tituloPagina.textContent = 'Crear Solicitud';
-                // Podrías mostrar un mensaje pidiendo que seleccionen una categoría primero.
+            const organizaciones = <?php echo $organizaciones_para_mapa_json; ?>;
+            const selectOrganizacion = document.getElementById('organizacion');
+
+            organizaciones.forEach(org => {
+                const marker = new google.maps.Marker({
+                    position: { lat: parseFloat(org.latitud), lng: parseFloat(org.longitud) },
+                    map: map,
+                    title: org.nombre_organizacion,
+                    org_id: org.id,
+                    org_calle: org.calle,
+                    org_num_ext: org.numero_exterior,
+                    org_colonia: org.colonia
+                });
+
+                marker.addListener("click", (e) => {
+                    e.domEvent.stopPropagation(); 
+                    selectOrganizacion.value = marker.org_id;
+                    map.setCenter(marker.getPosition());
+                    const contentString = createInfoWindowContent(marker);
+                    infoWindow.setContent(contentString);
+                    infoWindow.open(map, marker);
+                });
+
+                marcadores.push(marker);
+            });
+
+            selectOrganizacion.addEventListener('change', function() {
+                const selectedId = this.value;
+                const selectedOption = this.options[this.selectedIndex];
+                if (!selectedId) { infoWindow.close(); return; }
+
+                const lat = parseFloat(selectedOption.getAttribute('data-lat'));
+                const lng = parseFloat(selectedOption.getAttribute('data-lng'));
+
+                map.setCenter({ lat: lat, lng: lng });
+                map.setZoom(15);
+
+                const marcadorCorrespondiente = marcadores.find(m => m.org_id == selectedId);
+                if (marcadorCorrespondiente) {
+                    const contentString = createInfoWindowContent(marcadorCorrespondiente);
+                    infoWindow.setContent(contentString);
+                    infoWindow.open(map, marcadorCorrespondiente);
+                }
+            });
+            
+            // =========================================================
+            // INICIO DE LA MODIFICACIÓN: Se llama a la función de geolocalización
+            // =========================================================
+            geolocalizarUsuario();
+            // =========================================================
+            // FIN DE LA MODIFICACIÓN
+            // =========================================================
+        }
+
+        /**
+         * Función auxiliar para crear el HTML del InfoWindow (sin cambios)
+         */
+        function createInfoWindowContent(marker) {
+            const nombre = marker.title;
+            const calle = marker.org_calle || '';
+            const num_ext = marker.org_num_ext || '';
+            const colonia = marker.org_colonia || '';
+            return `<div style="font-family: 'DM Sans', sans-serif; max-width: 280px; font-size: 14px;"><h6 style="margin: 0 0 8px; font-weight: bold; font-size: 16px; color: #16243D;">${nombre}</h6><div style="border-left: 3px solid #06A3DA; padding-left: 12px;"><p style="margin: 0 0 2px;"><strong>Dirección:</strong></p><p style="margin: 0; color: #6c757d;">${calle} ${num_ext}, ${colonia}</p></div><div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid #eee; text-align: center;"><span class="badge bg-primary">Organización Seleccionada</span></div></div>`;
+        }
+
+        // =========================================================
+        // FUNCIÓN AÑADIDA: Geolocaliza al usuario
+        // =========================================================
+        function geolocalizarUsuario() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const userLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
+                        map.setCenter(userLocation);
+                        if (userLocationMarker) userLocationMarker.setMap(null);
+                        const svgIcon = `<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><g><circle cx="24" cy="24" r="22" fill="#06A3DA" stroke="#FFFFFF" stroke-width="2"/><g fill="#FFFFFF"><circle cx="24" cy="18" r="7"/><path d="M14 38 C14 30, 34 30, 34 38 Z"/></g></g></svg>`;
+                        userLocationMarker = new google.maps.Marker({
+                            position: userLocation, 
+                            map: map, 
+                            title: "Tu ubicación actual",
+                            icon: { url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svgIcon), scaledSize: new google.maps.Size(48, 48), anchor: new google.maps.Point(24, 24) },
+                        });
+                    }
+                );
+            }
+        }
+        // =========================================================
+        // FIN DE LA FUNCIÓN AÑADIDA
+        // =========================================================
+
+        // Evento de clic global para cerrar el infoWindow
+        window.addEventListener("click", () => {
+            if (infoWindow) {
+                infoWindow.close();
             }
         });
     </script>
-    
+
 </body>
 
 </html>
