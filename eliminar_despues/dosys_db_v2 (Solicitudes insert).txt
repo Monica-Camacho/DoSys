@@ -102,7 +102,27 @@ ADD CONSTRAINT `fk_donatarios_tipos_sangre`
   ON UPDATE NO ACTION;
 
 
+-- =================================================================
+-- REESTRUCTURACIÓN COMPLETA DE LA TABLA 'avisos_documentos'
+-- =================================================================
 
+-- PRIMERO: Eliminamos las columnas viejas que ya no se necesitan.
+-- (Si no existen, simplemente se ignorarán estos comandos sin dar error).
+ALTER TABLE `avisos_documentos`
+  DROP COLUMN IF EXISTS `tipo_documento`,
+  DROP COLUMN IF EXISTS `ruta_archivo`;
 
+-- SEGUNDO: Reestructuramos la tabla para que funcione como un vínculo.
+ALTER TABLE `avisos_documentos` DROP PRIMARY KEY, DROP COLUMN `id`;
+ALTER TABLE `avisos_documentos` DROP COLUMN `fecha_carga`;
+ALTER TABLE `avisos_documentos` ADD COLUMN `documento_id` INT(11) NOT NULL AFTER `aviso_id`;
+ALTER TABLE `avisos_documentos` ADD PRIMARY KEY (`aviso_id`, `documento_id`);
 
+-- TERCERO: Creamos la relación (Foreign Key) con la tabla 'documentos'.
+ALTER TABLE `avisos_documentos`
+ADD CONSTRAINT `fk_avisos_documentos_documentos`
+  FOREIGN KEY (`documento_id`)
+  REFERENCES `documentos` (`id`)
+  ON DELETE CASCADE
+  ON UPDATE NO ACTION;
 

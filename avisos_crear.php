@@ -221,7 +221,12 @@ if ($resultado_urgencia) {
                                         <input type="number" class="form-control" id="unidades" name="unidades_requeridas" placeholder="Ej: 4" min="1" required>
                                     </div>
 
-                                </div>
+                                    <div class="col-12 mt-3">
+                                        <label for="documento" class="form-label">Documento Médico de Soporte (Indispensable)</label>
+                                        <input type="file" class="form-control" id="documento" name="documento" required accept="application/pdf,image/jpeg,image/png">
+                                        <small class="form-text text-muted">Sube la solicitud del hospital o la receta médica.</small>
+                                    </div>
+                                    </div>
                             </div>
                         </div>
 
