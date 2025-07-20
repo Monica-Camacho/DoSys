@@ -31,12 +31,11 @@ $urgencia_id = (int)$_POST['urgencia_id'];
 $organizacion_id = (int)$_POST['organizacion_id'];
 $categoria_id = 3; // Fijo para DISPOSITIVOS en este formulario.
 
-// --- Datos específicos de la Solicitud de Medicamento ---
-$nombre_medicamento = trim($_POST['nombre_medicamento']);
-$dosis = trim($_POST['dosis']);
-$presentacion = trim($_POST['presentacion']);
+// --- Datos específicos de la Solicitud de Dispositivo ---
+$nombre_dispositivo = trim($_POST['nombre_dispositivo']);
+$especificaciones = trim($_POST['especificaciones']);
 $cantidad_requerida = (int)$_POST['cantidad_requerida'];
-// --- FIN  ---
+// --- FIN ---
 
 // --- Lógica del Donatario ---
 $es_para_mi = isset($_POST['es_para_mi']);
@@ -132,10 +131,10 @@ try {
     $stmt_link_doc->bind_param("ii", $aviso_id, $documento_id);
     $stmt_link_doc->execute();
     
-    // --- Vincular detalles del MEDICAMENTO con aviso ---
-    $stmt_link_medicamento = $conexion->prepare("INSERT INTO solicitudes_medicamentos (aviso_id, nombre_medicamento, dosis, presentacion, cantidad_requerida) VALUES (?, ?, ?, ?, ?)");
-    $stmt_link_medicamento->bind_param("isssi", $aviso_id, $nombre_medicamento, $dosis, $presentacion, $cantidad_requerida);
-    $stmt_link_medicamento->execute();
+    // --- Vincular detalles del DISPOSITIVO con aviso ---
+    $stmt_link_dispositivo = $conexion->prepare("INSERT INTO solicitudes_dispositivos (aviso_id, nombre_dispositivo, especificaciones, cantidad_requerida) VALUES (?, ?, ?, ?)");
+    $stmt_link_dispositivo->bind_param("issi", $aviso_id, $nombre_dispositivo, $especificaciones, $cantidad_requerida);
+    $stmt_link_dispositivo->execute();
     // --- FIN ---
 
     // =================================================================
