@@ -12,7 +12,6 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
 <html lang="es">
 
     <head>
-        <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
         <meta charset="utf-8">
         <title>DoSys - En Mantenimiento</title>
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -42,7 +41,6 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
 
         <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
-            <link href="css/Donaciones.css" rel="stylesheet">
 
     </head>
 
@@ -91,8 +89,6 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
         
         <?php require_once 'templates/scripts.php'; ?>
           
-
-
     <!-- Back to Top -->
     <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
 
