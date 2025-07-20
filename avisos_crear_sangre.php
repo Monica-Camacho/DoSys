@@ -1,12 +1,28 @@
 <?php
 // =================================================================
-// 1. OBTENCIÓN DE DATOS
+// 1. VERIFICACIÓN DE SESIÓN Y DATOS INICIALES
 // =================================================================
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/conexion_local.php';
 require_once __DIR__ . '/auth/ubicaciones_handler.php'; 
 
 session_start();
+
+// --- INICIO DE LA VERIFICACIÓN DE SEGURIDAD (PASO 1) ---
+// Si la variable de sesión 'loggedin' no está establecida o no es verdadera,
+// el usuario no ha iniciado sesión y será redirigido.
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    // Se guarda la URL actual para que el usuario pueda regresar a esta página
+    // después de iniciar sesión correctamente.
+    $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
+    
+    // Redirige al usuario a la página de inicio de sesión.
+    header('Location: login.php');
+    // Detiene la ejecución del script.
+    exit;
+}
+// --- FIN DE LA VERIFICACIÓN ---
+
 
 if (isset($_GET['error']) && $_GET['error'] == 1) {
     echo "<script>alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');</script>";
