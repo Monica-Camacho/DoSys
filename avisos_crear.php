@@ -200,20 +200,31 @@ if ($resultado_urgencia) {
                             </div>
                         </div>
 
-                        <div class="card border-0 shadow-sm">
+                        <!-- Datos de la Solicitud -->
+                        <div class="card border-0 shadow-sm mb-4">
                             <div class="card-body p-4">
-                                <h5 class="card-title mb-4">3. Justificación</h5>
-                                <div class="col-12">
-                                    <label for="descripcion" class="form-label">Descripción Detallada de la Situación</label>
-                                    <textarea class="form-control" id="descripcion" name="descripcion" rows="4" placeholder="Explica brevemente por qué necesitas la ayuda..." required></textarea>
-                                </div>
-                                <div class="col-12 mt-3">
-                                    <label for="documento" class="form-label">Documento Médico de Soporte (Indispensable)</label>
-                                    <input type="file" class="form-control" id="documento" name="documento" required accept="application/pdf,image/jpeg,image/png">
-                                    <small class="form-text text-muted">Sube la solicitud del hospital o la receta médica.</small>
+                                <h5 class="card-title mb-4">Detalles de la Donación de Sangre</h5>
+                                <div class="row g-3">
+
+                                    <div class="col-md-6">
+                                        <label for="solicitud_tipo_sangre" class="form-label">Tipo de Sangre Requerido</label>
+                                        <select id="solicitud_tipo_sangre" name="solicitud_tipo_sangre_id" class="form-select" required>
+                                            <option value="">Selecciona un tipo...</option>
+                                            <?php foreach ($tipos_sangre as $tipo): ?>
+                                                <option value="<?php echo $tipo['id']; ?>"><?php echo htmlspecialchars($tipo['nombre']); ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="unidades" class="form-label">Unidades Requeridas</label>
+                                        <input type="number" class="form-control" id="unidades" name="unidades_requeridas" placeholder="Ej: 4" min="1" required>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
+
                     </div>
 
                     <!-- Lateral Seleccionar ubicacion -->
