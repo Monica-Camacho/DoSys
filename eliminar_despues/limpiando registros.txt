@@ -1,0 +1,313 @@
+UPDATE avisos SET
+  titulo = 'Urgente: Donación de Sangre O+',
+  descripcion = 'Se necesita con urgencia donadores de sangre tipo O+ para paciente en cirugía en Hospital General.',
+  categoria_id = 1
+WHERE id = 1;
+
+UPDATE avisos SET
+  titulo = 'Apoyo con Medicamento: Insulina',
+  descripcion = 'Solicitamos insulina de acción rápida para paciente con diabetes tipo 1 que no cuenta con recursos.',
+  categoria_id = 2
+WHERE id = 2;
+
+UPDATE avisos SET
+  titulo = 'Solicitud de Muletas Adulto Mayor',
+  descripcion = 'Un adulto mayor requiere muletas para su movilidad. Cualquier apoyo es bienvenido.',
+  categoria_id = 3
+WHERE id = 3;
+
+UPDATE avisos SET
+  titulo = 'Donación de Sangre AB- para transfusión',
+  descripcion = 'Paciente pediátrico necesita transfusión con sangre tipo AB-. Se requiere antes de 48 horas.',
+  categoria_id = 1
+WHERE id = 8;
+
+UPDATE avisos SET
+  titulo = 'Medicamento para hipertensión',
+  descripcion = 'Solicitamos Amlodipino 5mg para paciente que no puede adquirir su tratamiento.',
+  categoria_id = 2
+WHERE id = 9;
+
+UPDATE avisos SET
+  titulo = 'Apoyo: Silla de ruedas en buen estado',
+  descripcion = 'Persona con discapacidad motriz necesita una silla de ruedas para su movilidad diaria.',
+  categoria_id = 3
+WHERE id = 12;
+
+UPDATE avisos SET
+  titulo = 'Se requiere donación de Sangre B+',
+  descripcion = 'Hospital IMSS solicita urgentemente unidades de sangre B+ para transfusión postoperatoria.',
+  categoria_id = 1
+WHERE id = 14;
+
+UPDATE avisos SET
+  titulo = 'Medicamento anticonvulsivo: Carbamazepina',
+  descripcion = 'Niño con epilepsia requiere suministro de carbamazepina.',
+  categoria_id = 2
+WHERE id = 17;
+
+UPDATE avisos SET
+  titulo = 'Entrega de Andadera para rehabilitación',
+  descripcion = 'Paciente en recuperación solicita andadera como apoyo temporal.',
+  categoria_id = 3
+WHERE id = 18;
+
+UPDATE avisos SET
+  titulo = 'Donación de Sangre A-',
+  descripcion = 'Se busca sangre tipo A- para paciente hospitalizado tras accidente vial.',
+  categoria_id = 1
+WHERE id = 19;
+
+UPDATE avisos SET
+  titulo = 'Medicamento oncológico: Tamoxifeno',
+  descripcion = 'Se necesita Tamoxifeno para paciente en tratamiento contra el cáncer de mama.',
+  categoria_id = 2
+WHERE id = 20;
+
+UPDATE avisos SET
+  titulo = 'Prótesis para pierna derecha',
+  descripcion = 'Persona joven perdió extremidad en accidente; necesita prótesis adaptada a su talla.',
+  categoria_id = 3
+WHERE id = 21;
+
+UPDATE avisos SET
+  titulo = 'Sangre requerida tipo O-',
+  descripcion = 'Banco de sangre reporta baja en reservas de tipo O-. Donadores urgentes.',
+  categoria_id = 1
+WHERE id = 22;
+
+UPDATE avisos SET
+  titulo = 'Medicamento para artritis reumatoide',
+  descripcion = 'Solicitamos Metotrexato para paciente que ha suspendido tratamiento por falta de recursos.',
+  categoria_id = 2
+WHERE id = 23;
+
+
+UPDATE roles
+SET nombre = 'Visualizador'
+WHERE id = 2;
+
+UPDATE roles
+SET nombre = 'Creador'
+WHERE id = 3;
+
+UPDATE usuarios SET email = 'lucia.perez@gmail.com', tipo_usuario_id = 1, rol_id = 1 WHERE id = 1;
+UPDATE usuarios SET email = 'sofia.diaz@gmail.com', tipo_usuario_id = 1, rol_id = 1 WHERE id = 2;
+UPDATE usuarios SET email = 'clara.lopez@empresa.com', tipo_usuario_id = 2, rol_id = 1 WHERE id = 3;
+UPDATE usuarios SET email = 'jorge.navarro@gmail.com', tipo_usuario_id = 1, rol_id = 1 WHERE id = 4;
+UPDATE usuarios SET email = 'lucia.martinez@empresa.com', tipo_usuario_id = 2, rol_id = 1 WHERE id = 5;
+UPDATE usuarios SET email = 'ana.salazar@gmail.com', tipo_usuario_id = 1, rol_id = 1 WHERE id = 10;
+UPDATE usuarios SET email = 'andres.morales@org.com', tipo_usuario_id = 3, rol_id = 1 WHERE id = 11;
+UPDATE usuarios SET email = 'diego.navarro@org.com', tipo_usuario_id = 3, rol_id = 1 WHERE id = 12;
+UPDATE usuarios SET email = 'maria.diaz@org.com', tipo_usuario_id = 3, rol_id = 2 WHERE id = 13;
+UPDATE usuarios SET email = 'maria.morales@empresa.com', tipo_usuario_id = 2, rol_id = 2 WHERE id = 14;
+UPDATE usuarios SET email = 'ana.vargas@org.com', tipo_usuario_id = 3, rol_id = 2 WHERE id = 15;
+UPDATE usuarios SET email = 'david.ramirez@org.com', tipo_usuario_id = 3, rol_id = 2 WHERE id = 18;
+UPDATE usuarios SET email = 'carlos.garcia@gmail.com', tipo_usuario_id = 1, rol_id = 1 WHERE id = 20;
+UPDATE usuarios SET email = 'monica.gomez@empresa.com', tipo_usuario_id = 2, rol_id = 2 WHERE id = 21;
+UPDATE usuarios SET email = 'david.garcia@empresa.com', tipo_usuario_id = 2, rol_id = 2 WHERE id = 28;
+UPDATE usuarios SET email = 'clara.lopez@gmail.com', tipo_usuario_id = 1, rol_id = 1 WHERE id = 30;
+UPDATE usuarios SET email = 'maria.diaz@gmail.com', tipo_usuario_id = 1, rol_id = 1 WHERE id = 32;
+
+
+UPDATE personas_perfil SET nombre='Lucia', apellido_paterno='Perez', apellido_materno='Gomez', fecha_nacimiento='1995-05-10', sexo='Femenino', telefono='5512345678', tipo_sangre_id=7 WHERE usuario_id=1;
+UPDATE personas_perfil SET nombre='Sofia', apellido_paterno='Diaz', apellido_materno='Rodriguez', fecha_nacimiento='1998-11-22', sexo='Femenino', telefono='5523456789', tipo_sangre_id=1 WHERE usuario_id=2;
+UPDATE personas_perfil SET nombre='Clara', apellido_paterno='Lopez', apellido_materno='Martinez', fecha_nacimiento='1992-01-30', sexo='Femenino', telefono='5534567890', tipo_sangre_id=3 WHERE usuario_id=3;
+UPDATE personas_perfil SET nombre='Jorge', apellido_paterno='Navarro', apellido_materno='Sanchez', fecha_nacimiento='1990-07-15', sexo='Masculino', telefono='5545678901', tipo_sangre_id=8 WHERE usuario_id=4;
+UPDATE personas_perfil SET nombre='Lucia', apellido_paterno='Martinez', apellido_materno='Fernandez', fecha_nacimiento='1996-03-12', sexo='Femenino', telefono='5556789012', tipo_sangre_id=2 WHERE usuario_id=5;
+UPDATE personas_perfil SET nombre='Ana', apellido_paterno='Salazar', apellido_materno='Romero', fecha_nacimiento='2001-09-05', sexo='Femenino', telefono='5567890123', tipo_sangre_id=5 WHERE usuario_id=10;
+UPDATE personas_perfil SET nombre='Andres', apellido_paterno='Morales', apellido_materno='Garcia', fecha_nacimiento='1988-12-18', sexo='Masculino', telefono='5578901234', tipo_sangre_id=1 WHERE usuario_id=11;
+UPDATE personas_perfil SET nombre='Diego', apellido_paterno='Navarro', apellido_materno='Perez', fecha_nacimiento='1999-02-25', sexo='Masculino', telefono='5589012345', tipo_sangre_id=7 WHERE usuario_id=12;
+UPDATE personas_perfil SET nombre='Maria', apellido_paterno='Diaz', apellido_materno='Gomez', fecha_nacimiento='1993-06-20', sexo='Femenino', telefono='5590123456', tipo_sangre_id=4 WHERE usuario_id=13;
+UPDATE personas_perfil SET nombre='Maria', apellido_paterno='Morales', apellido_materno='Rodriguez', fecha_nacimiento='1994-08-14', sexo='Femenino', telefono='5501234567', tipo_sangre_id=6 WHERE usuario_id=14;
+UPDATE personas_perfil SET nombre='Ana', apellido_paterno='Vargas', apellido_materno='Lopez', fecha_nacimiento='2000-04-01', sexo='Femenino', telefono='5511223344', tipo_sangre_id=1 WHERE usuario_id=15;
+UPDATE personas_perfil SET nombre='David', apellido_paterno='Ramirez', apellido_materno='Martinez', fecha_nacimiento='1985-10-28', sexo='Masculino', telefono='5522334455', tipo_sangre_id=3 WHERE usuario_id=18;
+UPDATE personas_perfil SET nombre='Carlos', apellido_paterno='Garcia', apellido_materno='Sanchez', fecha_nacimiento='1989-11-03', sexo='Masculino', telefono='5533445566', tipo_sangre_id=8 WHERE usuario_id=20;
+UPDATE personas_perfil SET nombre='Monica', apellido_paterno='Gomez', apellido_materno='Fernandez', fecha_nacimiento='1997-07-21', sexo='Femenino', telefono='5544556677', tipo_sangre_id=2 WHERE usuario_id=21;
+
+-- =================================================================
+-- SECCIÓN 2: CREACIÓN DE NUEVOS REGISTROS (ID 28, 30, 32)
+-- =================================================================
+
+INSERT INTO personas_perfil (usuario_id, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, sexo, telefono, direccion_id, tipo_sangre_id) VALUES
+(28, 'David', 'Garcia', 'Romero', '1991-05-19', 'Masculino', '5555667788', NULL, 7),
+(30, 'Clara', 'Lopez', 'Perez', '1992-02-11', 'Femenino', '5566778899', NULL, 5),
+(32, 'Maria', 'Diaz', 'Gonzalez', '1993-04-16', 'Femenino', '5577889900', NULL, 1);
+
+
+-- =================================================================
+-- 8 Representantes de Organizaciones Altruistas
+-- =================================================================
+UPDATE representantes SET nombre='Fernando', apellido_paterno='Hernandez', apellido_materno='Ruiz', email='fernando.hernandez@unete.org', telefono='5510102030' WHERE id=1;
+UPDATE representantes SET nombre='Laura', apellido_paterno='Castillo', apellido_materno='Flores', email='laura.castillo@sonrisas.org.mx', telefono='5511112131' WHERE id=2;
+UPDATE representantes SET nombre='Ricardo', apellido_paterno='Mendoza', apellido_materno='Soto', email='ricardo.mendoza@porlosninos.org', telefono='5512122232' WHERE id=5;
+UPDATE representantes SET nombre='Patricia', apellido_paterno='Aguilar', apellido_materno='Vega', email='patricia.aguilar@caritas.org', telefono='5513132333' WHERE id=6;
+UPDATE representantes SET nombre='Javier', apellido_paterno='Moreno', apellido_materno='Ramos', email='javier.moreno@mundoanimal.org', telefono='5514142434' WHERE id=7;
+UPDATE representantes SET nombre='Elena', apellido_paterno='Reyes', apellido_materno='Guzman', email='elena.reyes@ecoplaneta.org', telefono='5515152535' WHERE id=8;
+UPDATE representantes SET nombre='Miguel', apellido_paterno='Paredes', apellido_materno='Cruz', email='miguel.paredes@comedorcomunitario.mx', telefono='5516162636' WHERE id=10;
+UPDATE representantes SET nombre='Isabel', apellido_paterno='Jimenez', apellido_materno='Ortega', email='isabel.jimenez@apoyomayor.org', telefono='5517172737' WHERE id=12;
+
+-- =================================================================
+-- 4 Representantes de Bancos de Sangre
+-- =================================================================
+UPDATE representantes SET nombre='Victor', apellido_paterno='Rojas', apellido_materno='Salas', email='victor.rojas@cruzroja.sangre.mx', telefono='5518182838' WHERE id=23;
+UPDATE representantes SET nombre='Carmen', apellido_paterno='Ibarra', apellido_materno='Luna', email='carmen.ibarra@hemosalud.org', telefono='5519192939' WHERE id=24;
+UPDATE representantes SET nombre='Daniel', apellido_paterno='Castro', apellido_materno='Rios', email='daniel.castro@bancovida.com', telefono='5520203040' WHERE id=26;
+UPDATE representantes SET nombre='Veronica', apellido_paterno='Mora', apellido_materno='Campos', email='veronica.mora@redsangre.org.mx', telefono='5521213141' WHERE id=27;
+
+-- =================================================================
+-- 3 Representantes de Empresas (Gym, Farmacia, etc.)
+-- =================================================================
+UPDATE representantes SET nombre='Alejandro', apellido_paterno='Vazquez', apellido_materno='Solis', email='alejandro.vazquez@powergym.com', telefono='5522223242' WHERE id=31;
+UPDATE representantes SET nombre='Gabriela', apellido_paterno='Dominguez', apellido_materno='Chavez', email='gabriela.dominguez@farmabien.com', telefono='5523233343' WHERE id=32;
+UPDATE representantes SET nombre='Ruben', apellido_paterno='Serrano', apellido_materno='Leon', email='ruben.serrano@nutrimarket.mx', telefono='5524243444' WHERE id=33;
+
+-- Archivo: poblar_direcciones.sql
+-- Descripción: Actualiza 12 direcciones y crea 15 nuevas para un total de 27.
+
+-- =================================================================
+-- SECCIÓN 1: ACTUALIZACIÓN de 12 Direcciones en Centro, Tabasco
+-- =================================================================
+UPDATE direcciones SET calle='Avenida Francisco I. Madero', numero_exterior='101', colonia='Centro', codigo_postal='86000', municipio='Centro', estado='Tabasco', latitud=17.9939, longitud=-92.9276 WHERE id=1;
+UPDATE direcciones SET calle='Calle Ignacio Zaragoza', numero_exterior='520', colonia='Centro', codigo_postal='86000', municipio='Centro', estado='Tabasco', latitud=17.9892, longitud=-92.9248 WHERE id=2;
+UPDATE direcciones SET calle='Paseo Tabasco', numero_exterior='1401', colonia='Linda Vista', codigo_postal='86050', municipio='Centro', estado='Tabasco', latitud=18.0015, longitud=-92.9496 WHERE id=3;
+UPDATE direcciones SET calle='Avenida Gregorio Méndez Magaña', numero_exterior='2504', colonia='Atasta de Serra', codigo_postal='86100', municipio='Centro', estado='Tabasco', latitud=17.9818, longitud=-92.9340 WHERE id=4;
+UPDATE direcciones SET calle='Boulevard Adolfo Ruiz Cortines', numero_exterior='1800', colonia='Petrolera', codigo_postal='86030', municipio='Centro', estado='Tabasco', latitud=17.9965, longitud=-92.9430 WHERE id=5;
+UPDATE direcciones SET calle='Calle Miguel Hidalgo y Costilla', numero_exterior='303', colonia='Tamulté de las Barrancas', codigo_postal='86150', municipio='Centro', estado='Tabasco', latitud=17.9712, longitud=-92.9238 WHERE id=7;
+UPDATE direcciones SET calle='Avenida 27 de Febrero', numero_exterior='950', colonia='Centro', codigo_postal='86000', municipio='Centro', estado='Tabasco', latitud=17.9911, longitud=-92.9299 WHERE id=8;
+UPDATE direcciones SET calle='Calle Heroico Colegio Militar', numero_exterior='115', colonia='Primero de Mayo', codigo_postal='86190', municipio='Centro', estado='Tabasco', latitud=17.9855, longitud=-92.9491 WHERE id=9;
+UPDATE direcciones SET calle='Paseo Usumacinta', numero_exterior='1504', colonia='Guayabal', codigo_postal='86090', municipio='Centro', estado='Tabasco', latitud=17.9788, longitud=-92.9501 WHERE id=10;
+UPDATE direcciones SET calle='Circuito Interior Carlos Pellicer Cámara', numero_exterior='3305', colonia='Carrizal', codigo_postal='86038', municipio='Centro', estado='Tabasco', latitud=18.0142, longitud=-92.9567 WHERE id=11;
+UPDATE direcciones SET calle='Calle Andrés García', numero_exterior='201', colonia='Reforma', codigo_postal='86080', municipio='Centro', estado='Tabasco', latitud=17.9899, longitud=-92.9422 WHERE id=12;
+UPDATE direcciones SET calle='Avenida Universidad', numero_exterior='s/n', colonia='Magisterial', codigo_postal='86040', municipio='Centro', estado='Tabasco', latitud=17.9995, longitud=-92.9351 WHERE id=13;
+
+-- =================================================================
+-- SECCIÓN 2: INSERCIÓN de 15 Direcciones en Varios Estados
+-- =================================================================
+INSERT INTO direcciones (calle, numero_exterior, colonia, codigo_postal, municipio, estado, latitud, longitud) VALUES
+-- Jalisco
+('Avenida Chapultepec Sur', '284', 'Americana', '44160', 'Guadalajara', 'Jalisco', 20.6698, -103.3670),
+-- Nuevo León
+('Avenida del Roble', '660', 'Valle del Campestre', '66265', 'San Pedro Garza García', 'Nuevo León', 25.6588, -100.3621),
+-- Yucatán
+('Paseo de Montejo', '460', 'Centro', '97000', 'Mérida', 'Yucatán', 20.9851, -89.6226),
+-- Puebla
+('Avenida 5 Poniente', '129', 'Centro Histórico', '72000', 'Puebla', 'Puebla', 19.0435, -98.2000),
+-- Querétaro
+('Avenida 5 de Febrero', 's/n', 'Zona Industrial', '76120', 'Querétaro', 'Querétaro', 20.6133, -100.3950),
+-- Baja California
+('Avenida Revolución', '828', 'Zona Centro', '22000', 'Tijuana', 'Baja California', 32.5315, -117.0371),
+-- Oaxaca
+('Calle de Manuel García Vigil', '512', 'Centro', '68000', 'Oaxaca de Juárez', 'Oaxaca', 17.0654, -96.7255),
+-- Quintana Roo
+('Boulevard Kukulcán', 'Km 9.5', 'Zona Hotelera', '77500', 'Benito Juárez', 'Quintana Roo', 21.1328, -86.7725),
+-- Chiapas
+('Boulevard Belisario Domínguez', '1861', 'Fraccionamiento Bugambilias', '29020', 'Tuxtla Gutiérrez', 'Chiapas', 16.7519, -93.1499),
+-- Ciudad de México
+('Avenida Álvaro Obregón', '269', 'Roma Norte', '06700', 'Cuauhtémoc', 'Ciudad de México', 19.4184, -99.1627),
+-- Estado de México
+('Paseo Tollocan', '1001', 'Santa Ana Tlapaltitlán', '50160', 'Toluca', 'Estado de México', 19.2730, -99.6247),
+-- Sinaloa
+('Avenida Álvaro Obregón', '555', 'Centro', '80000', 'Culiacán', 'Sinaloa', 24.8093, -107.3941),
+-- Veracruz
+('Boulevard Manuel Ávila Camacho', '1234', 'Ricardo Flores Magón', '91900', 'Veracruz', 'Veracruz', 19.1809, -96.1245),
+-- Guanajuato
+('Boulevard Adolfo López Mateos', '2510', 'Jardines de Jerez', '37530', 'León', 'Guanajuato', 21.1027, -101.6360),
+-- Chihuahua
+('Avenida de la Independencia', '210', 'Centro', '31000', 'Chihuahua', 'Chihuahua', 28.6353, -106.0754);
+
+
+
+-- =================================================================
+-- SECCIÓN 1: ACTUALIZACIÓN de los 4 perfiles existentes
+-- =================================================================
+-- Asignando las primeras 4 organizaciones a los IDs que ya tienes.
+UPDATE organizaciones_perfil 
+SET 
+    nombre_organizacion = 'Fundación Únete por el Bienestar Social A.C.',
+    cluni = 'FUN210815HGTDFR01',
+    mision = 'Promover la participación ciudadana para apoyar a comunidades vulnerables a través de programas de desarrollo autosostenible.',
+    representante_id = 1
+WHERE id = 3;
+
+UPDATE organizaciones_perfil
+SET
+    nombre_organizacion = 'Sonrisas para el Futuro México A.C.',
+    cluni = 'SFM190120DFGHYT02',
+    mision = 'Brindar apoyo educativo, alimentario y emocional a niños y niñas en situación de riesgo para asegurarles un futuro digno.',
+    representante_id = 2
+WHERE id = 13;
+
+UPDATE organizaciones_perfil
+SET
+    nombre_organizacion = 'Asociación Civil Por los Niños',
+    cluni = 'APN050510PLMFRT03',
+    mision = 'Garantizar el derecho a la salud y a una educación de calidad para la niñez mexicana en comunidades marginadas.',
+    representante_id = 5
+WHERE id = 14;
+
+UPDATE organizaciones_perfil
+SET
+    nombre_organizacion = 'Cáritas Diocesana I.A.P.',
+    cluni = 'CDI991130GTRFDS04',
+    mision = 'Asistir a personas y familias en situación de pobreza y exclusión social, fomentando la caridad y la justicia social.',
+    representante_id = 6
+WHERE id = 15;
+
+-- =================================================================
+-- SECCIÓN 2: CREACIÓN de los 4 perfiles nuevos
+-- =================================================================
+-- Insertando los perfiles para los 4 representantes restantes.
+INSERT INTO organizaciones_perfil (nombre_organizacion, cluni, mision, representante_id)
+VALUES
+(
+    'Mundo Animal Refugio y Protección',
+    'MAR150312MNBVCX05',
+    'Rescatar, rehabilitar, esterilizar y encontrar hogares responsables para animales en situación de calle o maltrato.',
+    7
+),
+(
+    'EcoPlaneta Conservación Ambiental',
+    'ECA100228LKJHGF06',
+    'Fomentar la conservación de los ecosistemas y la biodiversidad en México a través de la educación y la acción comunitaria.',
+    8
+),
+(
+    'Comedor Comunitario Manos Unidas',
+    'CCM180901ASDFGY07',
+    'Proporcionar alimento nutritivo y balanceado a personas de escasos recursos, niños y adultos mayores en situación de vulnerabilidad.',
+    10
+),
+(
+    'Fundación Apoyo Mayor',
+    'FAM010717QWERTY08',
+    'Mejorar la calidad de vida de los adultos mayores a través de programas de salud, compañía, bienestar y asistencia integral.',
+    12
+);
+
+INSERT INTO organizaciones_perfil (nombre_organizacion, cluni, mision, representante_id)
+VALUES
+(
+    'Cruz Roja Mexicana - Banco de Sangre',
+    'CRM870215GTRDPL01',
+    'Contribuir a salvar vidas proporcionando sangre y componentes sanguíneos seguros y de alta calidad para la comunidad, bajo los principios de la donación voluntaria y altruista.',
+    23
+),
+(
+    'Hemosalud Centro de Donación',
+    'HCD051120HJKLYU02',
+    'Fomentar la cultura de la donación altruista de sangre y facilitar el acceso a componentes sanguíneos seguros para tratamientos médicos y emergencias.',
+    24
+),
+(
+    'Banco de Vida - Servicios Hematológicos',
+    'BVH110901ASDFGH03',
+    'Ofrecer servicios integrales de hematología y un banco de sangre con tecnología de punta para garantizar la seguridad y el bienestar de donantes y receptores.',
+    26
+),
+(
+    'Red Nacional de Sangre Altruista A.C.',
+    'RSA160418CVBNMK04',
+    'Conectar de manera eficiente a donantes voluntarios con pacientes que requieren transfusiones urgentes, creando y fortaleciendo una red de apoyo a nivel nacional.',
+    27
+);

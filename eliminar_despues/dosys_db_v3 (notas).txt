@@ -1,0 +1,13 @@
+
+### **Mi Plan (Basado en tu Idea)**
+
+Vamos a modificar el archivo `avisos.php`. En la parte superior, crearemos una consulta SQL que hará lo siguiente:
+
+1.  **Comenzará en la tabla `avisos`** para obtener la información principal (`titulo`, `descripcion`, `categoria_id`).
+2.  **Se unirá (`JOIN`) a la tabla `organizaciones_perfil`** usando el `organizacion_id` para obtener los datos de la organización gestora.
+3.  Desde `organizaciones_perfil`, **se unirá (`JOIN`) a la tabla `direcciones`** para obtener el `municipio` y el `estado`.
+4.  Aquí viene la parte inteligente: Usaremos `LEFT JOIN` para conectarnos **a las tres tablas de solicitudes** (`solicitudes_sangre`, `solicitudes_medicamentos`, y `solicitudes_dispositivos`) al mismo tiempo.
+    * `LEFT JOIN` es perfecto aquí porque un aviso solo tendrá detalles en una de esas tres tablas, y las otras dos quedarán vacías (`NULL`), permitiéndonos tomar el dato que sí exista.
+5.  Finalmente, usaremos una función de SQL llamada `COALESCE()` para tomar la cantidad requerida de la tabla que no esté vacía. La lógica sería: "Toma la `cantidad_requerida` de la tabla de sangre; si no existe, tómala de la de medicamentos; si tampoco existe, tómala de la de dispositivos".
+
+El resultado de esta consulta será una lista de "avisos enriquecidos", donde cada uno tendrá toda la información que necesitas (título, descripción, ubicación, cantidad, etc.) lista para ser mostrada en las tarjetas del HTML.

@@ -1,13 +1,53 @@
 <?php
-require_once 'config.php'; // Incluye la configuración y la URL base.
-// Inicia la sesión.
+require_once 'config.php';
+// --- INICIO DE LA MODIFICACIÓN: Añadir conexión y consulta ---
+require_once 'conexion_local.php';
 session_start();
 
-// Muestra una alerta si hay un error en el inicio de sesión.
-if (isset($_GET['error']) && $_GET['error'] == 1) {
-    echo "<script>alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');</script>";
+// Array para guardar los avisos que vienen de la BD
+$avisos = [];
+
+// Esta es la consulta "inteligente" que une todas las tablas
+$sql = "SELECT 
+            a.id AS aviso_id,
+            a.titulo,
+            a.descripcion,
+            a.categoria_id,
+            
+            -- Datos de la ubicación a través de la organización
+            d.municipio,
+            d.estado,
+            
+            -- Usamos COALESCE para obtener la cantidad requerida de la tabla correcta
+            COALESCE(ss.unidades_requeridas, sm.cantidad_requerida, sd.cantidad_requerida) AS cantidad_requerida
+            
+        FROM 
+            avisos a
+        JOIN 
+            organizaciones_perfil op ON a.organizacion_id = op.id
+        LEFT JOIN 
+            direcciones d ON op.direccion_id = d.id
+        LEFT JOIN 
+            solicitudes_sangre ss ON a.id = ss.aviso_id AND a.categoria_id = 1
+        LEFT JOIN 
+            solicitudes_medicamentos sm ON a.id = sm.aviso_id AND a.categoria_id = 2
+        LEFT JOIN 
+            solicitudes_dispositivos sd ON a.id = sd.aviso_id AND a.categoria_id = 3
+        WHERE
+            a.estatus_id = 2 -- Solo mostramos los avisos 'Activos'
+        ORDER BY 
+            a.fecha_creacion DESC";
+
+$resultado = $conexion->query($sql);
+if ($resultado) {
+    while ($fila = $resultado->fetch_assoc()) {
+        $avisos[] = $fila;
+    }
 }
+$conexion->close();
+// --- FIN DE LA MODIFICACIÓN ---
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -66,6 +106,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
     <!-- Notices Start -->
     <div class="container-fluid py-5 bg-light">
         <div class="container">
+            
             <div class="d-lg-flex justify-content-between align-items-center mb-5">
                 <div class="text-center text-lg-start">
                     <h1 class="display-5">Avisos de Donación</h1>
@@ -108,73 +149,71 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                 </div>
             </div>
 
-            <div class="row g-4">
-                <!-- Notice Card 1: Sangre -->
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s" data-category="sangre">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body d-flex flex-column p-4">
-                            <div class="position-absolute top-0 end-0 p-3">
-                                <i class="fas fa-tint fa-2x text-danger"></i>
-                            </div>
-                            <h5 class="card-title mt-5">Solicitud de Sangre O+</h5>
-                            <p class="card-text text-muted small mb-3"><i class="fas fa-map-marker-alt me-2"></i>Villahermosa, Tabasco</p>
-                            <p class="card-text">Se necesitan donantes para una transfusión. Tu donación es vital para ayudar a quien lo necesita.</p>
-                            <div class="mt-auto pt-3">
-                                <div class="progress mb-2" style="height: 10px;">
-                                    <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <p class="text-muted small">2 de 8 unidades recolectadas</p>
-                                <a href="avisos_detalles.php" class="btn btn-primary rounded-pill w-100">Ver Detalles</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<div class="row g-4">
+    <?php
+    // Primero, definimos un mapa de iconos para las categorías
+    $iconos_categoria = [
+        1 => '<i class="fas fa-tint fa-2x text-danger"></i>',    // Sangre
+        2 => '<i class="fas fa-pills fa-2x text-primary"></i>', // Medicamentos
+        3 => '<i class="fas fa-wheelchair fa-2x text-warning"></i>' // Dispositivos
+    ];
 
-                <!-- Notice Card 2: Medicamentos -->
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s" data-category="medicamentos">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body d-flex flex-column p-4">
-                             <div class="position-absolute top-0 end-0 p-3">
-                                <i class="fas fa-pills fa-2x text-primary"></i>
-                            </div>
-                            <h5 class="card-title mt-5">Solicitud de Insulina</h5>
-                            <p class="card-text text-muted small mb-3"><i class="fas fa-map-marker-alt me-2"></i>Comalcalco, Tabasco</p>
-                            <p class="card-text">Se requiere donación de insulina glargina para un tratamiento médico. Cualquier cantidad es de gran ayuda.</p>
-                             <div class="mt-auto pt-3">
-                                <div class="progress mb-2" style="height: 10px;">
-                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <p class="text-muted small">3 de 5 cajas obtenidas</p>
-                                <a href="avisos_detalles.php" class="btn btn-primary rounded-pill w-100">Ver Detalles</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    // Verificamos si hay avisos para mostrar
+    if (!empty($avisos)):
+        // Iniciamos un bucle que creará una tarjeta por cada aviso
+        foreach ($avisos as $aviso):
+    ?>
 
-                <!-- Notice Card 3: Dispositivos -->
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s" data-category="dispositivos">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body d-flex flex-column p-4">
-                            <div class="position-absolute top-0 end-0 p-3">
-                                <i class="fas fa-wheelchair fa-2x text-warning"></i>
-                            </div>
-                            <h5 class="card-title mt-5">Solicitud de Silla de Ruedas</h5>
-                            <p class="card-text text-muted small mb-3"><i class="fas fa-map-marker-alt me-2"></i>Cárdenas, Tabasco</p>
-                            <p class="card-text">Se necesita una silla de ruedas en buen estado para mejorar la movilidad y calidad de vida de una persona.</p>
-                             <div class="mt-auto pt-3">
-                                <div class="progress mb-2" style="height: 10px;">
-                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <p class="text-muted small">0 de 1 silla obtenida</p>
-                                <a href="avisos_detalles.php" class="btn btn-primary rounded-pill w-100">Ver Detalles</a>
-                            </div>
-                        </div>
-                    </div>
+    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body d-flex flex-column p-4">
+                
+                <div class="position-absolute top-0 end-0 p-3">
+                    <?php echo $iconos_categoria[$aviso['categoria_id']] ?? '<i class="fas fa-heart fa-2x text-muted"></i>'; ?>
                 </div>
                 
-                <!-- Add more notice cards as needed -->
-
+                <h5 class="card-title mt-5"><?php echo htmlspecialchars($aviso['titulo']); ?></h5>
+                
+                <p class="card-text text-muted small mb-3">
+                    <i class="fas fa-map-marker-alt me-2"></i><?php echo htmlspecialchars($aviso['municipio'] . ', ' . $aviso['estado']); ?>
+                </p>
+                
+                <p class="card-text"><?php echo htmlspecialchars(substr($aviso['descripcion'], 0, 100)) . '...'; ?></p>
+                
+                <div class="mt-auto pt-3">
+                    <div class="progress mb-2" style="height: 10px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    
+                    <p class="text-muted small">0 de <?php echo htmlspecialchars($aviso['cantidad_requerida']); ?> unidades recolectadas</p>
+                    
+                    <a href="avisos_detalles.php?id=<?php echo $aviso['aviso_id']; ?>" class="btn btn-primary rounded-pill w-100">Ver Detalles</a>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <?php
+        endforeach;
+    else:
+    ?>
+    
+    <div class="col-12">
+        <div class="alert alert-info text-center" role="alert">
+            <h4 class="alert-heading">¡Todo al día!</h4>
+            <p>Por el momento no hay solicitudes de donación activas. ¡Gracias por tu interés en ayudar!</p>
+        </div>
+    </div>
+
+    <?php
+    endif;
+    ?>
+</div>
+
+
+
+
+
         </div>
     </div>
     <!-- Notices End -->
