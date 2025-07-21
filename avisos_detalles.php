@@ -1,129 +1,201 @@
 <?php
-require_once 'config.php'; // Incluye la configuración y la URL base.
-// Inicia la sesión.
+require_once 'config.php';
+require_once 'conexion_local.php';
 session_start();
 
-// Muestra una alerta si hay un error en el inicio de sesión.
-if (isset($_GET['error']) && $_GET['error'] == 1) {
-    echo "<script>alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');</script>";
+// 1. OBTENER EL ID DEL AVISO
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    header('Location: avisos.php');
+    exit();
 }
+$aviso_id = intval($_GET['id']);
+
+// 2. CONSULTA FINAL Y DEFINITIVA
+$sql = "SELECT
+            a.id AS aviso_id, a.titulo, a.descripcion,
+            a.categoria_id, cd.nombre AS categoria_nombre,
+            op.nombre_organizacion,
+            d.calle, d.numero_exterior, d.colonia, d.municipio, d.estado, d.latitud, d.longitud,
+            COALESCE(ss.unidades_requeridas, sm.cantidad_requerida, sd.cantidad_requerida) AS cantidad_requerida,
+            0 AS cantidad_recolectada,
+            
+            -- AJUSTE FINAL: Seleccionamos solo la columna 'tipo' de la tabla 'tipos_sangre'
+            ts.tipo AS tipo_sangre
+
+        FROM
+            avisos a
+        JOIN
+            organizaciones_perfil op ON a.organizacion_id = op.id
+        JOIN
+            direcciones d ON op.direccion_id = d.id
+        JOIN
+            categorias_donacion cd ON a.categoria_id = cd.id
+        LEFT JOIN
+            solicitudes_sangre ss ON a.id = ss.aviso_id AND a.categoria_id = 1
+        LEFT JOIN
+            tipos_sangre ts ON ss.tipo_sangre_id = ts.id
+        LEFT JOIN
+            solicitudes_medicamentos sm ON a.id = sm.aviso_id AND a.categoria_id = 2
+        LEFT JOIN
+            solicitudes_dispositivos sd ON a.id = sd.aviso_id AND a.categoria_id = 3
+        WHERE
+            a.id = ?";
+
+$stmt = $conexion->prepare($sql);
+
+if ($stmt === false) {
+    die("Error al preparar la consulta: " . htmlspecialchars($conexion->error));
+}
+
+$stmt->bind_param("i", $aviso_id);
+$stmt->execute();
+$resultado = $stmt->get_result();
+
+if ($resultado->num_rows === 0) {
+    header('Location: avisos.php');
+    exit();
+}
+
+$aviso = $resultado->fetch_assoc();
+
+// 3. CALCULAR EL PROGRESO
+$requerido = $aviso['cantidad_requerida'] ?? 0;
+$recolectado = $aviso['cantidad_recolectada'] ?? 0;
+$porcentaje = ($requerido > 0) ? ($recolectado / $requerido) * 100 : 0;
+
+// Mapa de íconos y colores
+$mapa_categorias = [
+    1 => ['icono' => 'fa-tint', 'color' => 'bg-danger'],
+    2 => ['icono' => 'fa-pills', 'color' => 'bg-primary'],
+    3 => ['icono' => 'fa-wheelchair', 'color' => 'bg-warning'],
+];
+$categoria_info = $mapa_categorias[$aviso['categoria_id']] ?? ['icono' => 'fa-heart', 'color' => 'bg-secondary'];
+
+$stmt->close();
+$conexion->close();
 ?>
 <!DOCTYPE html>
 <html lang="es">
 
-    <head>
-        <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
-        <meta charset="utf-8">
-        <title>DoSys - Detalles del Aviso</title>
-        <meta content="width=device-width, initial-scale=1.0" name="viewport">
-        <meta content="" name="keywords">
-        <meta content="" name="description">
+<head>
+    <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
+    <meta charset="utf-8">
+    <title>DoSys - <?php echo htmlspecialchars($aviso['titulo']); ?></title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="<?php echo htmlspecialchars(substr($aviso['descripcion'], 0, 155)); ?>" name="description">
 
-        <!-- Favicon -->
-        <link rel="icon" type="image/png" href="img/logos/DoSys_chico.png">
+    <link rel="icon" type="image/png" href="img/logos/DoSys_chico.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="lib/animate/animate.min.css" />
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <style>
+        #map { height: 400px; width: 100%; border-radius: .5rem; }
+    </style>
+</head>
 
-        <!-- Google Web Fonts -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
-
-        <!-- Icon Font Stylesheet -->
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
-
-        <!-- Libraries Stylesheet -->
-        <link rel="stylesheet" href="lib/animate/animate.min.css"/>
-        <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
-        <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-
-
-        <!-- Customized Bootstrap Stylesheet -->
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-
-        <!-- Template Stylesheet -->
-        <link href="css/style.css" rel="stylesheet">
-
-    </head>
-
-    <body>
-
-        <!-- Spinner Start -->
-        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Cargando...</span>
-            </div>
+<body>
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Cargando...</span>
         </div>
-        <!-- Spinner End -->
+    </div>
+    <?php require_once 'templates/topbar.php'; ?>
+    <?php require_once 'templates/navbar.php'; ?>
 
-        <!-- Topbar Start -->
-        <?php require_once 'templates/topbar.php'; ?>
-        <!-- Topbar End -->
-         
-        <!-- Navbar Start -->
-        <?php require_once 'templates/navbar.php'; ?>
-        <!-- Navbar End -->
-
-    <!-- Notice Details Start -->
     <div class="container-fluid py-5 bg-light">
         <div class="container">
             <div class="row g-5">
-                <!-- Main Content -->
                 <div class="col-lg-7">
                     <div class="card border-0 shadow-sm">
                         <div class="card-body p-4 p-md-5">
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <div>
-                                    <h2 class="card-title mb-1">Solicitud Urgente de Sangre O+</h2>
-                                    <p class="card-text text-muted"><i class="fas fa-map-marker-alt me-2"></i>Villahermosa, Tabasco</p>
+                                    <h2 class="card-title mb-1"><?php echo htmlspecialchars($aviso['titulo']); ?></h2>
+                                    <p class="card-text text-muted">
+                                        <i class="fas fa-hospital me-2"></i><?php echo htmlspecialchars($aviso['nombre_organizacion']); ?>
+                                        <br>
+                                        <i class="fas fa-map-marker-alt me-2"></i><?php echo htmlspecialchars($aviso['municipio'] . ', ' . $aviso['estado']); ?>
+                                    </p>
                                 </div>
-                                <span class="badge bg-danger p-2 fs-6"><i class="fas fa-tint me-2"></i>Sangre</span>
+                                <span class="badge <?php echo $categoria_info['color']; ?> p-2 fs-6">
+                                    <i class="fas <?php echo $categoria_info['icono']; ?> me-2"></i><?php echo htmlspecialchars($aviso['categoria_nombre']); ?>
+                                </span>
                             </div>
                             <hr>
                             <h5 class="mb-3">Descripción de la Necesidad</h5>
-                            <p>Se solicita con urgencia la donación de 8 unidades de sangre tipo O positivo para un paciente que será sometido a una cirugía cardíaca de alto riesgo. La intervención es crucial y está programada para los próximos días, por lo que el tiempo es un factor crítico.</p>
-                            <p>Los donantes deben cumplir con los requisitos básicos de salud, tener entre 18 y 65 años y no haber donado en los últimos 3 meses. Su colaboración puede marcar la diferencia entre la vida y la muerte. Agradecemos de antemano su generosidad y apoyo en este momento tan delicado.</p>
+                            <p><?php echo nl2br(htmlspecialchars($aviso['descripcion'])); ?></p>
+                            
+                            <?php if ($aviso['categoria_id'] == 1 && !empty($aviso['tipo_sangre'])): ?>
+                            <div class="alert alert-danger mt-4">
+                                <strong>Tipo de Sangre Requerido: </strong> <?php echo htmlspecialchars($aviso['tipo_sangre']); ?>
+                            </div>
+                            <?php endif; ?>
+                            
                         </div>
                     </div>
                 </div>
 
-                <!-- Sidebar -->
                 <div class="col-lg-5">
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-body p-4">
                             <h5 class="mb-3">Progreso de la Donación</h5>
-                            <p class="text-muted small mb-1">2 de 8 unidades recolectadas</p>
+                            <p class="text-muted small mb-1"><?php echo number_format($recolectado); ?> de <?php echo number_format($requerido); ?> unidades recolectadas</p>
                             <div class="progress mb-3" style="height: 10px;">
-                                <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar bg-success" role="progressbar" style="width: <?php echo $porcentaje; ?>%;" aria-valuenow="<?php echo $porcentaje; ?>" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
                             <div class="d-grid">
                                 <button class="btn btn-primary btn-lg">Donar Ahora</button>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Map Card -->
+
                     <div class="card border-0 shadow-sm">
                         <div class="card-body p-4">
                             <h5 class="mb-3">Ubicación de Referencia</h5>
-                            <div class="ratio" style="--bs-aspect-ratio: 100%;">
-                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d122261.9443651356!2d-93.00839966953124!3d17.987553400000004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85edd7e883d3483d%3A0x49f50858587b69b5!2sVillahermosa%2C%20Tab.!5e0!3m2!1ses-419!2smx!4v1720027732441!5m2!1ses-419!2smx" style="border:0; width: 100%; height: 100%;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                            </div>
+                            <?php if (!empty($aviso['latitud']) && !empty($aviso['longitud'])): ?>
+                                <div id="map"></div>
+                            <?php else: ?>
+                                <div class="alert alert-warning">No hay datos de ubicación para mostrar en el mapa.</div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Notice Details End -->
-        
-        <!-- Footer Start -->
-        <?php require_once 'templates/footer.php'; ?>
-        <!-- Footer End -->
-         
-        <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a> 
-        
-        <?php require_once 'templates/scripts.php'; ?>
-          
+    <?php require_once 'templates/footer.php'; ?>
+    <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>
+    
+    <?php require_once 'templates/scripts.php'; ?>
+
+    <?php if (!empty($aviso['latitud']) && !empty($aviso['longitud'])): ?>
+    <script>
+        function initMap() {
+            const locationCoords = {
+                lat: <?php echo $aviso['latitud']; ?>,
+                lng: <?php echo $aviso['longitud']; ?>
+            };
+            
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 15,
+                center: locationCoords,
+                mapTypeControl: false,
+                streetViewControl: false
+            });
+
+            const marker = new google.maps.Marker({
+                position: locationCoords,
+                map: map,
+                title: "<?php echo htmlspecialchars($aviso['nombre_organizacion']); ?>"
+            });
+        }
+    </script>
+    <?php endif; ?>
 </body>
 
 </html>
