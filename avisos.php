@@ -1,26 +1,23 @@
 <?php
 require_once 'config.php';
-// --- INICIO DE LA MODIFICACIÓN: Añadir conexión y consulta ---
 require_once 'conexion_local.php';
 session_start();
+
+// --- INICIO DE LA MODIFICACIÓN: Lógica de filtros ---
+
+// 1. Recoger los valores de los filtros de la URL (si existen)
+$keyword = $_GET['q'] ?? '';
+$tipo_id = $_GET['tipo'] ?? '';
+$ubicacion = $_GET['ubicacion'] ?? '';
 
 // Array para guardar los avisos que vienen de la BD
 $avisos = [];
 
-// Esta es la consulta "inteligente" que une todas las tablas
+// 2. Construir la consulta base
 $sql = "SELECT 
-            a.id AS aviso_id,
-            a.titulo,
-            a.descripcion,
-            a.categoria_id,
-            
-            -- Datos de la ubicación a través de la organización
-            d.municipio,
-            d.estado,
-            
-            -- Usamos COALESCE para obtener la cantidad requerida de la tabla correcta
+            a.id AS aviso_id, a.titulo, a.descripcion, a.categoria_id,
+            d.municipio, d.estado,
             COALESCE(ss.unidades_requeridas, sm.cantidad_requerida, sd.cantidad_requerida) AS cantidad_requerida
-            
         FROM 
             avisos a
         JOIN 
@@ -32,18 +29,59 @@ $sql = "SELECT
         LEFT JOIN 
             solicitudes_medicamentos sm ON a.id = sm.aviso_id AND a.categoria_id = 2
         LEFT JOIN 
-            solicitudes_dispositivos sd ON a.id = sd.aviso_id AND a.categoria_id = 3
-        WHERE
-            a.estatus_id = 2 -- Solo mostramos los avisos 'Activos'
-        ORDER BY 
-            a.fecha_creacion DESC";
+            solicitudes_dispositivos sd ON a.id = sd.aviso_id AND a.categoria_id = 3";
 
-$resultado = $conexion->query($sql);
+// 3. Añadir las condiciones de los filtros de forma dinámica
+$conditions = ['a.estatus_id = 2']; // Condición base: solo avisos 'Activos'
+$params = [];
+$types = '';
+
+// Filtro por palabra clave (en título o descripción)
+if (!empty($keyword)) {
+    $conditions[] = "(a.titulo LIKE ? OR a.descripcion LIKE ?)";
+    $params[] = "%$keyword%";
+    $params[] = "%$keyword%";
+    $types .= 'ss';
+}
+
+// Filtro por tipo de donación (categoría)
+if (!empty($tipo_id)) {
+    $conditions[] = "a.categoria_id = ?";
+    $params[] = $tipo_id;
+    $types .= 'i';
+}
+
+// Filtro por ubicación (municipio)
+if (!empty($ubicacion)) {
+    $conditions[] = "d.municipio = ?";
+    $params[] = $ubicacion;
+    $types .= 's';
+}
+
+// Unir todas las condiciones a la consulta SQL
+if (!empty($conditions)) {
+    $sql .= " WHERE " . implode(" AND ", $conditions);
+}
+
+$sql .= " ORDER BY a.fecha_creacion DESC";
+
+// 4. Preparar y ejecutar la consulta de forma segura
+$stmt = $conexion->prepare($sql);
+
+if (!empty($params)) {
+    $stmt->bind_param($types, ...$params);
+}
+
+$stmt->execute();
+$resultado = $stmt->get_result();
+
 if ($resultado) {
     while ($fila = $resultado->fetch_assoc()) {
         $avisos[] = $fila;
     }
 }
+
+$stmt->close();
 $conexion->close();
 // --- FIN DE LA MODIFICACIÓN ---
 ?>
@@ -118,36 +156,40 @@ $conexion->close();
             </div>
 
             <!-- Advanced Filters -->
-            <div class="row mb-5">
-                <div class="col-12">
-                    <form class="row g-3 align-items-center bg-white p-3 rounded shadow-sm">
-                        <div class="col-lg-5 col-md-12">
-                            <input type="text" class="form-control" placeholder="Buscar por palabra clave...">
-                        </div>
-                        <div class="col-lg-3 col-md-6">
-                            <select class="form-select">
-                                <option selected>Tipo de donación...</option>
-                                <option value="all">Todos</option>
-                                <option value="sangre">Sangre</option>
-                                <option value="medicamentos">Medicamentos</option>
-                                <option value="dispositivos">Dispositivos</option>
-                            </select>
-                        </div>
-                        <div class="col-lg-3 col-md-6">
-                             <select class="form-select">
-                                <option selected>Ubicación...</option>
-                                <option value="centro">Centro</option>
-                                <option value="cardenas">Cárdenas</option>
-                                <option value="comalcalco">Comalcalco</option>
-                                <option value="paraiso">Paraíso</option>
-                            </select>
-                        </div>
-                        <div class="col-lg-1 col-md-12 text-end">
-                            <button type="submit" class="btn btn-primary w-100">Buscar</button>
-                        </div>
-                    </form>
-                </div>
+<div class="row mb-5">
+    <div class="col-12">
+        <form class="row g-3 align-items-center bg-white p-3 rounded shadow-sm" method="GET" action="avisos.php">
+            <div class="col-lg-5 col-md-12">
+                <input type="text" name="q" class="form-control" placeholder="Buscar por palabra clave..." value="<?php echo htmlspecialchars($keyword); ?>">
             </div>
+            <div class="col-lg-3 col-md-6">
+                <select name="tipo" class="form-select">
+                    <option value="">Tipo de donación...</option>
+                    <option value="1" <?php if ($tipo_id == '1') echo 'selected'; ?>>Sangre</option>
+                    <option value="2" <?php if ($tipo_id == '2') echo 'selected'; ?>>Medicamentos</option>
+                    <option value="3" <?php if ($tipo_id == '3') echo 'selected'; ?>>Dispositivos</option>
+                </select>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                 <select name="ubicacion" class="form-select">
+                    <option value="">Ubicación...</option>
+                    <option value="Centro" <?php if ($ubicacion == 'Centro') echo 'selected'; ?>>Centro</option>
+                    <option value="Cárdenas" <?php if ($ubicacion == 'Cárdenas') echo 'selected'; ?>>Cárdenas</option>
+                    <option value="Comalcalco" <?php if ($ubicacion == 'Comalcalco') echo 'selected'; ?>>Comalcalco</option>
+                    <option value="Paraíso" <?php if ($ubicacion == 'Paraíso') echo 'selected'; ?>>Paraíso</option>
+                </select>
+            </div>
+            <div class="col-lg-1 col-md-12 text-end">
+                <button type="submit" class="btn btn-primary w-100">Buscar</button>
+            </div>
+        </form>
+        </div>
+</div>
+
+
+
+
+
 
 <div class="row g-4">
     <?php
