@@ -10,7 +10,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 }
 $aviso_id = intval($_GET['id']);
 
-// 2. CONSULTA ACTUALIZADA PARA INCLUIR MEDICAMENTOS
+// 2. CONSULTA FINAL (INCLUYE LAS 3 CATEGORÍAS)
 $sql = "SELECT
             a.id AS aviso_id, a.titulo, a.descripcion,
             a.categoria_id, cd.nombre AS categoria_nombre,
@@ -21,8 +21,10 @@ $sql = "SELECT
             
             ts.tipo AS tipo_sangre,
             
-            -- ¡NUEVO! Detalles para medicamentos
-            sm.nombre_medicamento, sm.dosis, sm.presentacion
+            sm.nombre_medicamento, sm.dosis, sm.presentacion,
+            
+            -- ¡NUEVO! Detalles para dispositivos
+            sd.nombre_dispositivo, sd.especificaciones
 
         FROM
             avisos a
@@ -89,7 +91,8 @@ $conexion->close();
     <link rel="icon" type="image/png" href="img/logos/DoSys_chico.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
+    <link href="https
+://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="lib/animate/animate.min.css" />
@@ -148,6 +151,18 @@ $conexion->close();
                                     <?php endif; ?>
                                     <?php if (!empty($aviso['presentacion'])): ?>
                                         <li><strong>Presentación:</strong> <?php echo htmlspecialchars($aviso['presentacion']); ?></li>
+                                    <?php endif; ?>
+                                </ul>
+                            </div>
+                            <?php endif; ?>
+
+                            <?php if ($aviso['categoria_id'] == 3 && !empty($aviso['nombre_dispositivo'])): ?>
+                            <div class="alert alert-warning mt-4">
+                                <h6 class="alert-heading">Detalles del Dispositivo</h6>
+                                <ul class="list-unstyled mb-0">
+                                    <li><strong>Dispositivo:</strong> <?php echo htmlspecialchars($aviso['nombre_dispositivo']); ?></li>
+                                    <?php if (!empty($aviso['especificaciones'])): ?>
+                                        <li><strong>Especificaciones:</strong> <?php echo nl2br(htmlspecialchars($aviso['especificaciones'])); ?></li>
                                     <?php endif; ?>
                                 </ul>
                             </div>
