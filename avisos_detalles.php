@@ -10,7 +10,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 }
 $aviso_id = intval($_GET['id']);
 
-// 2. CONSULTA FINAL Y DEFINITIVA
+// 2. CONSULTA ACTUALIZADA PARA INCLUIR MEDICAMENTOS
 $sql = "SELECT
             a.id AS aviso_id, a.titulo, a.descripcion,
             a.categoria_id, cd.nombre AS categoria_nombre,
@@ -19,8 +19,10 @@ $sql = "SELECT
             COALESCE(ss.unidades_requeridas, sm.cantidad_requerida, sd.cantidad_requerida) AS cantidad_requerida,
             0 AS cantidad_recolectada,
             
-            -- AJUSTE FINAL: Seleccionamos solo la columna 'tipo' de la tabla 'tipos_sangre'
-            ts.tipo AS tipo_sangre
+            ts.tipo AS tipo_sangre,
+            
+            -- ¡NUEVO! Detalles para medicamentos
+            sm.nombre_medicamento, sm.dosis, sm.presentacion
 
         FROM
             avisos a
@@ -133,6 +135,21 @@ $conexion->close();
                             <?php if ($aviso['categoria_id'] == 1 && !empty($aviso['tipo_sangre'])): ?>
                             <div class="alert alert-danger mt-4">
                                 <strong>Tipo de Sangre Requerido: </strong> <?php echo htmlspecialchars($aviso['tipo_sangre']); ?>
+                            </div>
+                            <?php endif; ?>
+
+                            <?php if ($aviso['categoria_id'] == 2 && !empty($aviso['nombre_medicamento'])): ?>
+                            <div class="alert alert-primary mt-4">
+                                <h6 class="alert-heading">Detalles del Medicamento</h6>
+                                <ul class="list-unstyled mb-0">
+                                    <li><strong>Medicamento:</strong> <?php echo htmlspecialchars($aviso['nombre_medicamento']); ?></li>
+                                    <?php if (!empty($aviso['dosis'])): ?>
+                                        <li><strong>Dosis:</strong> <?php echo htmlspecialchars($aviso['dosis']); ?></li>
+                                    <?php endif; ?>
+                                    <?php if (!empty($aviso['presentacion'])): ?>
+                                        <li><strong>Presentación:</strong> <?php echo htmlspecialchars($aviso['presentacion']); ?></li>
+                                    <?php endif; ?>
+                                </ul>
                             </div>
                             <?php endif; ?>
                             
