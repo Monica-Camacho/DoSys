@@ -18,9 +18,8 @@ $sql = "SELECT
             d.calle, d.numero_exterior, d.colonia, d.municipio, d.estado, d.latitud, d.longitud,
             COALESCE(ss.unidades_requeridas, sm.cantidad_requerida, sd.cantidad_requerida) AS cantidad_requerida,
             
-            -- ¡NUEVO! Cálculo real de unidades recolectadas
-            -- Suma las cantidades de la tabla 'donaciones' solo si el estatus es 2 (Aprobado/Completado)
-            COALESCE((SELECT SUM(cantidad) FROM donaciones WHERE aviso_id = a.id AND estatus_id = 2), 0) AS cantidad_recolectada,
+            -- CORRECCIÓN: Se usa estatus_id = 3 para contar las donaciones completadas
+            COALESCE((SELECT SUM(cantidad) FROM donaciones WHERE aviso_id = a.id AND estatus_id = 3), 0) AS cantidad_recolectada,
             
             ts.tipo AS tipo_sangre,
             sm.nombre_medicamento, sm.dosis, sm.presentacion,
@@ -78,6 +77,7 @@ $categoria_info = $mapa_categorias[$aviso['categoria_id']] ?? ['icono' => 'fa-he
 $stmt->close();
 $conexion->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 
