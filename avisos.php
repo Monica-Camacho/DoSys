@@ -14,7 +14,12 @@ $avisos = [];
 $sql = "SELECT 
             a.id AS aviso_id, a.titulo, a.descripcion, a.categoria_id,
             d.municipio, d.estado,
-            COALESCE(ss.unidades_requeridas, sm.cantidad_requerida, sd.cantidad_requerida) AS cantidad_requerida
+            COALESCE(ss.unidades_requeridas, sm.cantidad_requerida, sd.cantidad_requerida) AS cantidad_requerida,
+
+            -- ¡NUEVO! Se añade esta subconsulta para calcular el total recolectado
+            -- con estatus_id = 3
+            COALESCE((SELECT SUM(cantidad) FROM donaciones WHERE aviso_id = a.id AND estatus_id = 3), 0) AS cantidad_recolectada
+
         FROM 
             avisos a
         JOIN 
@@ -82,6 +87,7 @@ $iconos_categoria = [
     3 => '<i class="fas fa-wheelchair fa-2x text-warning"></i>' // Dispositivos
 ];
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -165,6 +171,12 @@ $iconos_categoria = [
             <div class="row g-4">
                 <?php if (!empty($avisos)) : ?>
                     <?php foreach ($avisos as $aviso) : ?>
+                        <?php
+                        // 1. Calculamos el porcentaje para la barra de progreso
+                        $requerido = $aviso['cantidad_requerida'];
+                        $recolectado = $aviso['cantidad_recolectada'];
+                        $porcentaje = ($requerido > 0) ? round(($recolectado / $requerido) * 100) : 0;
+                        ?>
                         <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                             <div class="card h-100 border-0 shadow-sm">
                                 <div class="card-body d-flex flex-column p-4">
@@ -183,11 +195,10 @@ $iconos_categoria = [
 
                                     <div class="mt-auto pt-3">
                                         <div class="progress mb-2" style="height: 10px;">
-                                            <div class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: <?php echo $porcentaje; ?>%;" aria-valuenow="<?php echo $porcentaje; ?>" aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
-
-                                        <p class="text-muted small">0 de <?php echo htmlspecialchars($aviso['cantidad_requerida']); ?> unidades recolectadas</p>
-
+                                        <p class="text-muted small"><?php echo number_format($recolectado); ?> de <?php echo number_format($requerido); ?> unidades recolectadas</p>
+                                        
                                         <a href="avisos_detalles.php?id=<?php echo $aviso['aviso_id']; ?>" class="btn btn-primary rounded-pill w-100">Ver Detalles</a>
                                     </div>
                                 </div>
