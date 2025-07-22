@@ -106,72 +106,72 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
         <?php require_once 'templates/navbar.php'; ?>
         <!-- Navbar End -->
 
-    <!-- Carousel Start -->
-    <div id="donationCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            <!-- Slide 1: Sangre -->
-            <div class="carousel-item active">
-                <div class="carousel-image-container h-100">
-                    <img src="img/fondos/sangre.png" class="d-block w-100 carousel-image img-fluid" alt="Donación de sangre">
-                    <div class="carousel-caption">
-                        <div class="px-3">
-                            <h1 class="text-light display-3 mb-4">Sangre</h1>
-                            <p class="fs-5 fw-medium text-white mb-4 pb-2">Tu donación puede salvar vidas. Ayuda a quienes más lo necesitan.</p>
-                            <div class="d-flex gap-4 justify-content-center">
-                                <a href="crear_donacion_persona.php?categoria=sangre" class="btn btn-primary btn-lg rounded-pill px-4">Ser Donante</a>
-                                <a href="crear_aviso_persona.php?categoria=sangre" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Donante</a>
+        <!-- Carousel Start -->
+        <div id="donationCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <!-- Slide 1: Sangre -->
+                <div class="carousel-item active">
+                    <div class="carousel-image-container h-100">
+                        <img src="img/fondos/sangre.png" class="d-block w-100 carousel-image img-fluid" alt="Donación de sangre">
+                        <div class="carousel-caption">
+                            <div class="px-3">
+                                <h1 class="text-light display-3 mb-4">Sangre</h1>
+                                <p class="fs-5 fw-medium text-white mb-4 pb-2">Tu donación puede salvar vidas. Ayuda a quienes más lo necesitan.</p>
+                                <div class="d-flex gap-4 justify-content-center">
+                                    <a href="donacion_general.php" class="btn btn-primary btn-lg rounded-pill px-4">Ser Donante</a>
+                                    <a href="avisos_crear_sangre.php" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Donante</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2: Medicamentos -->
+                <div class="carousel-item">
+                    <div class="carousel-image-container h-100">
+                        <img src="img/fondos/medicinas.png" class="d-block w-100 carousel-image img-fluid" alt="Donación de medicamentos">
+                        <div class="carousel-caption">
+                            <div class="px-3">
+                                <h1 class="text-light display-3 mb-4">Medicamentos</h1>
+                                <p class="fs-5 fw-medium text-white mb-4 pb-2">Dona medicamentos que ya no necesites y ayuda a un tratamiento.</p>
+                                <div class="d-flex gap-4 justify-content-center">
+                                    <a href="donacion_general.php" class="btn btn-primary btn-lg rounded-pill px-4">Donar Medicamentos</a>
+                                    <a href="avisos_crear_medicamento.php" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Medicamentos</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 3: Dispositivos -->
+                <div class="carousel-item">
+                    <div class="carousel-image-container h-100">
+                        <img src="img/fondos/dispositivos.png" class="d-block w-100 carousel-image img-fluid" alt="Donación de dispositivos">
+                        <div class="carousel-caption">
+                            <div class="px-3">
+                                <h1 class="text-light display-3 mb-4">Dispositivos de Asistencia</h1>
+                                <p class="fs-5 fw-medium text-white mb-4 pb-2">Mejora la calidad de vida de alguien donando un dispositivo médico.</p>
+                                <div class="d-flex gap-4 justify-content-center">
+                                    <a href="donacion_general.php" class="btn btn-primary btn-lg rounded-pill px-4">Donar Dispositivo</a>
+                                    <a href="avisos_crear_dispositivo.php" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Dispositivo</a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Slide 2: Medicamentos -->
-            <div class="carousel-item">
-                <div class="carousel-image-container h-100">
-                    <img src="img/fondos/medicinas.png" class="d-block w-100 carousel-image img-fluid" alt="Donación de medicamentos">
-                    <div class="carousel-caption">
-                         <div class="px-3">
-                            <h1 class="text-light display-3 mb-4">Medicamentos</h1>
-                            <p class="fs-5 fw-medium text-white mb-4 pb-2">Dona medicamentos que ya no necesites y ayuda a un tratamiento.</p>
-                            <div class="d-flex gap-4 justify-content-center">
-                                <a href="crear_donacion_persona.php?categoria=medicamentos" class="btn btn-primary btn-lg rounded-pill px-4">Donar Medicamentos</a>
-                                <a href="crear_aviso_persona.php?categoria=medicamentos" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Medicamentos</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 3: Dispositivos -->
-            <div class="carousel-item">
-                <div class="carousel-image-container h-100">
-                    <img src="img/fondos/dispositivos.png" class="d-block w-100 carousel-image img-fluid" alt="Donación de dispositivos">
-                    <div class="carousel-caption">
-                         <div class="px-3">
-                            <h1 class="text-light display-3 mb-4">Dispositivos de Asistencia</h1>
-                            <p class="fs-5 fw-medium text-white mb-4 pb-2">Mejora la calidad de vida de alguien donando un dispositivo médico.</p>
-                            <div class="d-flex gap-4 justify-content-center">
-                                <a href="crear_donacion_persona.php?categoria=dispositivos" class="btn btn-primary btn-lg rounded-pill px-4">Donar Dispositivo</a>
-                                <a href="crear_aviso_persona.php?categoria=dispositivos" class="btn btn-success btn-lg rounded-pill px-4">Solicitar Dispositivo</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- Controles del Carrusel -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#donationCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#donationCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Siguiente</span>
+            </button>
         </div>
-
-        <!-- Controles del Carrusel -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#donationCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Anterior</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#donationCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Siguiente</span>
-        </button>
-    </div>
-    <!-- Carousel End -->
+        <!-- Carousel End -->
         
         <!-- ACERCA DE DOSYS -->
         <div class="container-fluid bg-light about pb-5">

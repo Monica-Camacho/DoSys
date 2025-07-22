@@ -23,7 +23,7 @@ $aviso_id = filter_input(INPUT_POST, 'aviso_id', FILTER_VALIDATE_INT);
 $cantidad = filter_input(INPUT_POST, 'cantidad', FILTER_VALIDATE_INT);
 // CORRECCIÓN: Se elimina la variable $organizacion_id que no se usa.
 
-$redirect_url = '../donacion_registrar.php?aviso_id=' . $aviso_id;
+$redirect_url = '../donacion_avisos.php?aviso_id=' . $aviso_id;
 
 // Se actualiza la validación.
 if (!$aviso_id || !$cantidad) {

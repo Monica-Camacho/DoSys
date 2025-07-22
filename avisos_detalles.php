@@ -190,7 +190,7 @@ $conexion->close();
                                         <i class="fas fa-check-circle me-2"></i>Meta Alcanzada
                                     </button>
                                 <?php else : ?>
-                                    <a href="donacion_registrar.php?aviso_id=<?php echo $aviso['aviso_id']; ?>" class="btn btn-primary btn-lg">Donar Ahora</a>
+                                    <a href="donacion_avisos.php?aviso_id=<?php echo $aviso['aviso_id']; ?>" class="btn btn-primary btn-lg">Donar Ahora</a>
                                 <?php 
                                 endif; 
                                 // --- FIN DE LA MODIFICACIÓN ---
