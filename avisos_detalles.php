@@ -10,20 +10,20 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 }
 $aviso_id = intval($_GET['id']);
 
-// 2. CONSULTA FINAL (INCLUYE LAS 3 CATEGORÍAS)
+// 2. CONSULTA FINAL CON CÁLCULO DE PROGRESO REAL
 $sql = "SELECT
             a.id AS aviso_id, a.titulo, a.descripcion,
             a.categoria_id, cd.nombre AS categoria_nombre,
             op.nombre_organizacion,
             d.calle, d.numero_exterior, d.colonia, d.municipio, d.estado, d.latitud, d.longitud,
             COALESCE(ss.unidades_requeridas, sm.cantidad_requerida, sd.cantidad_requerida) AS cantidad_requerida,
-            0 AS cantidad_recolectada,
+            
+            -- ¡NUEVO! Cálculo real de unidades recolectadas
+            -- Suma las cantidades de la tabla 'donaciones' solo si el estatus es 2 (Aprobado/Completado)
+            COALESCE((SELECT SUM(cantidad) FROM donaciones WHERE aviso_id = a.id AND estatus_id = 2), 0) AS cantidad_recolectada,
             
             ts.tipo AS tipo_sangre,
-            
             sm.nombre_medicamento, sm.dosis, sm.presentacion,
-            
-            -- ¡NUEVO! Detalles para dispositivos
             sd.nombre_dispositivo, sd.especificaciones
 
         FROM
@@ -65,7 +65,7 @@ $aviso = $resultado->fetch_assoc();
 // 3. CALCULAR EL PROGRESO
 $requerido = $aviso['cantidad_requerida'] ?? 0;
 $recolectado = $aviso['cantidad_recolectada'] ?? 0;
-$porcentaje = ($requerido > 0) ? ($recolectado / $requerido) * 100 : 0;
+$porcentaje = ($requerido > 0) ? round(($recolectado / $requerido) * 100) : 0;
 
 // Mapa de íconos y colores
 $mapa_categorias = [
@@ -176,12 +176,25 @@ $conexion->close();
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-body p-4">
                             <h5 class="mb-3">Progreso de la Donación</h5>
-                            <p class="text-muted small mb-1"><?php echo number_format($recolectado); ?> de <?php echo number_format($requerido); ?> unidades recolectadas</p>
+                            <p class="text-muted small mb-1"><?php echo number_format($recolectado); ?> de <?php echo number_format($requerido); ?> unidades recolectadas (<?php echo $porcentaje; ?>%)</p>
                             <div class="progress mb-3" style="height: 10px;">
                                 <div class="progress-bar bg-success" role="progressbar" style="width: <?php echo $porcentaje; ?>%;" aria-valuenow="<?php echo $porcentaje; ?>" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
                             <div class="d-grid">
-                                <button class="btn btn-primary btn-lg">Donar Ahora</button>
+                                <?php
+                                // --- INICIO DE LA MODIFICACIÓN ---
+                                // Verificamos si la meta ya se alcanzó
+                                if ($recolectado >= $requerido && $requerido > 0) :
+                                ?>
+                                    <button class="btn btn-success btn-lg" disabled>
+                                        <i class="fas fa-check-circle me-2"></i>Meta Alcanzada
+                                    </button>
+                                <?php else : ?>
+                                    <a href="donacion_registrar.php?aviso_id=<?php echo $aviso['aviso_id']; ?>" class="btn btn-primary btn-lg">Donar Ahora</a>
+                                <?php 
+                                endif; 
+                                // --- FIN DE LA MODIFICACIÓN ---
+                                ?>
                             </div>
                         </div>
                     </div>
