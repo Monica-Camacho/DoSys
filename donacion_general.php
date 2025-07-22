@@ -1,25 +1,16 @@
 <?php
-// Lógica corregida para incluir el manejador de ubicaciones
 require_once 'config.php';
 require_once 'conexion_local.php';
-// --- INICIO DE LA CORRECCIÓN ---
-// Se incluye el manejador de ubicaciones para obtener los datos de forma centralizada.
 require_once 'auth/ubicaciones_handler.php'; 
-// --- FIN DE LA CORRECCIÓN ---
 session_start();
 
-// 1. Verificar que el usuario haya iniciado sesión
 if (!isset($_SESSION['id'])) {
     $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
     header('Location: login.php?error=2');
     exit();
 }
 
-// 2. Obtener todas las organizaciones activas usando la función del handler.
-// Esto es más limpio y reutiliza el código que ya tienes.
 $organizaciones = obtener_organizaciones_con_categorias($conexion);
-
-// Convertimos los datos a JSON para que JavaScript los pueda usar en el mapa.
 $organizaciones_json = json_encode($organizaciones);
 
 $conexion->close();
@@ -66,9 +57,9 @@ $conexion->close();
                         <div class="card-body p-4">
                             <h5 class="card-title mb-4">1. ¿Qué tipo de donación quieres hacer?</h5>
                             <div class="d-flex justify-content-around">
-                                <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="categoria_donacion" id="radioSangre" value="sangre" required><label class="form-check-label" for="radioSangre"><i class="fas fa-tint text-danger me-2"></i>Sangre</label></div>
-                                <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="categoria_donacion" id="radioMedicamentos" value="medicamentos" required><label class="form-check-label" for="radioMedicamentos"><i class="fas fa-pills text-primary me-2"></i>Medicamentos</label></div>
-                                <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="categoria_donacion" id="radioDispositivos" value="dispositivos" required><label class="form-check-label" for="radioDispositivos"><i class="fas fa-wheelchair text-warning me-2"></i>Dispositivos</label></div>
+                                <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="categoria_donacion" id="radioSangre" value="sangre" data-id="1" required><label class="form-check-label" for="radioSangre"><i class="fas fa-tint text-danger me-2"></i>Sangre</label></div>
+                                <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="categoria_donacion" id="radioMedicamentos" value="medicamentos" data-id="2" required><label class="form-check-label" for="radioMedicamentos"><i class="fas fa-pills text-primary me-2"></i>Medicamentos</label></div>
+                                <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="categoria_donacion" id="radioDispositivos" value="dispositivos" data-id="3" required><label class="form-check-label" for="radioDispositivos"><i class="fas fa-wheelchair text-warning me-2"></i>Dispositivos</label></div>
                             </div>
                         </div>
                     </div>
@@ -95,12 +86,7 @@ $conexion->close();
                             <div class="mb-3">
                                 <label for="organizacion_select" class="form-label">Centro de Donación</label>
                                 <select id="organizacion_select" class="form-select" required>
-                                    <option value="">Selecciona una organización...</option>
-                                    <?php foreach ($organizaciones as $org): ?>
-                                        <option value="<?php echo $org['id']; ?>" data-lat="<?php echo $org['latitud']; ?>" data-lng="<?php echo $org['longitud']; ?>">
-                                            <?php echo htmlspecialchars($org['nombre_organizacion']); ?>
-                                        </option>
-                                    <?php endforeach; ?>
+                                    <option value="">Primero selecciona una categoría...</option>
                                 </select>
                             </div>
                             
@@ -120,85 +106,123 @@ $conexion->close();
     <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a> 
     <?php require_once 'templates/scripts.php'; ?>
           
-    <script>
+<script>
+        // --- INICIO DE LA CORRECCIÓN ---
+
+        // Declaramos las variables principales fuera para que sean accesibles por todas las funciones.
+        const organizaciones = <?php echo $organizaciones_json; ?>;
+        let map;
+        let infoWindow;
+        const marcadores = [];
+
+        /**
+         * Función global que es llamada por la API de Google Maps cuando termina de cargar.
+         * Se encarga de crear el mapa y los marcadores iniciales.
+         */
+        function initMap() {
+            const initialPos = { lat: 17.9869, lng: -92.9303 };
+            map = new google.maps.Map(document.getElementById("map"), { zoom: 12, center: initialPos, mapTypeControl: false });
+            infoWindow = new google.maps.InfoWindow();
+
+            organizaciones.forEach(org => {
+                const marker = new google.maps.Marker({
+                    position: { lat: parseFloat(org.latitud), lng: parseFloat(org.longitud) },
+                    map: map,
+                    title: org.nombre_organizacion,
+                    orgId: org.id,
+                    categorias: org.categorias_ids ? org.categorias_ids.split(',') : []
+                });
+
+                marker.setVisible(false); // Todos los marcadores inician ocultos
+
+                marker.addListener("click", () => {
+                    // Usamos querySelector aquí porque este código se ejecuta antes de que el DOM esté listo
+                    document.getElementById('organizacion_select').value = marker.orgId;
+                    document.getElementById('organizacion_id_hidden').value = marker.orgId;
+                    document.getElementById('btn-confirmar').disabled = false;
+                    
+                    map.setCenter(marker.getPosition());
+                    map.setZoom(15);
+                    infoWindow.setContent(`<div class="p-2"><strong>${marker.title}</strong><br><span class="badge bg-primary mt-2">Organización Seleccionada</span></div>`);
+                    infoWindow.open(map, marker);
+                });
+                marcadores.push(marker);
+            });
+        }
+
+        /**
+         * El resto de la lógica que manipula el formulario se ejecuta
+         * solo cuando el documento HTML está completamente cargado.
+         */
         document.addEventListener('DOMContentLoaded', function() {
-            // --- Lógica para mostrar/ocultar campos ---
+            const selectOrganizacion = document.getElementById('organizacion_select');
+            const organizacionIdInput = document.getElementById('organizacion_id_hidden');
+            const btnConfirmar = document.getElementById('btn-confirmar');
             const radios = document.querySelectorAll('input[name="categoria_donacion"]');
             const detallesDiv = document.getElementById('detalles-donacion');
-            const campos = { sangre: document.getElementById('campos-sangre'), medicamentos: document.getElementById('campos-medicamentos'), dispositivos: document.getElementById('campos-dispositivos') };
-            const inputs = { sangre: campos.sangre.querySelectorAll('input, select'), medicamentos: campos.medicamentos.querySelectorAll('input, select'), dispositivos: campos.dispositivos.querySelectorAll('input, select') };
+            const campos = {
+                sangre: document.getElementById('campos-sangre'),
+                medicamentos: document.getElementById('campos-medicamentos'),
+                dispositivos: document.getElementById('campos-dispositivos')
+            };
+
+            function manejarCamposDetalle(categoriaSeleccionada) {
+                detallesDiv.classList.remove('d-none');
+                for (let key in campos) {
+                    const esActivo = key === categoriaSeleccionada;
+                    campos[key].classList.toggle('d-none', !esActivo);
+                    campos[key].querySelectorAll('input, select').forEach(input => {
+                        input.disabled = !esActivo;
+                        input.required = esActivo && input.type !== 'file';
+                    });
+                }
+            }
+
+            function filtrarOrganizaciones(categoriaId) {
+                selectOrganizacion.innerHTML = '<option value="">Selecciona una organización...</option>';
+                organizacionIdInput.value = "";
+                btnConfirmar.disabled = true;
+                if(infoWindow) infoWindow.close();
+
+                marcadores.forEach(marker => {
+                    const perteneceALaCategoria = marker.categorias.includes(categoriaId);
+                    marker.setVisible(perteneceALaCategoria);
+                    if (perteneceALaCategoria) {
+                        const option = document.createElement('option');
+                        option.value = marker.orgId;
+                        option.textContent = marker.title;
+                        selectOrganizacion.appendChild(option);
+                    }
+                });
+            }
 
             radios.forEach(radio => {
                 radio.addEventListener('change', function() {
-                    detallesDiv.classList.remove('d-none');
-                    for (let key in campos) {
-                        campos[key].classList.add('d-none');
-                        inputs[key].forEach(input => { input.disabled = true; input.required = false; });
-                    }
                     if (this.checked) {
-                        campos[this.value].classList.remove('d-none');
-                        inputs[this.value].forEach(input => {
-                            input.disabled = false;
-                            // Re-aplicar 'required' solo a los inputs que lo necesiten
-                            if(input.name !== 'foto_medicamento' && input.name !== 'foto_dispositivo') {
-                                input.required = true;
-                            }
-                        });
+                        manejarCamposDetalle(this.value);
+                        filtrarOrganizaciones(this.getAttribute('data-id'));
                     }
                 });
             });
 
-            // --- Script del mapa interactivo adaptado ---
-            const organizaciones = <?php echo $organizaciones_json; ?>;
-            let map;
-            let infoWindow;
-            const marcadores = [];
-            const selectOrganizacion = document.getElementById('organizacion_select');
-            const organizacionIdInput = document.getElementById('organizacion_id_hidden');
-            const btnConfirmar = document.getElementById('btn-confirmar');
+            selectOrganizacion.addEventListener('change', function() {
+                const selectedId = this.value;
+                organizacionIdInput.value = selectedId;
+                infoWindow.close();
+                if (!selectedId) { btnConfirmar.disabled = true; return; }
 
-            window.initMap = function() {
-                const initialPos = { lat: 17.9869, lng: -92.9303 };
-                map = new google.maps.Map(document.getElementById("map"), { zoom: 12, center: initialPos, mapTypeControl: false });
-                infoWindow = new google.maps.InfoWindow();
-
-                organizaciones.forEach(org => {
-                    const marker = new google.maps.Marker({
-                        position: { lat: parseFloat(org.latitud), lng: parseFloat(org.longitud) },
-                        map: map,
-                        title: org.nombre_organizacion,
-                        orgId: org.id
-                    });
-
-                    marker.addListener("click", () => {
-                        selectOrganizacion.value = marker.orgId;
-                        organizacionIdInput.value = marker.orgId;
-                        btnConfirmar.disabled = false;
-                        map.setCenter(marker.getPosition());
-                        map.setZoom(15);
-                        infoWindow.setContent(`<div class="p-2"><strong>${marker.title}</strong><br><span class="badge bg-primary mt-2">Organización Seleccionada</span></div>`);
-                        infoWindow.open(map, marker);
-                    });
-                    marcadores.push(marker);
-                });
-
-                selectOrganizacion.addEventListener('change', function() {
-                    const selectedId = this.value;
-                    organizacionIdInput.value = selectedId;
-                    infoWindow.close();
-                    if (!selectedId) { btnConfirmar.disabled = true; return; }
-
-                    btnConfirmar.disabled = false;
-                    const marcadorCorrespondiente = marcadores.find(m => m.orgId == selectedId);
-                    if (marcadorCorrespondiente) {
-                        map.setCenter(marcadorCorrespondiente.getPosition());
-                        map.setZoom(15);
-                        infoWindow.setContent(`<div class="p-2"><strong>${marcadorCorrespondiente.title}</strong><br><span class="badge bg-primary mt-2">Organización Seleccionada</span></div>`);
-                        infoWindow.open(map, marcadorCorrespondiente);
-                    }
-                });
-            }
+                btnConfirmar.disabled = false;
+                const marcadorCorrespondiente = marcadores.find(m => m.orgId == selectedId);
+                if (marcadorCorrespondiente) {
+                    map.setCenter(marcadorCorrespondiente.getPosition());
+                    map.setZoom(15);
+                    infoWindow.setContent(`<div class="p-2"><strong>${marcadorCorrespondiente.title}</strong><br><span class="badge bg-primary mt-2">Organización Seleccionada</span></div>`);
+                    infoWindow.open(map, marcadorCorrespondiente);
+                }
+            });
         });
+        // --- FIN DE LA CORRECCIÓN ---
     </script>
+
 </body>
 </html>
