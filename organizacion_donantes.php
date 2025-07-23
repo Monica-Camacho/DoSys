@@ -1,124 +1,166 @@
 <?php
-require_once 'config.php'; // Incluye la configuración y la URL base.
-// Inicia la sesión.
+require_once 'config.php';
+require_once 'conexion_local.php';
 session_start();
 
-// Muestra una alerta si hay un error en el inicio de sesión.
-if (isset($_GET['error']) && $_GET['error'] == 1) {
-    echo "<script>alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');</script>";
+// 1. AUTENTICACIÓN Y AUTORIZACIÓN
+if (!isset($_SESSION['id'])) {
+    header('Location: login.php');
+    exit();
 }
+$usuario_id = $_SESSION['id'];
+
+// --- CORRECCIÓN: Se restaura el bloque que obtiene el ID de la organización ---
+$sql_org = "SELECT organizacion_id FROM usuarios_x_organizaciones WHERE usuario_id = ?";
+$stmt_org = $conexion->prepare($sql_org);
+$stmt_org->bind_param("i", $usuario_id);
+$stmt_org->execute();
+$resultado_org = $stmt_org->get_result();
+if ($resultado_org->num_rows === 0) {
+    header('Location: persona_dashboard.php');
+    exit();
+}
+$organizacion_id = $resultado_org->fetch_assoc()['organizacion_id'];
+$stmt_org->close();
+// --- FIN DE LA CORRECCIÓN ---
+
+
+// 2. OBTENER LAS LISTAS DE DONACIONES
+function obtener_donaciones_por_estatus($conexion, $organizacion_id, $estatus_ids) {
+    $donaciones = [];
+    if (!is_array($estatus_ids)) {
+        $estatus_ids = [$estatus_ids];
+    }
+    if (empty($estatus_ids)) {
+        return [];
+    }
+    
+    $placeholders = implode(',', array_fill(0, count($estatus_ids), '?'));
+    
+    $sql = "SELECT 
+                d.id AS donacion_id, d.estatus_id,
+                d.fecha_compromiso, d.fecha_validacion,
+                d.item_nombre,
+                CONCAT(pp.nombre, ' ', pp.apellido_paterno) AS nombre_donante,
+                a.titulo AS aviso_titulo
+            FROM donaciones d
+            JOIN personas_perfil pp ON d.donante_id = pp.usuario_id
+            LEFT JOIN avisos a ON d.aviso_id = a.id
+            WHERE 
+                (d.organizacion_id = ? OR a.organizacion_id = ?) 
+                AND d.estatus_id IN ($placeholders)";
+    
+    $types = 'ii' . str_repeat('i', count($estatus_ids));
+    $params = array_merge([$organizacion_id, $organizacion_id], $estatus_ids);
+    
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+    while ($fila = $resultado->fetch_assoc()) {
+        $donaciones[] = $fila;
+    }
+    $stmt->close();
+    return $donaciones;
+}
+
+$donaciones_pendientes = obtener_donaciones_por_estatus($conexion, $organizacion_id, 1);
+$donaciones_aprobadas = obtener_donaciones_por_estatus($conexion, $organizacion_id, 2);
+$donaciones_historial = obtener_donaciones_por_estatus($conexion, $organizacion_id, [3, 4]);
+
+$conexion->close();
 ?>
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
-    <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
     <meta charset="utf-8">
     <title>DoSys - Gestionar Donantes</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="img/logos/DoSys_chico.png">
 
-    <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
 
-    <!-- Icon Font Stylesheet -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- Libraries Stylesheet -->
     <link rel="stylesheet" href="lib/animate/animate.min.css"/>
     <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 
-    <!-- Customized Bootstrap Stylesheet -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
 </head>
 
 <body>
 
-    <!-- Spinner Start -->
     <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
         <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
             <span class="sr-only">Cargando...</span>
         </div>
     </div>
-    <!-- Spinner End -->
-
-        <!-- Topbar Start -->
-        <?php require_once 'templates/topbar.php'; ?>
-        <!-- Topbar End -->
-
-        <!-- Navbar Start -->
-        <?php require_once 'templates/navbar.php'; ?>
-        <!-- Navbar End -->
-
-    <!-- Header Start -->
+    <?php require_once 'templates/topbar.php'; ?>
+    <?php require_once 'templates/navbar.php'; ?>
     <div class="container-fluid bg-light py-5">
         <div class="container">
             <div>
-                <h1 class='display-5 mb-0'>Gestionar Donantes</h1>
+                <h1 class='display-5 mb-0'>Gestionar Donaciones</h1>
                 <p class="fs-5 text-muted mb-0">Aprueba y da seguimiento a los donantes comprometidos con tus causas.</p>
             </div>
         </div>
     </div>
-    <!-- Header End -->
-
-    <!-- Donors Management Content Start -->
-    <div class="container-fluid py-5">
+<div class="container-fluid py-5">
         <div class="container">
-            <!-- Nav Tabs -->
             <ul class="nav nav-pills nav-fill mb-4" id="donorsTabs" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active position-relative" id="pending-donors-tab" data-bs-toggle="tab" data-bs-target="#pending-donors" type="button" role="tab" aria-controls="pending-donors" aria-selected="true">
                         Pendientes de Aprobación
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">7</span>
+                        <?php if(count($donaciones_pendientes) > 0): ?>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"><?php echo count($donaciones_pendientes); ?></span>
+                        <?php endif; ?>
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="in-progress-tab" data-bs-toggle="tab" data-bs-target="#in-progress" type="button" role="tab" aria-controls="in-progress" aria-selected="false">
-                        En Proceso
+                        Aprobados (En Proceso)
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="completed-donors-tab" data-bs-toggle="tab" data-bs-target="#completed-donors" type="button" role="tab" aria-controls="completed-donors" aria-selected="false">
-                        Completados
+                    <button class="nav-link" id="history-donors-tab" data-bs-toggle="tab" data-bs-target="#history-donors" type="button" role="tab" aria-controls="history-donors" aria-selected="false">
+                        Historial
                     </button>
                 </li>
             </ul>
 
-            <!-- Tab Content -->
             <div class="tab-content" id="donorsTabsContent">
-                <!-- Pending Approval Tab -->
+                
                 <div class="tab-pane fade show active" id="pending-donors" role="tabpanel" aria-labelledby="pending-donors-tab">
                     <div class="card border-0 shadow-sm">
                         <div class="card-body p-4">
-                            <h5 class="card-title mb-4">Donantes Pendientes de Aprobación</h5>
+                            <h5 class="card-title mb-4">Donaciones Pendientes de Aprobación</h5>
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Donante</th>
-                                            <th>Solicitud a la que apoya</th>
-                                            <th>Fecha de Compromiso</th>
-                                            <th class="text-center">Acciones</th>
-                                        </tr>
-                                    </thead>
+                                    <thead class="table-light"><tr><th>Donante</th><th>Donación</th><th>Fecha de Compromiso</th><th class="text-center">Acciones</th></tr></thead>
                                     <tbody>
-                                        <tr>
-                                            <td>Maria López</td>
-                                            <td>Silla de Ruedas para Carlos S.</td>
-                                            <td>06/07/2025</td>
-                                            <td class="text-center">
-                                                <button class="btn btn-sm btn-success me-1" title="Aprobar Donante"><i class="fas fa-check"></i></button>
-                                                <button class="btn btn-sm btn-danger" title="Rechazar Donante"><i class="fas fa-times"></i></button>
-                                            </td>
-                                        </tr>
+                                        <?php if(empty($donaciones_pendientes)): ?>
+                                            <tr><td colspan="4" class="text-center text-muted">No hay donaciones pendientes.</td></tr>
+                                        <?php else: foreach($donaciones_pendientes as $donacion): ?>
+                                            <tr>
+                                                <td><?php echo htmlspecialchars($donacion['nombre_donante']); ?></td>
+                                                <td><?php echo htmlspecialchars($donacion['item_nombre'] ?? $donacion['aviso_titulo'] ?? 'Donación General'); ?></td>
+                                                <td><?php echo date('d/m/Y', strtotime($donacion['fecha_compromiso'])); ?></td>
+                                                <td class="text-center">
+                                                    <form action="auth/gestionar_donacion.php" method="POST" class="d-inline">
+                                                        <input type="hidden" name="donacion_id" value="<?php echo $donacion['donacion_id']; ?>">
+                                                        <button type="submit" name="accion" value="aprobar" class="btn btn-sm btn-success me-1" title="Aprobar"><i class="fas fa-check"></i></button>
+                                                        <button type="submit" name="accion" value="rechazar" class="btn btn-sm btn-danger" title="Rechazar"><i class="fas fa-times"></i></button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; endif; ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -126,30 +168,29 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                     </div>
                 </div>
 
-                <!-- In Progress Tab -->
                 <div class="tab-pane fade" id="in-progress" role="tabpanel" aria-labelledby="in-progress-tab">
                      <div class="card border-0 shadow-sm">
                         <div class="card-body p-4">
-                            <h5 class="card-title mb-4">Donantes en Proceso</h5>
+                            <h5 class="card-title mb-4">Donaciones Aprobadas en Proceso de Entrega</h5>
                              <div class="table-responsive">
                                 <table class="table table-hover align-middle">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Donante</th>
-                                            <th>Solicitud a la que apoya</th>
-                                            <th>Fecha de Aprobación</th>
-                                            <th class="text-center">Acciones</th>
-                                        </tr>
-                                    </thead>
+                                    <thead class="table-light"><tr><th>Donante</th><th>Donación</th><th>Fecha de Aprobación</th><th class="text-center">Acciones</th></tr></thead>
                                     <tbody>
+                                        <?php if(empty($donaciones_aprobadas)): ?>
+                                            <tr><td colspan="4" class="text-center text-muted">No hay donaciones en proceso.</td></tr>
+                                        <?php else: foreach($donaciones_aprobadas as $donacion): ?>
                                         <tr>
-                                            <td>Juan Pérez García</td>
-                                            <td>Medicamentos para Ana G.</td>
-                                            <td>03/07/2025</td>
+                                            <td><?php echo htmlspecialchars($donacion['nombre_donante']); ?></td>
+                                            <td><?php echo htmlspecialchars($donacion['item_nombre'] ?? $donacion['aviso_titulo'] ?? 'Donación General'); ?></td>
+                                            <td><?php echo date('d/m/Y', strtotime($donacion['fecha_validacion'])); ?></td>
                                             <td class="text-center">
-                                                <button class="btn btn-sm btn-primary" title="Marcar como Recibido"><i class="fas fa-gift"></i></button>
+                                                <form action="auth/gestionar_donacion.php" method="POST" class="d-inline">
+                                                    <input type="hidden" name="donacion_id" value="<?php echo $donacion['donacion_id']; ?>">
+                                                    <button type="submit" name="accion" value="recibir" class="btn btn-sm btn-primary" title="Marcar como Recibido"><i class="fas fa-gift"></i></button>
+                                                </form>
                                             </td>
                                         </tr>
+                                        <?php endforeach; endif; ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -157,26 +198,37 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                     </div>
                 </div>
 
-                <!-- Completed Tab -->
-                <div class="tab-pane fade" id="completed-donors" role="tabpanel" aria-labelledby="completed-donors-tab">
+                <div class="tab-pane fade" id="history-donors" role="tabpanel" aria-labelledby="history-donors-tab">
                      <div class="card border-0 shadow-sm">
                         <div class="card-body p-4">
-                            <h5 class="card-title mb-4">Historial de Donaciones Recibidas</h5>
+                            <h5 class="card-title mb-4">Historial de Donaciones</h5>
                              <div class="table-responsive">
                                 <table class="table table-hover align-middle">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Donante</th>
-                                            <th>Solicitud Apoyada</th>
-                                            <th>Fecha de Entrega</th>
+                                            <th>Donación</th>
+                                            <th>Fecha Finalización</th>
+                                            <th class="text-center">Resultado</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>Laura Méndez</td>
-                                            <td>Sangre para Paciente X</td>
-                                            <td>20/06/2025</td>
-                                        </tr>
+                                        <?php if(empty($donaciones_historial)): ?>
+                                            <tr><td colspan="4" class="text-center text-muted">Aún no hay donaciones en el historial.</td></tr>
+                                        <?php else: foreach($donaciones_historial as $donacion): ?>
+                                            <tr>
+                                                <td><?php echo htmlspecialchars($donacion['nombre_donante']); ?></td>
+                                                <td><?php echo htmlspecialchars($donacion['item_nombre'] ?? $donacion['aviso_titulo'] ?? 'Donación General'); ?></td>
+                                                <td><?php echo date('d/m/Y', strtotime($donacion['fecha_validacion'])); ?></td>
+                                                <td class="text-center">
+                                                    <?php if ($donacion['estatus_id'] == 3): ?>
+                                                        <span class="badge bg-success">Recibido</span>
+                                                    <?php elseif ($donacion['estatus_id'] == 4): ?>
+                                                        <span class="badge bg-danger">No Concretado</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; endif; ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -186,16 +238,11 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
             </div>
         </div>
     </div>
-    <!-- Donors Management Content End -->
+
+    <?php require_once 'templates/footer.php'; ?>
+    <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a> 
         
-        <!-- Footer Start -->
-        <?php require_once 'templates/footer.php'; ?>
-        <!-- Footer End -->
-         
-        <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a> 
-        
-        <?php require_once 'templates/scripts.php'; ?>
+    <?php require_once 'templates/scripts.php'; ?>
 
 </body>
-
 </html>
