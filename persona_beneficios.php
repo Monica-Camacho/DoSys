@@ -12,7 +12,6 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
 <?php
 // Simulación de una sesión de usuario iniciada
 // En una aplicación real, aquí verificarías la sesión.
-session_start();
 // $_SESSION['usuario_id'] = 1; // Ejemplo
 // $_SESSION['usuario_nombre'] = "Mónica Camacho"; // Ejemplo
 
