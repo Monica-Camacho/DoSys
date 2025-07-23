@@ -33,7 +33,9 @@ function obtener_donaciones_por_estatus($conexion, $organizacion_id, $estatus_id
     $sql = "SELECT 
                 d.id AS donacion_id, d.estatus_id,
                 d.fecha_compromiso, d.fecha_validacion,
+                d.cantidad, d.item_nombre, d.item_detalle, d.fecha_caducidad, d.ruta_foto,
                 CONCAT(pp.nombre, ' ', pp.apellido_paterno) AS nombre_donante,
+                ts.tipo AS tipo_sangre_donante,
                 CASE
                     WHEN d.item_nombre IS NOT NULL AND d.item_nombre != '' THEN d.item_nombre
                     WHEN a.categoria_id = 1 THEN 'Donación de Sangre'
@@ -43,6 +45,7 @@ function obtener_donaciones_por_estatus($conexion, $organizacion_id, $estatus_id
             FROM donaciones d
             JOIN personas_perfil pp ON d.donante_id = pp.usuario_id
             LEFT JOIN avisos a ON d.aviso_id = a.id
+            LEFT JOIN tipos_sangre ts ON pp.tipo_sangre_id = ts.id
             WHERE 
                 (d.organizacion_id = ? OR a.organizacion_id = ?) 
                 AND d.estatus_id IN ($placeholders)";
@@ -152,12 +155,20 @@ $conexion->close();
                                     <?php if(empty($donaciones_pendientes)): ?>
                                         <tr><td colspan="4" class="text-center text-muted">No hay donaciones pendientes.</td></tr>
                                     <?php else: foreach($donaciones_pendientes as $donacion): ?>
-                                        <tr>
+                                        <tr style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#detalleDonacionModal"
+                                            data-donante="<?php echo htmlspecialchars($donacion['nombre_donante']); ?>"
+                                            data-descripcion="<?php echo htmlspecialchars($donacion['donacion_descripcion']); ?>"
+                                            data-cantidad="<?php echo htmlspecialchars($donacion['cantidad']); ?>"
+                                            data-item-nombre="<?php echo htmlspecialchars($donacion['item_nombre'] ?? 'N/A'); ?>"
+                                            data-item-detalle="<?php echo htmlspecialchars($donacion['item_detalle'] ?? 'No se proporcionaron detalles.'); ?>"
+                                            data-fecha-caducidad="<?php echo !empty($donacion['fecha_caducidad']) ? date('d/m/Y', strtotime($donacion['fecha_caducidad'])) : 'No aplica'; ?>"
+                                            data-foto="<?php echo !empty($donacion['ruta_foto']) ? htmlspecialchars($donacion['ruta_foto']) : ''; ?>"
+                                            data-tipo-sangre="<?php echo htmlspecialchars($donacion['tipo_sangre_donante'] ?? 'No especificado'); ?>"> 
                                             <td><?php echo htmlspecialchars($donacion['nombre_donante']); ?></td>
                                             <td><?php echo htmlspecialchars($donacion['donacion_descripcion']); ?></td>
                                             <td><?php echo date('d/m/Y', strtotime($donacion['fecha_compromiso'])); ?></td>
                                             <td class="text-center">
-                                                <form action="auth/gestionar_donacion.php" method="POST" class="d-inline">
+                                                <form action="auth/gestionar_donacion.php" method="POST" class="d-inline" onclick="event.stopPropagation();">
                                                     <input type="hidden" name="donacion_id" value="<?php echo $donacion['donacion_id']; ?>">
                                                     <button type="submit" name="accion" value="aprobar" class="btn btn-sm btn-success me-1" title="Aprobar"><i class="fas fa-check"></i></button>
                                                     <button type="submit" name="accion" value="rechazar" class="btn btn-sm btn-danger" title="Rechazar"><i class="fas fa-times"></i></button>
@@ -181,14 +192,25 @@ $conexion->close();
                                     <?php if(empty($donaciones_aprobadas)): ?>
                                         <tr><td colspan="4" class="text-center text-muted">No hay donaciones en proceso.</td></tr>
                                     <?php else: foreach($donaciones_aprobadas as $donacion): ?>
-                                        <tr>
+                                        <tr style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#detalleDonacionModal"
+                                            data-donante="<?php echo htmlspecialchars($donacion['nombre_donante']); ?>"
+                                            data-descripcion="<?php echo htmlspecialchars($donacion['donacion_descripcion']); ?>"
+                                            data-cantidad="<?php echo htmlspecialchars($donacion['cantidad']); ?>"
+                                            data-item-nombre="<?php echo htmlspecialchars($donacion['item_nombre'] ?? 'N/A'); ?>"
+                                            data-item-detalle="<?php echo htmlspecialchars($donacion['item_detalle'] ?? 'No se proporcionaron detalles.'); ?>"
+                                            data-fecha-caducidad="<?php echo !empty($donacion['fecha_caducidad']) ? date('d/m/Y', strtotime($donacion['fecha_caducidad'])) : 'No aplica'; ?>"
+                                            data-foto="<?php echo !empty($donacion['ruta_foto']) ? htmlspecialchars($donacion['ruta_foto']) : ''; ?>"
+                                            data-tipo-sangre="<?php echo htmlspecialchars($donacion['tipo_sangre_donante'] ?? 'No especificado'); ?>">
                                             <td><?php echo htmlspecialchars($donacion['nombre_donante']); ?></td>
                                             <td><?php echo htmlspecialchars($donacion['donacion_descripcion']); ?></td>
                                             <td><?php echo !empty($donacion['fecha_validacion']) ? date('d/m/Y', strtotime($donacion['fecha_validacion'])) : 'N/A'; ?></td>
                                             <td class="text-center">
-                                                <form action="auth/gestionar_donacion.php" method="POST" class="d-inline">
+                                                <form action="auth/gestionar_donacion.php" method="POST" class="d-inline" onclick="event.stopPropagation();">
                                                     <input type="hidden" name="donacion_id" value="<?php echo $donacion['donacion_id']; ?>">
-                                                    <button type="submit" name="accion" value="recibir" class="btn btn-sm btn-primary" title="Marcar como Recibido"><i class="fas fa-gift"></i></button>
+                                                    
+                                                    <button type="submit" name="accion" value="recibir" class="btn btn-sm btn-primary me-1" title="Marcar como Recibido"><i class="fas fa-gift"></i></button>
+                                                    
+                                                    <button type="submit" name="accion" value="no_concretado" class="btn btn-sm btn-warning" title="Marcar como No Concretado"><i class="fas fa-ban"></i></button>
                                                 </form>
                                             </td>
                                         </tr>
@@ -209,7 +231,15 @@ $conexion->close();
                                     <?php if(empty($donaciones_historial)): ?>
                                         <tr><td colspan="4" class="text-center text-muted">Aún no hay donaciones en el historial.</td></tr>
                                     <?php else: foreach($donaciones_historial as $donacion): ?>
-                                        <tr>
+                                        <tr style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#detalleDonacionModal"
+                                            data-donante="<?php echo htmlspecialchars($donacion['nombre_donante']); ?>"
+                                            data-descripcion="<?php echo htmlspecialchars($donacion['donacion_descripcion']); ?>"
+                                            data-cantidad="<?php echo htmlspecialchars($donacion['cantidad']); ?>"
+                                            data-item-nombre="<?php echo htmlspecialchars($donacion['item_nombre'] ?? 'N/A'); ?>"
+                                            data-item-detalle="<?php echo htmlspecialchars($donacion['item_detalle'] ?? 'No se proporcionaron detalles.'); ?>"
+                                            data-fecha-caducidad="<?php echo !empty($donacion['fecha_caducidad']) ? date('d/m/Y', strtotime($donacion['fecha_caducidad'])) : 'No aplica'; ?>"
+                                            data-foto="<?php echo !empty($donacion['ruta_foto']) ? htmlspecialchars($donacion['ruta_foto']) : ''; ?>"
+                                            data-tipo-sangre="<?php echo htmlspecialchars($donacion['tipo_sangre_donante'] ?? 'No especificado'); ?>">
                                             <td><?php echo htmlspecialchars($donacion['nombre_donante']); ?></td>
                                             <td><?php echo htmlspecialchars($donacion['donacion_descripcion']); ?></td>
                                             <td><?php echo !empty($donacion['fecha_validacion']) ? date('d/m/Y', strtotime($donacion['fecha_validacion'])) : 'N/A'; ?></td>
@@ -227,8 +257,82 @@ $conexion->close();
         </div>
     </div>
     
+    <div class="modal fade" id="detalleDonacionModal" tabindex="-1" aria-labelledby="detalleDonacionModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="detalleDonacionModalLabel">Detalles de la Donación</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div id="detalle-foto-container" class="mb-3 text-center" style="display: none;">
+                <img id="detalle-foto" src="" class="img-fluid rounded" alt="Foto del Ítem" style="max-height: 250px;">
+            </div>
+            <p><strong>Donante:</strong> <span id="detalle-donante"></span></p>
+            <p><strong>Descripción General:</strong> <span id="detalle-descripcion"></span></p>
+            <p><strong>Ítem Específico:</strong> <span id="detalle-item-nombre"></span></p>
+            <p><strong>Cantidad:</strong> <span id="detalle-cantidad"></span> unidad(es)</p>
+            <p><strong>Fecha de Caducidad:</strong> <span id="detalle-fecha-caducidad"></span></p>
+            <p><strong>Detalles Adicionales:</strong></p>
+            <p class="text-muted" id="detalle-item-detalle"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <?php require_once 'templates/footer.php'; ?>
     <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a> 
+    
     <?php require_once 'templates/scripts.php'; ?>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const detalleModal = document.getElementById('detalleDonacionModal');
+        if (detalleModal) {
+            detalleModal.addEventListener('show.bs.modal', function (event) {
+                const row = event.relatedTarget;
+
+                const donante = row.getAttribute('data-donante');
+                const descripcion = row.getAttribute('data-descripcion');
+                const cantidad = row.getAttribute('data-cantidad');
+                const itemNombre = row.getAttribute('data-item-nombre');
+                const itemDetalle = row.getAttribute('data-item-detalle');
+                const fechaCaducidad = row.getAttribute('data-fecha-caducidad');
+                const fotoUrl = row.getAttribute('data-foto');
+                const tipoSangre = row.getAttribute('data-tipo-sangre');
+
+                const modal = event.target;
+                modal.querySelector('#detalle-donante').textContent = donante;
+                modal.querySelector('#detalle-descripcion').textContent = descripcion;
+                modal.querySelector('#detalle-cantidad').textContent = cantidad;
+                modal.querySelector('#detalle-item-detalle').textContent = itemDetalle;
+                modal.querySelector('#detalle-fecha-caducidad').textContent = fechaCaducidad;
+                
+                let itemEspecificoFinal = itemNombre;
+                if ((itemNombre === 'N/A' || itemNombre === '') && descripcion.toLowerCase().includes('sangre')) {
+                    if (tipoSangre && tipoSangre !== 'No especificado' && tipoSangre !== 'null') {
+                        itemEspecificoFinal = 'Tipo de Sangre del Donante: ' + tipoSangre;
+                    } else {
+                        itemEspecificoFinal = 'Tipo de Sangre del Donante: No especificado';
+                    }
+                }
+                modal.querySelector('#detalle-item-nombre').textContent = itemEspecificoFinal;
+
+                const fotoContainer = modal.querySelector('#detalle-foto-container');
+                const fotoImg = modal.querySelector('#detalle-foto');
+                
+                if (fotoUrl) {
+                    fotoImg.src = fotoUrl;
+                    fotoContainer.style.display = 'block';
+                } else {
+                    fotoContainer.style.display = 'none';
+                }
+            });
+        }
+    });
+    </script>
 </body>
 </html>

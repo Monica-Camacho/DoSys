@@ -49,12 +49,18 @@ switch ($accion) {
         break;
     case 'rechazar':
         $nuevo_estatus_id = 4; // 4: No Concretado
-        $mensaje_exito = "La donación ha sido marcada como no concretada.";
+        $mensaje_exito = "La donación ha sido rechazada.";
         break;
     case 'recibir':
         $nuevo_estatus_id = 3; // 3: Recibido
         $mensaje_exito = "¡Excelente! La donación ha sido marcada como recibida.";
         break;
+    // --- INICIO DE LA MODIFICACIÓN ---
+    case 'no_concretado':
+        $nuevo_estatus_id = 4; // 4: No Concretado
+        $mensaje_exito = "La donación ha sido marcada como no concretada.";
+        break;
+    // --- FIN DE LA MODIFICACIÓN ---
     default:
         // Si la acción no es válida, no hacer nada.
         header('Location: ../organizacion_donantes.php');
