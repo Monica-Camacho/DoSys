@@ -136,6 +136,13 @@ $conexion->close();
             let userLocationMarker;
             const organizaciones = <?php echo $organizaciones_json; ?>;
 
+            const defaultIcon = 'img/icon/heart.png';
+            const iconMap = {
+                '1': 'img/icon/sangre.png',       // ID 1 para Sangre
+                '2': 'img/icon/medicamento.png',  // ID 2 para Medicamentos
+                '3': 'img/icon/muleta.png'         // ID 3 para Dispositivos
+            };
+
             function initMap() {
                 const initialPos = { lat: 17.9869, lng: -92.9303 };
                 
@@ -150,6 +157,7 @@ $conexion->close();
                         position: { lat: parseFloat(org.latitud), lng: parseFloat(org.longitud) },
                         map: map,
                         title: org.nombre_organizacion,
+                        icon: defaultIcon, // <-- AÑADIR ESTA LÍNEA
                         categorias: org.categorias_ids ? org.categorias_ids.split(',') : [],
                         // Guardamos los datos adicionales para usarlos en el InfoWindow
                         org_calle: org.calle,
@@ -210,11 +218,35 @@ $conexion->close();
 
             function aplicarFiltros() {
                 const filtrosActivos = [];
-                document.querySelectorAll('.filter-checkbox:checked').forEach(checkbox => filtrosActivos.push(checkbox.value));
+                document.querySelectorAll('.filter-checkbox:checked').forEach(checkbox => {
+                    filtrosActivos.push(checkbox.value);
+                });
+
                 marcadores.forEach(marker => {
-                    if (filtrosActivos.length === 0) { marker.setVisible(true); return; }
-                    const coincide = marker.categorias.some(cat => filtrosActivos.includes(cat));
-                    marker.setVisible(coincide);
+                    // Caso 1: No hay ningún filtro activo
+                    if (filtrosActivos.length === 0) {
+                        marker.setVisible(true);
+                        marker.setIcon(defaultIcon); // Usar el ícono por defecto
+                        return; // Pasar al siguiente marcador
+                    }
+
+                    // Caso 2: Hay filtros activos
+                    // Encontrar las categorías del marcador que coinciden con los filtros
+                    const categoriasCoincidentes = marker.categorias.filter(cat => filtrosActivos.includes(cat));
+                    
+                    if (categoriasCoincidentes.length > 0) {
+                        // Si hay al menos una coincidencia, el marcador es visible
+                        marker.setVisible(true);
+                        
+                        // Usamos la PRIMERA categoría coincidente para decidir el ícono
+                        // Esto resuelve el caso de que una organización pertenezca a varias categorías filtradas
+                        const categoriaParaIcono = categoriasCoincidentes[0];
+                        marker.setIcon(iconMap[categoriaParaIcono] || defaultIcon); // Usar el ícono de la categoría o el de por defecto si algo falla
+
+                    } else {
+                        // Si no hay coincidencias, el marcador se oculta
+                        marker.setVisible(false);
+                    }
                 });
             }
 
