@@ -123,9 +123,9 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                 <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="0.1s">
                     <div class="team-item bg-light rounded-3 h-100 shadow-sm border">
                         <div class="team-img">
-                            <img src="img/Conocenos/Integrantes/Monica.jpg" class="img-fluid" alt="Mónica Camacho">
+                            <img src="img/elements/integrantes/monica.jpg" class="img-fluid" alt="Mónica Camacho">
                             <div class="team-social">
-                                <a class="btn btn-primary btn-lg-square rounded-circle me-2" href="#"><i class="fab fa-linkedin-in"></i></a>
+                                <a class="btn btn-primary btn-lg-square rounded-circle me-2" href="https://www.linkedin.com/in/monica-guadalupe-camacho-garcia-b72301358" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin-in"></i></a>
                             </div>
                         </div>
                         <div class="p-4 text-center">
@@ -138,7 +138,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                 <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="0.2s">
                     <div class="team-item bg-light rounded-3 h-100 shadow-sm border">
                         <div class="team-img">
-                            <img src="img/Conocenos/Integrantes/Zarate.jpg" class="img-fluid" alt="Gabriel Zárate">
+                            <img src="img/elements/integrantes/zarate.jpg" class="img-fluid" alt="Gabriel Zárate">
                             <div class="team-social">
                                 <a class="btn btn-primary btn-lg-square rounded-circle me-2" href="#"><i class="fab fa-linkedin-in"></i></a>
                             </div>
@@ -153,7 +153,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                 <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="0.3s">
                     <div class="team-item bg-light rounded-3 h-100 shadow-sm border">
                         <div class="team-img">
-                            <img src="img/Conocenos/Integrantes/Freddy.jpg" class="img-fluid" alt="Freddy Vela">
+                            <img src="img/elements/integrantes/freddy.jpg" class="img-fluid" alt="Freddy Vela">
                             <div class="team-social">
                                 <a class="btn btn-primary btn-lg-square rounded-circle me-2" href="#"><i class="fab fa-linkedin-in"></i></a>
                             </div>
@@ -168,7 +168,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                 <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="0.4s">
                     <div class="team-item bg-light rounded-3 h-100 shadow-sm border">
                         <div class="team-img">
-                            <img src="img/Conocenos/Integrantes/Sergio.jpg" class="img-fluid" alt="Sergio Jimenez">
+                            <img src="img/elements/integrantes/sergio.jpg" class="img-fluid" alt="Sergio Jimenez">
                             <div class="team-social">
                                 <a class="btn btn-primary btn-lg-square rounded-circle me-2" href="#"><i class="fab fa-linkedin-in"></i></a>
                             </div>
@@ -196,7 +196,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                 <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="0.1s">
                     <div class="team-item bg-white rounded-3 h-100 shadow-sm border">
                         <div class="team-img">
-                            <img src="img/Conocenos/Integrantes/Arcely.jpg" class="img-fluid" alt="M.A. Arcely Aquino Ruíz">
+                            <img src="img/elements/integrantes/arcely.jpg" class="img-fluid" alt="M.A. Arcely Aquino Ruíz">
                             <div class="team-social">
                                 <a class="btn btn-primary btn-lg-square rounded-circle me-2" href="#"><i class="fab fa-linkedin-in"></i></a>
                             </div>
@@ -204,21 +204,6 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                         <div class="p-4 text-center">
                             <h5 class="mb-1">M.A. Arcely Aquino Ruíz</h5>
                             <p class="text-muted m-0">Asesora Principal</p>
-                        </div>
-                    </div>
-                </div>
-                <!-- M.I.S. Dulce María León de la O. -->
-                <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="0.2s">
-                    <div class="team-item bg-white rounded-3 h-100 shadow-sm border">
-                        <div class="team-img">
-                            <img src="img/Conocenos/Integrantes/Dulce.jpg" class="img-fluid" alt="M.I.S. Dulce María León de la O.">
-                            <div class="team-social">
-                                <a class="btn btn-primary btn-lg-square rounded-circle me-2" href="#"><i class="fab fa-linkedin-in"></i></a>
-                            </div>
-                        </div>
-                        <div class="p-4 text-center">
-                            <h5 class="mb-1">M.I.S. Dulce María León de la O.</h5>
-                            <p class="text-muted m-0">Asesora</p>
                         </div>
                     </div>
                 </div>
