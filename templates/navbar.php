@@ -50,19 +50,34 @@ $user_role = $is_logged_in ? ($_SESSION['rol_id'] ?? 0) : 0;
                             <div class="dropdown-menu dropdown-menu-end">
                                 <?php switch ($user_type):
                                     case 1: // Menú Persona ?>
-                                        <a href="<?php echo BASE_URL; ?>persona_perfil.php" class="dropdown-item">Mi Cuenta Personal</a>
-                                        <a href="<?php echo BASE_URL; ?>persona_dashboard.php" class="dropdown-item">Mi Panel</a>
+                                        <a href="<?php echo BASE_URL; ?>persona_dashboard.php" class="dropdown-item">Panel Personañ</a>
                                         <a href="<?php echo BASE_URL; ?>persona_beneficios.php" class="dropdown-item">Mis Beneficios</a>
                                         <a href="<?php echo BASE_URL; ?>persona_configuracion.php" class="dropdown-item">Configuración</a>
+
+                                        <div class="dropdown-divider"></div>
+                                        <li class="dropdown-header">Cuenta</li>
+                                        <a href="<?php echo BASE_URL; ?>persona_perfil.php" class="dropdown-item">Mi Cuenta Personal</a>
                                         <?php break; ?>
                                     <?php case 2: // Menú Empresa ?>
-                                        <a href="<?php echo BASE_URL; ?>persona_perfil.php" class="dropdown-item">Mi Perfil</a>                                        
-                                        <a href="<?php echo BASE_URL; ?>empresa_dashboard.php" class="dropdown-item">Panel de Empresa</a>
-                                        <a href="<?php echo BASE_URL; ?>empresa_perfil.php" class="dropdown-item">Perfil de la Empresa</a>
-                                        <a href="<?php echo BASE_URL; ?>empresa_beneficios.php" class="dropdown-item">Beneficios</a>
-                                        <a href="<?php echo BASE_URL; ?>empresa_usuarios.php" class="dropdown-item">Usuarios</a>
-                                        <a href="<?php echo BASE_URL; ?>empresa_reportes.php" class="dropdown-item">Reportes</a>
+                                        <li class="dropdown-header">Gestión de la Empresa</li>
+                                        <a href="<?php echo BASE_URL; ?>empresa_dashboard.php" class="dropdown-item">Panel Principal</a>
+                                        <a href="<?php echo BASE_URL; ?>empresa_beneficios.php" class="dropdown-item">Gestionar Beneficios</a>
+                                        <a href="<?php echo BASE_URL; ?>empresa_usuarios.php" class="dropdown-item">Gestionar Equipo</a>
+                                        <a href="<?php echo BASE_URL; ?>empresa_reportes.php" class="dropdown-item">Generar Reportes</a>
+
+                                        <div class="dropdown-divider"></div>
+                                        <li class="dropdown-header">Perfil de la Empresa</li>
+                                    
+                                        <a href="<?php echo BASE_URL; ?>empresa_perfil.php" class="dropdown-item">Perfil Empresa</a>
+                                        
+                                        <?php if ($user_role == 1): ?>
                                         <a href="<?php echo BASE_URL; ?>empresa_configuracion.php" class="dropdown-item">Configuración</a>
+                                        <?php endif; ?>
+
+                                        <div class="dropdown-divider"></div>
+                                        <li class="dropdown-header">Cuenta</li>
+                                        <a href="<?php echo BASE_URL; ?>persona_perfil.php" class="dropdown-item">Mi Cuenta Personal</a>
+
                                         <?php break; ?>
                                     <?php case 3: // Menú Organización ?>
                                         <li class="dropdown-header">Gestión de la Organización</li>
@@ -72,8 +87,8 @@ $user_role = $is_logged_in ? ($_SESSION['rol_id'] ?? 0) : 0;
                                         <a href="<?php echo BASE_URL; ?>organizacion_usuarios.php" class="dropdown-item">Gestionar Equipo</a>
                                         
                                         <div class="dropdown-divider"></div>
-                                        <li class="dropdown-header">Perfil</li>
-                                        
+                                        <li class="dropdown-header">Perfil de la Organizacion</li>
+                                    
                                         <a href="<?php echo BASE_URL; ?>organizacion_perfil.php" class="dropdown-item">Perfil Organización</a>
                                         
                                         <?php if ($user_role == 1): ?>
