@@ -1,18 +1,44 @@
 <?php
-require_once 'config.php'; // Incluye la configuración y la URL base.
-// Inicia la sesión.
+require_once 'config.php';
+require_once 'conexion_local.php'; // Se necesita para las estadísticas
 session_start();
 
-// Muestra una alerta si hay un error en el inicio de sesión.
 if (isset($_GET['error']) && $_GET['error'] == 1) {
     echo "<script>alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');</script>";
 }
+
+// --- INICIO: BLOQUE PARA OBTENER ESTADÍSTICAS REALES ---
+$estadisticas = [
+    'total_donadores' => 0,
+    'total_organizaciones' => 0,
+    'total_ayudados' => 0,
+    'total_medicamentos' => 0
+];
+
+// 1. Total de Donadores Altruistas (usuarios únicos que han donado)
+$result_don = $conexion->query("SELECT COUNT(DISTINCT donante_id) AS total FROM donaciones WHERE estatus_id = 3");
+if ($result_don) $estadisticas['total_donadores'] = $result_don->fetch_assoc()['total'] ?? 0;
+
+// 2. Total de Asociaciones Vinculadas (organizaciones activas)
+$result_org = $conexion->query("SELECT COUNT(id) AS total FROM organizaciones_perfil WHERE estado = 'Activa'");
+if ($result_org) $estadisticas['total_organizaciones'] = $result_org->fetch_assoc()['total'] ?? 0;
+
+// 3. Total de Personas Ayudadas (beneficiarios únicos de avisos completados)
+$result_ayu = $conexion->query("SELECT COUNT(DISTINCT donatario_id) AS total FROM avisos WHERE estatus_id = 3");
+if ($result_ayu) $estadisticas['total_ayudados'] = $result_ayu->fetch_assoc()['total'] ?? 0;
+
+// 4. Total de Medicamentos Donados (suma de cantidades de donaciones de medicamentos completadas)
+$result_med = $conexion->query("SELECT SUM(d.cantidad) AS total FROM donaciones d JOIN avisos a ON d.aviso_id = a.id WHERE a.categoria_id = 2 AND d.estatus_id = 3");
+if ($result_med) $estadisticas['total_medicamentos'] = $result_med->fetch_assoc()['total'] ?? 0;
+
+$conexion->close();
+// --- FIN: BLOQUE PARA OBTENER ESTADÍSTICAS ---
 ?>
 <!DOCTYPE html>
 <html lang="es">
 
     <head>
-        <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
+
         <meta charset="utf-8">
         <title>DoSys (Donation System)</title>
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -42,49 +68,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
 
         <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
-
-                <style>
-            .carousel-caption {
-                top: 0;
-                bottom: 0;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-            }
-            
-            /* Responsive adjustments ONLY for mobile devices */
-            @media (max-width: 768px) {
-                .carousel-item {
-                    height: 85vh; /* Give a consistent, good-looking height on mobile */
-                }
-                .carousel-item .carousel-image-container,
-                .carousel-item .carousel-image {
-                    height: 100%;
-                    object-fit: cover; /* Ensure image covers the slide area without distortion */
-                }
-
-                .carousel-caption h1 {
-                    font-size: 2.5rem; /* Smaller title on mobile */
-                }
-                .carousel-caption p {
-                    font-size: 1rem; /* Smaller paragraph on mobile */
-                    margin-bottom: 1.5rem !important;
-                }
-                .carousel-caption .d-flex.gap-4 {
-                    flex-direction: column; /* Stack buttons vertically on mobile */
-                    gap: 0.75rem !important; /* Reduce gap between stacked buttons */
-                    align-items: center;
-                }
-                 .carousel-caption .btn {
-                    font-size: 0.9rem;
-                    padding: 0.7rem 1.5rem;
-                    width: 80%;
-                    max-width: 280px;
-                }
-            }
-        </style>
+        <link href="css/Carrusel.css" rel="stylesheet">
 
     </head>
 
@@ -181,16 +165,14 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                         <div class="about-item-content bg-white rounded p-5 h-100">
                             <h4 class="text-primary">Acerca de DoSys</h4>
                             <h1 class="display-4 mb-4">La Herramienta Universal de donación por excelencia.</h1>
-                            <p style="text-align: justify;">Logramos ser un método universal para las donaciones altruistas en México, 
-                                conectando con las diferentes organizaciones altruistas, las ONG, hospitales y el público en general.
-                            </p>
-                            <p style="text-align: justify;">Buscamos acercar la oportunidad de mejorar el sistema de salud actual, recompensando a los 
-                                donadores altruistas y facilitando el trabajo de las organizaciones altruistas.
-                            </p>
+                            <p style="text-align: justify;">Logramos ser un método universal para las donaciones altruistas en México, conectando con las diferentes organizaciones altruistas, las ONG, hospitales y el público en general.</p>
                             <p class="text-dark" style="text-align: justify;"><i class="fa fa-check text-primary me-3"></i>Facilitamos el sistema de donación.</p>
                             <p class="text-dark" style="text-align: justify;"><i class="fa fa-check text-primary me-3"></i>Recompensamos a nuestros donadores.</p>
                             <p class="text-dark mb-4" style="text-align: justify;"><i class="fa fa-check text-primary me-3"></i>Mejoramos la calidad de vida de las personas.</p>
-                            <a class="btn btn-primary rounded-pill py-3 px-5" href="C-Sobre_Nosotros.html">Más información</a>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a class="btn btn-primary rounded-pill py-3 px-3" href="c-sobre_nosotros.php">Más Información</a>
+                                <a class="btn btn-outline-primary rounded-pill py-3 px-3" href="estadisticas.php">Ver Estadísticas</a>
+                            </div>
                         </div>
                     </div>
                     <div class="col-xl-6 wow fadeInRight" data-wow-delay="0.2s">
@@ -204,7 +186,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                                 <div class="col-sm-6">
                                     <div class="counter-item bg-light rounded p-3 h-100">
                                         <div class="counter-counting">
-                                            <span class="text-primary fs-2 fw-bold" data-toggle="counter-up">25</span>
+                                            <span class="text-primary fs-2 fw-bold" data-toggle="counter-up"><?php echo $estadisticas['total_donadores']; ?></span>
                                             <span class="h1 fw-bold text-primary">+</span>
                                         </div>
                                         <h4 class="mb-0 text-dark">Donadores Altruistas</h4>
@@ -213,7 +195,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                                 <div class="col-sm-6">
                                     <div class="counter-item bg-light rounded p-3 h-100">
                                         <div class="counter-counting">
-                                            <span class="text-primary fs-2 fw-bold" data-toggle="counter-up">10</span>
+                                            <span class="text-primary fs-2 fw-bold" data-toggle="counter-up"><?php echo $estadisticas['total_organizaciones']; ?></span>
                                             <span class="h1 fw-bold text-primary">+</span>
                                         </div>
                                         <h4 class="mb-0 text-dark">Asociaciones vinculadas</h4>
@@ -222,7 +204,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                                 <div class="col-sm-6">
                                     <div class="counter-item bg-light rounded p-3 h-100">
                                         <div class="counter-counting">
-                                            <span class="text-primary fs-2 fw-bold" data-toggle="counter-up">100</span>
+                                            <span class="text-primary fs-2 fw-bold" data-toggle="counter-up"><?php echo $estadisticas['total_ayudados']; ?></span>
                                             <span class="h1 fw-bold text-primary">+</span>
                                         </div>
                                         <h4 class="mb-0 text-dark">Personas ayudadas</h4>
@@ -231,13 +213,13 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                                 <div class="col-sm-6">
                                     <div class="counter-item bg-light rounded p-3 h-100">
                                         <div class="counter-counting">
-                                            <span class="text-primary fs-2 fw-bold" data-toggle="counter-up">362</span>
+                                            <span class="text-primary fs-2 fw-bold" data-toggle="counter-up"><?php echo $estadisticas['total_medicamentos']; ?></span>
                                             <span class="h1 fw-bold text-primary">+</span>
                                         </div>
                                         <h4 class="mb-0 text-dark">Medicamentos donados</h4>
                                     </div>
                                 </div>
-                            </div>
+                                </div>
                         </div>
                     </div>
                 </div>

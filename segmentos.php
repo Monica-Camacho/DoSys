@@ -12,7 +12,6 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
 <html lang="es">
 
     <head>
-        <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
         <meta charset="utf-8">
         <title>DoSys - Seleccionar Tipo de Solicitud</title>
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -42,51 +41,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
 
         <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
-        <link href="css/Donaciones.css" rel="stylesheet">
-
-        <style>
-            .carousel-caption {
-                top: 0;
-                bottom: 0;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-            }
-            
-            /* Responsive adjustments ONLY for mobile devices */
-            @media (max-width: 768px) {
-                .carousel-item {
-                    height: 85vh; /* Give a consistent, good-looking height on mobile */
-                }
-                .carousel-item .carousel-image-container,
-                .carousel-item .carousel-image {
-                    height: 100%;
-                    object-fit: cover; /* Ensure image covers the slide area without distortion */
-                }
-
-                .carousel-caption h1 {
-                    font-size: 2.5rem; /* Smaller title on mobile */
-                }
-                .carousel-caption p {
-                    font-size: 1rem; /* Smaller paragraph on mobile */
-                    margin-bottom: 1.5rem !important;
-                }
-                .carousel-caption .d-flex.gap-4 {
-                    flex-direction: column; /* Stack buttons vertically on mobile */
-                    gap: 0.75rem !important; /* Reduce gap between stacked buttons */
-                    align-items: center;
-                }
-                 .carousel-caption .btn {
-                    font-size: 0.9rem;
-                    padding: 0.7rem 1.5rem;
-                    width: 80%;
-                    max-width: 280px;
-                }
-            }
-        </style>
-
+        <link href="css/Carrusel.css" rel="stylesheet">
     </head>
 
     <body>
