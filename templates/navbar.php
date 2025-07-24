@@ -3,6 +3,10 @@
 $is_logged_in = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true;
 $user_type = $is_logged_in ? $_SESSION['tipo_usuario_id'] : 0;
 $user_name = ($is_logged_in && isset($_SESSION['nombre_usuario'])) ? $_SESSION['nombre_usuario'] : 'Usuario';
+
+// ¡AÑADIDO! Obtenemos el rol del usuario desde la sesión.
+$user_role = $is_logged_in ? ($_SESSION['rol_id'] ?? 0) : 0;
+
 ?>
 
 <div class="container-fluid nav-bar px-0 px-lg-4 py-lg-0">
@@ -46,7 +50,7 @@ $user_name = ($is_logged_in && isset($_SESSION['nombre_usuario'])) ? $_SESSION['
                             <div class="dropdown-menu dropdown-menu-end">
                                 <?php switch ($user_type):
                                     case 1: // Menú Persona ?>
-                                        <a href="<?php echo BASE_URL; ?>persona_perfil.php" class="dropdown-item">Mi Perfil</a>
+                                        <a href="<?php echo BASE_URL; ?>persona_perfil.php" class="dropdown-item">Mi Cuenta Personal</a>
                                         <a href="<?php echo BASE_URL; ?>persona_dashboard.php" class="dropdown-item">Mi Panel</a>
                                         <a href="<?php echo BASE_URL; ?>persona_beneficios.php" class="dropdown-item">Mis Beneficios</a>
                                         <a href="<?php echo BASE_URL; ?>persona_configuracion.php" class="dropdown-item">Configuración</a>
@@ -68,9 +72,13 @@ $user_name = ($is_logged_in && isset($_SESSION['nombre_usuario'])) ? $_SESSION['
                                         <a href="<?php echo BASE_URL; ?>organizacion_usuarios.php" class="dropdown-item">Gestionar Equipo</a>
                                         
                                         <div class="dropdown-divider"></div>
-                                        <li class="dropdown-header">Perfil Público</li>
-                                        <a href="<?php echo BASE_URL; ?>organizacion_perfil.php" class="dropdown-item">Editar Perfil Organización</a>
+                                        <li class="dropdown-header">Perfil</li>
+                                        
+                                        <a href="<?php echo BASE_URL; ?>organizacion_perfil.php" class="dropdown-item">Perfil Organización</a>
+                                        
+                                        <?php if ($user_role == 1): ?>
                                         <a href="<?php echo BASE_URL; ?>organizacion_configuracion.php" class="dropdown-item">Configuración</a>
+                                        <?php endif; ?>
 
                                         <div class="dropdown-divider"></div>
                                         <li class="dropdown-header">Cuenta</li>

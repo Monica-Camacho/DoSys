@@ -5,9 +5,9 @@
                 <div class="col-xl-4 col-lg-4 col-md-6">
                     <div class="footer-item">
                         <h4 class="text-white mb-4">Información Legal</h4>
-                        <a class="btn-link" href="#"><i class="fas fa-angle-right me-2"></i> Términos y Condiciones</a>
-                        <a class="btn-link" href="#"><i class="fas fa-angle-right me-2"></i> Política de Privacidad</a>
-                        <a class="btn-link" href="#"><i class="fas fa-angle-right me-2"></i> Aviso Legal</a>
+                        <a class="btn-link" href="<?php echo BASE_URL; ?>terminos_condiciones.php"><i class="fas fa-angle-right me-2"></i> Términos y Condiciones</a>
+                        <a class="btn-link" href="<?php echo BASE_URL; ?>politica_privacidad.php"><i class="fas fa-angle-right me-2"></i> Política de Privacidad</a>
+                        <a class="btn-link" href="<?php echo BASE_URL; ?>aviso_legal.php"><i class="fas fa-angle-right me-2"></i> Aviso Legal</a>
                     </div>
                 </div>
                 <div class="col-xl-4 col-lg-4 col-md-6">
