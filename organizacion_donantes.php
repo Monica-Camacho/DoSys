@@ -170,8 +170,8 @@ $conexion->close();
                                             <td class="text-center">
                                                 <form action="auth/gestionar_donacion.php" method="POST" class="d-inline" onclick="event.stopPropagation();">
                                                     <input type="hidden" name="donacion_id" value="<?php echo $donacion['donacion_id']; ?>">
-                                                    <button type="submit" name="accion" value="aprobar" class="btn btn-sm btn-success me-1" title="Aprobar"><i class="fas fa-check"></i></button>
-                                                    <button type="submit" name="accion" value="rechazar" class="btn btn-sm btn-danger" title="Rechazar"><i class="fas fa-times"></i></button>
+                                                    <button type="submit" name="accion" value="aprobar" class="btn btn-sm btn-outline-success me-2" title="Aprobar"><i class="fas fa-check"></i> Aprobar</button>
+                                                    <button type="submit" name="accion" value="rechazar" class="btn btn-sm btn-outline-danger me-2" title="Rechazar"><i class="fas fa-times"></i> Rechazar</button>
                                                 </form>
                                             </td>
                                         </tr>
@@ -208,9 +208,9 @@ $conexion->close();
                                                 <form action="auth/gestionar_donacion.php" method="POST" class="d-inline" onclick="event.stopPropagation();">
                                                     <input type="hidden" name="donacion_id" value="<?php echo $donacion['donacion_id']; ?>">
                                                     
-                                                    <button type="submit" name="accion" value="recibir" class="btn btn-sm btn-primary me-1" title="Marcar como Recibido"><i class="fas fa-gift"></i></button>
+                                                    <button type="submit" name="accion" value="recibir" class="btn btn-sm btn-outline-success me-2" title="Marcar como Recibido"><i class="fas fa-gift"></i> Recibido</button>
                                                     
-                                                    <button type="submit" name="accion" value="no_concretado" class="btn btn-sm btn-warning" title="Marcar como No Concretado"><i class="fas fa-ban"></i></button>
+                                                    <button type="submit" name="accion" value="no_concretado" class="btn btn-sm btn-outline-warning me-2" title="Marcar como No Concretado"><i class="fas fa-ban"></i> No Concretado</button>
                                                 </form>
                                             </td>
                                         </tr>
