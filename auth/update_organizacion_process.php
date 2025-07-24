@@ -55,6 +55,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $rep_email = $_POST['rep_email'];
     $rep_telefono = $_POST['rep_telefono'];
 
+    // --- ¡NUEVO! RECEPCIÓN DE CATEGORÍAS ---
+    $categorias_seleccionadas = $_POST['categorias'] ?? [];
+
+
     // 3. ACTUALIZACIÓN EN BASE DE DATOS (CON TRANSACCIÓN)
     // =================================================================
     
@@ -79,23 +83,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (!$stmt1->execute()) $error = true;
         $stmt1->close();
 
-        // ==============================================================
-        // === INICIO DE LA LÓGICA CORREGIDA PARA DIRECCIÓN (INSERT/UPDATE) ===
-        // ==============================================================
+        // --- LÓGICA PARA DIRECCIÓN (INSERT/UPDATE) ---
         if (!$error) {
             if ($direccion_id) {
-                // Si la organización YA TIENE una dirección (direccion_id no es NULL), la ACTUALIZAMOS.
-                $stmt_dir = $conexion->prepare(
-                    "UPDATE direcciones SET calle = ?, numero_exterior = ?, numero_interior = ?, colonia = ?, codigo_postal = ?, municipio = ?, estado = ?, latitud = ?, longitud = ? WHERE id = ?"
-                );
+                $stmt_dir = $conexion->prepare("UPDATE direcciones SET calle = ?, numero_exterior = ?, numero_interior = ?, colonia = ?, codigo_postal = ?, municipio = ?, estado = ?, latitud = ?, longitud = ? WHERE id = ?");
                 $stmt_dir->bind_param("sssssssssi", $calle, $numero_exterior, $numero_interior, $colonia, $codigo_postal, $municipio, $estado, $latitud, $longitud, $direccion_id);
                 if (!$stmt_dir->execute()) $error = true;
                 $stmt_dir->close();
             } else {
-                // Si la organización NO TIENE una dirección, INSERTAMOS una nueva.
-                $stmt_dir = $conexion->prepare(
-                    "INSERT INTO direcciones (calle, numero_exterior, numero_interior, colonia, codigo_postal, municipio, estado, latitud, longitud) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
-                );
+                $stmt_dir = $conexion->prepare("INSERT INTO direcciones (calle, numero_exterior, numero_interior, colonia, codigo_postal, municipio, estado, latitud, longitud) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 $stmt_dir->bind_param("sssssssss", $calle, $numero_exterior, $numero_interior, $colonia, $codigo_postal, $municipio, $estado, $latitud, $longitud);
                 if (!$stmt_dir->execute()) {
                     $error = true;
@@ -112,11 +108,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             }
         }
-        // ==============================================================
-        // === FIN DE LA LÓGICA CORREGIDA PARA DIRECCIÓN ===
-        // ==============================================================
-
-        // --- UPDATE 3: Tabla 'representantes' (esta lógica se mantiene igual) ---
+        
+        // --- UPDATE 3: Tabla 'representantes' ---
         if (!$error && $representante_id) {
             $sql3 = "UPDATE representantes SET nombre = ?, apellido_paterno = ?, apellido_materno = ?, email = ?, telefono = ? WHERE id = ?";
             $stmt3 = $conexion->prepare($sql3);
@@ -124,6 +117,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (!$stmt3->execute()) $error = true;
             $stmt3->close();
         }
+
+        // ==============================================================
+        // === INICIO DE LA NUEVA LÓGICA PARA GUARDAR CATEGORÍAS ===
+        // ==============================================================
+        if (!$error) {
+            // 1. Borramos las categorías existentes para esta organización
+            $stmt_delete = $conexion->prepare("DELETE FROM organizaciones_x_categorias WHERE organizacion_id = ?");
+            $stmt_delete->bind_param("i", $organizacion_id);
+            if (!$stmt_delete->execute()) $error = true;
+            $stmt_delete->close();
+            
+            // 2. Insertamos las nuevas categorías seleccionadas
+            if (!$error && !empty($categorias_seleccionadas)) {
+                $sql_insert_cat = "INSERT INTO organizaciones_x_categorias (organizacion_id, categoria_id) VALUES (?, ?)";
+                $stmt_insert_cat = $conexion->prepare($sql_insert_cat);
+                foreach ($categorias_seleccionadas as $categoria_id) {
+                    $stmt_insert_cat->bind_param("ii", $organizacion_id, $categoria_id);
+                    if (!$stmt_insert_cat->execute()) {
+                        $error = true;
+                        break; // Salir del bucle si hay un error
+                    }
+                }
+                $stmt_insert_cat->close();
+            }
+        }
+        // ==============================================================
+        // === FIN DE LA NUEVA LÓGICA PARA GUARDAR CATEGORÍAS ===
+        // ==============================================================
+
 
         // --- Finalizamos la transacción ---
         if ($error) {

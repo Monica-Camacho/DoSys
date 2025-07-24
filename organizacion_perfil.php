@@ -63,6 +63,24 @@ if ($stmt = $conexion->prepare($sql)) {
     die("Error al preparar la consulta: " . $conexion->error);
 }
 
+// --- INICIO CÓDIGO AÑADIDO PARA OBTENER CATEGORÍAS ---
+// Obtener todas las categorías disponibles para mostrarlas como opciones
+$todas_las_categorias = $conexion->query("SELECT id, nombre FROM categorias_donacion ORDER BY id")->fetch_all(MYSQLI_ASSOC);
+
+// Obtener los IDs de las categorías que la organización YA tiene seleccionadas
+$categorias_actuales_ids = [];
+if (isset($organizacion['organizacion_id'])) {
+    $stmt_cats = $conexion->prepare("SELECT categoria_id FROM organizaciones_x_categorias WHERE organizacion_id = ?");
+    $stmt_cats->bind_param("i", $organizacion['organizacion_id']);
+    $stmt_cats->execute();
+    $resultado_cats = $stmt_cats->get_result();
+    while ($fila = $resultado_cats->fetch_assoc()) {
+        $categorias_actuales_ids[] = $fila['categoria_id'];
+    }
+    $stmt_cats->close();
+}
+// --- FIN CÓDIGO AÑADIDO PARA OBTENER CATEGORÍAS ---
+
 // 5. LÓGICA DE PERMISOS
 $rol_usuario = $organizacion['rol_usuario'] ?? '';
 $puede_editar = ($rol_usuario === 'Administrador');
@@ -205,6 +223,28 @@ $conexion->close();
                                         <?php endif; ?>
                                     </div>
                                 </div>
+                                
+                                    <hr class="my-4">
+                                    <h6 class="mb-3">Categorías de Donación Atendidas</h6>
+                                    <div class="row">
+                                        <?php foreach ($todas_las_categorias as $categoria): ?>
+                                            <?php
+                                                $is_checked = in_array($categoria['id'], $categorias_actuales_ids);
+                                            ?>
+                                            <div class="col-md-4">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="categorias[]" 
+                                                           value="<?php echo $categoria['id']; ?>" 
+                                                           id="cat<?php echo $categoria['id']; ?>" 
+                                                           <?php if ($is_checked) echo 'checked'; ?> 
+                                                           disabled>
+                                                    <label class="form-check-label" for="cat<?php echo $categoria['id']; ?>">
+                                                        <?php echo htmlspecialchars($categoria['nombre']); ?>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
                             </div></div>
                         </div>
 
