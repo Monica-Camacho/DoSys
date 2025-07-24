@@ -12,28 +12,36 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
 <html lang="es">
 
 <head>
-    <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
-    <meta charset="utf-8">
-    <title>DoSys - Sobre Nosotros</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="img/logos/DoSys_chico.png">
+        <meta charset="utf-8">
+        <title>DoSys - Sobre Nosostros</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="" name="keywords">
+        <meta content="" name="description">
 
-    <!-- Google Web Fonts, Iconos y Estilos -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
-    
-    <!-- Librerías de Estilos -->
-    <link href="lib/animate/animate.min.css" rel="stylesheet">
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="img/logos/DoSys_chico.png">
 
-    <!-- Estilos de Bootstrap y de la Plantilla -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+        <!-- Google Web Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
+
+        <!-- Icon Font Stylesheet -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+        <!-- Libraries Stylesheet -->
+        <link rel="stylesheet" href="lib/animate/animate.min.css"/>
+        <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+        <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+
+        <!-- Customized Bootstrap Stylesheet -->
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Template Stylesheet -->
+        <link href="css/style.css" rel="stylesheet">
+
 </head>
 
 <body>
@@ -70,7 +78,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
         <div class="container">
             <div class="row g-5 align-items-center">
                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
-                    <img src="img/about-img.jpg" class="img-fluid rounded" alt="Imagen del equipo de DoSys">
+                    <img src="img/elements/integrantes/equipo_dosys.jpg" class="img-fluid rounded" alt="Imagen del equipo de DoSys">
                 </div>
                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
                     <h2 class="display-6">Nuestra Historia</h2>
@@ -199,7 +207,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                 <div class="col-lg-8">
                     <h2 class="display-5 text-white mb-3 wow fadeIn" data-wow-delay="0.2s">Una Dosys de esperanza, puede cambiar vidas</h2>
                     <p class="text-white mb-4 wow fadeIn" data-wow-delay="0.4s">Tu donación es más que un acto de generosidad; es un mensaje de que nadie está solo. Únete a nuestra comunidad y sé parte del cambio.</p>
-                    <a href="r_seleccionar_tipo.html" class="btn btn-light rounded-pill py-3 px-5 wow fadeIn" data-wow-delay="0.6s">Conviértete en Donante</a>
+                    <a href="r_seleccionar_tipo.php" class="btn btn-light rounded-pill py-3 px-5 wow fadeIn" data-wow-delay="0.6s">Únete a la comunidad</a>
                 </div>
             </div>
         </div>
