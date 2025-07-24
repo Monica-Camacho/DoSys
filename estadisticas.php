@@ -33,7 +33,9 @@ session_start();
         </div>
     </div>
     <?php require_once 'templates/topbar.php'; ?>
+    
     <?php require_once 'templates/navbar.php'; ?>
+
     <div class="container-fluid bg-light py-5">
         <div class="container text-center">
             <div>
@@ -45,53 +47,85 @@ session_start();
     <div class="container-fluid py-5">
         <div class="container">
             <div class="row g-4 mb-5">
-                <div class="col-md-4">
+                <div class="col-lg-3 col-md-6">
                     <div class="card text-center shadow-sm h-100">
-                        <div class="card-body">
+                        <div class="card-body d-flex flex-column justify-content-center">
                             <i class="fas fa-hand-holding-heart fa-3x text-primary mb-3"></i>
-                            <h2 class="card-title" id="totalDonaciones">0</h2>
+                            <h2 class="card-title display-5" id="totalDonaciones">0</h2>
                             <p class="card-text text-muted">Donaciones Completadas</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-lg-3 col-md-6">
                     <div class="card text-center shadow-sm h-100">
-                        <div class="card-body">
+                        <div class="card-body d-flex flex-column justify-content-center">
                             <i class="fas fa-users fa-3x text-primary mb-3"></i>
-                            <h2 class="card-title" id="totalDonantes">0</h2>
-                            <p class="card-text text-muted">Donantes Activos</p>
+                            <h2 class="card-title display-5" id="totalDonantes">0</h2>
+                            <p class="card-text text-muted">Donantes Únicos</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card text-center shadow-sm h-100">
-                        <div class="card-body">
-                            <i class="fas fa-building fa-3x text-primary mb-3"></i>
-                            <h2 class="card-title" id="totalEmpresas">0</h2>
-                            <p class="card-text text-muted">Organizaciones Aliadas</p>
+
+                <div class="col-lg-3 col-md-6">
+                    <a href="mapa.php" class="text-decoration-none">
+                        <div class="card text-center shadow-sm h-100 card-hover">
+                            <div class="card-body d-flex flex-column justify-content-center">
+                                <i class="fas fa-hands-helping fa-3x text-primary mb-3"></i>
+                                <h2 class="card-title display-5" id="totalOrganizaciones">0</h2>
+                                <p class="card-text text-muted">Organizaciones Altruistas</p>
+                            </div>
                         </div>
-                    </div>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <a href="c-empresas_aliadas.php" class="text-decoration-none">
+                        <div class="card text-center shadow-sm h-100 card-hover">
+                            <div class="card-body d-flex flex-column justify-content-center">
+                                <i class="fas fa-building fa-3x text-primary mb-3"></i>
+                                <h2 class="card-title display-5" id="totalEmpresas">0</h2>
+                                <p class="card-text text-muted">Empresas Aliadas</p>
+                            </div>
+                        </div>
+                    </a>
                 </div>
             </div>
 
             <div class="row g-4">
                 <div class="col-lg-6">
                     <div class="card shadow-sm h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">Donaciones por Tipo</h5>
-                            <canvas id="donacionesPorTipoChart"></canvas>
+                        <div class="card-body d-flex justify-content-center align-items-center">
+                            <div style="position: relative; height:350px; width:100%">
+                                <canvas id="donacionesPorTipoChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="card shadow-sm h-100">
                         <div class="card-body">
-                            <h5 class="card-title">Donaciones por Mes (Últimos 6)</h5>
                             <canvas id="donacionesPorMesChart"></canvas>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div class="row g-4 mt-4">
+                <div class="col-lg-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <canvas id="topOrganizacionesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <canvas id="donacionesPorEstadoChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
         </div>
     </div>
     <?php require_once 'templates/footer.php'; ?>
@@ -99,45 +133,60 @@ session_start();
         
     <?php require_once 'templates/scripts.php'; ?>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             
-            // Función para procesar los datos y crear las gráficas
+            Chart.defaults.font.family = "'DM Sans', sans-serif";
+            Chart.defaults.font.size = 14;
+            Chart.defaults.color = '#6c757d';
+
             function procesarEstadisticas(data) {
-                // Actualizar tarjetas de estadísticas
+                // Actualizar tarjetas de totales
                 document.getElementById('totalDonaciones').textContent = data.totales.donaciones.toLocaleString('es-MX');
                 document.getElementById('totalDonantes').textContent = data.totales.donantes.toLocaleString('es-MX');
+                document.getElementById('totalOrganizaciones').textContent = data.totales.organizaciones.toLocaleString('es-MX');
                 document.getElementById('totalEmpresas').textContent = data.totales.empresas.toLocaleString('es-MX');
 
-                // Crear gráfica de Donaciones por Tipo (Pastel)
+                // Gráfica 1: Donaciones por Tipo (Dona)
                 const ctxPie = document.getElementById('donacionesPorTipoChart').getContext('2d');
+                const pieData = [data.por_tipo.sangre, data.por_tipo.medicamentos, data.por_tipo.dispositivos];
+                const totalTipos = pieData.reduce((a, b) => a + b, 0);
+
                 new Chart(ctxPie, {
-                    type: 'pie',
+                    type: 'doughnut',
                     data: {
                         labels: ['Sangre', 'Medicamentos', 'Dispositivos'],
                         datasets: [{
-                            label: 'Donaciones por Tipo',
-                            data: [
-                                data.por_tipo.sangre, 
-                                data.por_tipo.medicamentos, 
-                                data.por_tipo.dispositivos
-                            ],
-                            backgroundColor: [
-                                'rgba(255, 82, 82, 0.8)',
-                                'rgba(54, 162, 235, 0.8)',
-                                'rgba(255, 206, 86, 0.8)'
-                            ],
+                            data: pieData,
+                            backgroundColor: ['rgba(220, 53, 69, 0.8)', 'rgba(13, 110, 253, 0.8)', 'rgba(255, 193, 7, 0.8)'],
                             borderColor: '#fff',
-                            borderWidth: 2
+                            borderWidth: 3,
+                            hoverOffset: 4
                         }]
                     },
                     options: {
                         responsive: true,
-                        plugins: { legend: { position: 'top' } }
+                        maintainAspectRatio: false,
+                        cutout: '60%',
+                        plugins: {
+                            legend: { position: 'bottom' },
+                            title: { display: true, text: 'Distribución de Donaciones por Tipo' },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.raw;
+                                        const percentage = totalTipos > 0 ? ((value / totalTipos) * 100).toFixed(1) : 0;
+                                        return `${label}: ${value} (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
                     }
                 });
 
-                // Crear gráfica de Donaciones por Mes (Barras)
+                // Gráfica 2: Donaciones por Mes (Barras)
                 const ctxBar = document.getElementById('donacionesPorMesChart').getContext('2d');
                 new Chart(ctxBar, {
                     type: 'bar',
@@ -154,18 +203,77 @@ session_start();
                     },
                     options: {
                         responsive: true,
-                        scales: { y: { beginAtZero: true } },
-                        plugins: { legend: { display: false } }
+                        scales: { y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' } }, x: { grid: { display: false } } },
+                        plugins: { legend: { display: false }, title: { display: true, text: 'Volumen de Donaciones Mensuales' } }
                     }
                 });
+
+                // Gráfica 3: Top 5 Organizaciones
+                if (data.top_organizaciones && data.top_organizaciones.length > 0) {
+                    const ctxTopOrgs = document.getElementById('topOrganizacionesChart').getContext('2d');
+                    const orgLabels = data.top_organizaciones.map(org => org.nombre_organizacion);
+                    const orgData = data.top_organizaciones.map(org => org.total_donaciones);
+                    
+                    new Chart(ctxTopOrgs, {
+                        type: 'bar',
+                        data: {
+                            labels: orgLabels,
+                            datasets: [{
+                                label: 'Donaciones Gestionadas',
+                                data: orgData,
+                                backgroundColor: 'rgba(25, 135, 84, 0.7)',
+                                borderColor: 'rgba(25, 135, 84, 1)',
+                                borderWidth: 1,
+                                borderRadius: 5
+                            }]
+                        },
+                        options: {
+                            indexAxis: 'y', // <-- Gráfica de barras horizontal
+                            responsive: true,
+                            plugins: {
+                                legend: { display: false },
+                                title: { display: true, text: 'Top 5 Organizaciones por Donaciones Gestionadas' }
+                            },
+                            scales: { x: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' } }, y: { grid: { display: false } } }
+                        }
+                    });
+                }
+
+                // Gráfica 4: Donaciones por Estado
+                if (data.donaciones_por_estado && data.donaciones_por_estado.length > 0) {
+                    const ctxEstado = document.getElementById('donacionesPorEstadoChart').getContext('2d');
+                    const estadoLabels = data.donaciones_por_estado.map(e => e.estado);
+                    const estadoData = data.donaciones_por_estado.map(e => e.total_donaciones);
+
+                    new Chart(ctxEstado, {
+                        type: 'bar',
+                        data: {
+                            labels: estadoLabels,
+                            datasets: [{
+                                label: 'Donaciones Completadas',
+                                data: estadoData,
+                                backgroundColor: 'rgba(220, 53, 69, 0.7)',
+                                borderColor: 'rgba(220, 53, 69, 1)',
+                                borderWidth: 1,
+                                borderRadius: 5
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { display: false },
+                                title: { display: true, text: 'Donaciones por Estado' }
+                            },
+                            scales: { y: { beginAtZero: true, grid: { color: 'rgba(0, 0,0, 0.05)' } }, x: { grid: { display: false } } }
+                        }
+                    });
+                }
             }
 
             // --- CÓDIGO PARA CONECTAR AL BACKEND ---
             fetch('auth/obtener_estadisticas.php')
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('La respuesta del servidor no fue exitosa.');
-                    }
+                    if (!response.ok) { throw new Error('La respuesta del servidor no fue exitosa.'); }
                     return response.json();
                 })
                 .then(data => {
@@ -173,8 +281,7 @@ session_start();
                 })
                 .catch(error => {
                     console.error('Error al cargar las estadísticas:', error);
-                    // Opcional: Mostrar un mensaje de error en la página
-                    // document.querySelector('.container-fluid.py-5').innerHTML = '<div class="alert alert-danger">No se pudieron cargar los datos de estadísticas.</div>';
+                    document.querySelector('.container-fluid.py-5 .container').innerHTML = '<div class="alert alert-danger">No se pudieron cargar los datos de estadísticas. Por favor, inténtelo más tarde.</div>';
                 });
         });
     </script>
