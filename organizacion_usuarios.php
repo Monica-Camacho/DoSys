@@ -84,21 +84,29 @@ $conexion->close();
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>DoSys - Gestionar Voluntarios</title>
+    <title>DoSys - Gestionar Equipo</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="img/logos/DoSys_chico.png">
 
-    <!-- Google Web Fonts, Iconos y Estilos -->
+    <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
-    
-    <!-- Estilos de Bootstrap y de la Plantilla -->
+
+    <!-- Libraries Stylesheet -->
+    <link rel="stylesheet" href="lib/animate/animate.min.css"/>
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
     
 </head>
@@ -189,20 +197,22 @@ $conexion->close();
                                 </td>
                                 <?php if ($rol_usuario_logueado == 1): // Solo el admin puede ver los botones de acciones ?>
                                 <td class="text-center">
-                                    <button type="button" class="btn btn-sm btn-warning me-1" title="Editar"
+                                    <button type="button" class="btn btn-sm btn-outline-primary me-2" title="Editar"
                                         data-bs-toggle="modal" 
                                         data-bs-target="#editarUsuarioModal"
                                         data-usuario-id="<?php echo $voluntario['usuario_id']; ?>"
                                         data-usuario-nombre="<?php echo htmlspecialchars($voluntario['nombre'] . ' ' . $voluntario['apellido_paterno']); ?>"
                                         data-rol-id="<?php echo $voluntario['rol_id']; ?>"
                                         data-estado="<?php echo htmlspecialchars($voluntario['estado']); ?>">
-                                        <i class="fas fa-pencil-alt"></i>
+                                        <i class="fas fa-edit"></i> Editar
                                     </button>
                                     
                                     <?php if ($voluntario['estado'] == 'Activo'): ?>
                                     <form action="auth/gestionar_equipo.php" method="POST" class="d-inline">
                                         <input type="hidden" name="usuario_id" value="<?php echo $voluntario['usuario_id']; ?>">
-                                        <button type="submit" name="accion" value="eliminar_suave" class="btn btn-sm btn-danger" title="Desactivar Usuario" onclick="return confirm('¿Estás seguro de que quieres desactivar a este usuario?');"><i class="fas fa-trash-alt"></i></button>
+                                        <button type="submit" name="accion" value="eliminar_suave" class="btn btn-sm btn-outline-danger" title="Desactivar Usuario" onclick="return confirm('¿Estás seguro de que quieres desactivar a este usuario?');">
+                                            <i class="fas fa-trash-alt"></i> Eliminar
+                                        </button>
                                     </form>
                                     <?php endif; ?>
                                 </td>
