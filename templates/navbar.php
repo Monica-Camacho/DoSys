@@ -61,13 +61,20 @@ $user_name = ($is_logged_in && isset($_SESSION['nombre_usuario'])) ? $_SESSION['
                                         <a href="<?php echo BASE_URL; ?>empresa_configuracion.php" class="dropdown-item">Configuración</a>
                                         <?php break; ?>
                                     <?php case 3: // Menú Organización ?>
-                                        <a href="<?php echo BASE_URL; ?>persona_perfil.php" class="dropdown-item">Mi Perfil</a>                                
-                                        <a href="<?php echo BASE_URL; ?>organizacion_dashboard.php" class="dropdown-item">Panel de Organización</a>
-                                        <a href="<?php echo BASE_URL; ?>organizacion_solicitudes.php" class="dropdown-item">Solicitudes</a>
-                                        <a href="<?php echo BASE_URL; ?>organizacion_donantes.php" class="dropdown-item">Donantes</a>
-                                        <a href="<?php echo BASE_URL; ?>organizacion_usuarios.php" class="dropdown-item">Voluntarios</a>
-                                        <a href="<?php echo BASE_URL; ?>organizacion_perfil.php" class="dropdown-item">Perfil de la Organización</a>
+                                        <li class="dropdown-header">Gestión de la Organización</li>
+                                        <a href="<?php echo BASE_URL; ?>organizacion_dashboard.php" class="dropdown-item">Panel Principal</a>
+                                        <a href="<?php echo BASE_URL; ?>organizacion_solicitudes.php" class="dropdown-item">Gestionar Solicitudes</a>
+                                        <a href="<?php echo BASE_URL; ?>organizacion_donantes.php" class="dropdown-item">Gestionar Donaciones</a>
+                                        <a href="<?php echo BASE_URL; ?>organizacion_usuarios.php" class="dropdown-item">Gestionar Equipo</a>
+                                        
+                                        <div class="dropdown-divider"></div>
+                                        <li class="dropdown-header">Perfil Público</li>
+                                        <a href="<?php echo BASE_URL; ?>organizacion_perfil.php" class="dropdown-item">Editar Perfil Organización</a>
                                         <a href="<?php echo BASE_URL; ?>organizacion_configuracion.php" class="dropdown-item">Configuración</a>
+
+                                        <div class="dropdown-divider"></div>
+                                        <li class="dropdown-header">Cuenta</li>
+                                        <a href="<?php echo BASE_URL; ?>persona_perfil.php" class="dropdown-item">Mi Cuenta Personal</a>
                                         <?php break; ?>
                                 <?php endswitch; ?>
                                 <div class="dropdown-divider"></div>

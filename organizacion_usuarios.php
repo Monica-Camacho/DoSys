@@ -110,7 +110,7 @@ $conexion->close();
     <div class="container-fluid bg-light py-5">
         <div class="container">
             <div>
-                <h1 class='display-5 mb-0'>Gestionar Voluntarios</h1>
+                <h1 class='display-5 mb-0'>Gestionar Equipo</h1>
                 <p class="fs-5 text-muted mb-0">Administra los miembros de tu equipo y sus roles.</p>
             </div>
         </div>

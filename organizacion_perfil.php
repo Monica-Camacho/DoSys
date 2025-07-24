@@ -75,7 +75,6 @@ $conexion->close();
 <html lang="es">
 
 <head>
-    <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
     <meta charset="utf-8">
     <title>DoSys - Perfil de Organizacion</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
