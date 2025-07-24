@@ -24,7 +24,7 @@ $stmt_org->close();
 
 // Si no se encuentra la organización o el usuario no es admin, se le redirige
 if (!$organizacion || $organizacion['rol_id'] != 1) {
-    header('Location: ../dashboard.php'); // O a donde corresponda
+    header('Location: ../organizacion_dashboard.php'); // O a donde corresponda
     exit();
 }
 ?>

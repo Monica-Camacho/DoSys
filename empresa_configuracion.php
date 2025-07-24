@@ -1,18 +1,36 @@
 <?php
-require_once 'config.php'; // Incluye la configuración y la URL base.
-// Inicia la sesión.
+require_once 'config.php';
+require_once 'conexion_local.php';
 session_start();
 
-// Muestra una alerta si hay un error en el inicio de sesión.
-if (isset($_GET['error']) && $_GET['error'] == 1) {
-    echo "<script>alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');</script>";
+// 1. AUTENTICACIÓN Y PERMISOS DE ADMINISTRADOR
+if (!isset($_SESSION['id'])) {
+    header('Location: login.php');
+    exit();
+}
+$admin_id = $_SESSION['id'];
+
+// Se busca la empresa, su estado, y el rol del usuario logueado
+$sql_empresa = "SELECT ep.id, ep.nombre_comercial, ep.estado, u.rol_id 
+                FROM empresas_perfil ep
+                JOIN usuarios_x_empresas uxe ON ep.id = uxe.empresa_id
+                JOIN usuarios u ON uxe.usuario_id = u.id
+                WHERE uxe.usuario_id = ?";
+$stmt_empresa = $conexion->prepare($sql_empresa);
+$stmt_empresa->bind_param("i", $admin_id);
+$stmt_empresa->execute();
+$empresa = $stmt_empresa->get_result()->fetch_assoc();
+$stmt_empresa->close();
+
+// Si no se encuentra la empresa o el usuario no es admin, se le redirige
+if (!$empresa || $empresa['rol_id'] != 1) {
+    header('Location: empresa_dashboard.php'); // O a donde corresponda
+    exit();
 }
 ?>
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
     <meta charset="utf-8">
     <title>DoSys - Configuración de Empresa</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -38,78 +56,118 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
+
 </head>
-
 <body>
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div></div>
+    
+    <?php require_once 'templates/topbar.php'; ?>
+    <?php require_once 'templates/navbar.php'; ?>
 
-    <!-- Spinner Start -->
-    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-            <span class="sr-only">Cargando...</span>
-        </div>
-    </div>
-    <!-- Spinner End -->
-
-        <!-- Topbar Start -->
-        <?php require_once 'templates/topbar.php'; ?>
-        <!-- Topbar End -->     
-
-        <!-- Navbar Start -->
-        <?php require_once 'templates/navbar.php'; ?>
-        <!-- Navbar End -->
-
-    <!-- Header Start -->
     <div class="container-fluid bg-light py-5">
         <div class="container">
             <div>
                 <h1 class='display-5 mb-0'>Configuración de la Empresa</h1>
-                <p class="fs-5 text-muted mb-0">Ajusta las preferencias de la cuenta de tu empresa.</p>
+                <p class="fs-5 text-muted mb-0">Gestiona las opciones avanzadas de tu cuenta.</p>
             </div>
         </div>
     </div>
-    <!-- Header End -->
 
-    <!-- Settings Content Start -->
     <div class="container-fluid py-5">
         <div class="container">
+            <?php if (isset($_SESSION['success_message'])): ?>
+                <div class="alert alert-success"><?php echo $_SESSION['success_message']; unset($_SESSION['success_message']); ?></div>
+            <?php endif; ?>
+            <?php if (isset($_SESSION['error_message'])): ?>
+                <div class="alert alert-danger"><?php echo $_SESSION['error_message']; unset($_SESSION['error_message']); ?></div>
+            <?php endif; ?>
             <div class="row justify-content-center">
                 <div class="col-lg-8">
-                    <div class="card border-danger shadow-sm">
-                        <div class="card-header bg-danger text-white">
-                            <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Zona de Peligro</h5>
-                        </div>
-                        <div class="card-body p-4">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div>
-                                    <h6>Desactivar cuenta de empresa</h6>
-                                    <p class="text-muted mb-0 small">Tu empresa dejará de ser visible y los beneficios se pausarán. Podrás reactivarla más tarde.</p>
+                    <?php if ($empresa['estado'] == 'Activa'): ?>
+                        <div class="card border-danger shadow-sm">
+                            <div class="card-header bg-danger text-white"><h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Zona de Peligro</h5></div>
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6>Desactivar cuenta de la empresa</h6>
+                                        <p class="text-muted mb-0 small">Tu empresa dejará de ser visible y sus beneficios no se mostrarán. Podrás reactivarla más tarde.</p>
+                                    </div>
+                                    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#confirmacionModal" data-accion="desactivar">Desactivar</button>
                                 </div>
-                                <button class="btn btn-warning">Desactivar</button>
-                            </div>
-                            <hr>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6>Eliminar cuenta de empresa</h6>
-                                    <p class="text-muted mb-0 small">Esta acción es permanente y eliminará todos los datos de la empresa y sus usuarios.</p>
-                                </div>
-                                <button class="btn btn-danger">Eliminar mi cuenta</button>
                             </div>
                         </div>
-                    </div>
+                    <?php else: ?>
+                        <div class="card border-success shadow-sm">
+                            <div class="card-header bg-success text-white"><h5 class="mb-0"><i class="fas fa-power-off me-2"></i>Cuenta Inactiva</h5></div>
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6>Reactivar cuenta de la empresa</h6>
+                                        <p class="text-muted mb-0 small">Tu empresa está actualmente inactiva. Reactívala para volver a ser visible.</p>
+                                    </div>
+                                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmacionModal" data-accion="reactivar">Reactivar</button>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Settings Content End -->
-        
-        <!-- Footer Start -->
-        <?php require_once 'templates/footer.php'; ?>
-        <!-- Footer End -->
-         
-        <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a> 
-        
-        <?php require_once 'templates/scripts.php'; ?>
     
-</body>
+    <div class="modal fade" id="confirmacionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar Acción</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="auth/gestionar_cuenta_empresa.php" method="POST">
+                    <div class="modal-body">
+                        <input type="hidden" name="accion" id="modal_accion">
+                        <p id="modal_texto">Para confirmar esta acción, por favor introduce tu contraseña.</p>
+                        <div class="form-group">
+                            <label for="password">Contraseña</label>
+                            <input type="password" name="password" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger" id="modal_boton_confirmar">Confirmar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+        
+    <?php require_once 'templates/footer.php'; ?>
+    <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a> 
+    
+    <?php require_once 'templates/scripts.php'; ?>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const confirmacionModal = document.getElementById('confirmacionModal');
+        confirmacionModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const accion = button.dataset.accion;
+            
+            const modalAccionInput = confirmacionModal.querySelector('#modal_accion');
+            const modalTexto = confirmacionModal.querySelector('#modal_texto');
+            const modalBoton = confirmacionModal.querySelector('#modal_boton_confirmar');
 
+            modalAccionInput.value = accion;
+
+            if (accion === 'desactivar') {
+                modalTexto.textContent = 'Para confirmar la DESACTIVACIÓN de tu empresa, por favor introduce tu contraseña.';
+                modalBoton.className = 'btn btn-danger';
+                modalBoton.textContent = 'Sí, Desactivar';
+            } else if (accion === 'reactivar') {
+                modalTexto.textContent = 'Para confirmar la REACTIVACIÓN de tu empresa, por favor introduce tu contraseña.';
+                modalBoton.className = 'btn btn-success';
+                modalBoton.textContent = 'Sí, Reactivar';
+            }
+        });
+    });
+    </script>
+</body>
 </html>
