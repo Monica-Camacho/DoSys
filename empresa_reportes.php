@@ -250,8 +250,8 @@ $conexion->close(); // Cerrar la conexión
                                 <button type="submit" class="btn btn-primary w-100">Generar Reporte</button>
                             </div>
                             <div class="col-md-2">
-                                <!-- Exportar a PDF/CSV - Funcionalidad futura, por ahora solo un botón -->
-                                <button type="button" class="btn btn-outline-success w-100" onclick="alert('Funcionalidad de exportación en desarrollo.')"><i class="fas fa-file-pdf me-2"></i>Exportar</button>
+                                <!-- Botón de Exportar PDF -->
+                                <button type="button" class="btn btn-outline-success w-100" id="exportPdfBtn"><i class="fas fa-file-pdf me-2"></i>Exportar PDF</button>
                             </div>
                         </form>
                     </div>
@@ -360,6 +360,27 @@ $conexion->close(); // Cerrar la conexión
                 const fp = document.querySelector("#reportRange")._flatpickr;
                 fp.setDate([startDateHidden, endDateHidden]);
             }
+
+            // Event listener para el botón de exportar PDF
+            document.getElementById('exportPdfBtn').addEventListener('click', function() {
+                const startDate = document.getElementById('start_date_hidden').value;
+                const endDate = document.getElementById('end_date_hidden').value;
+                const benefitFilter = document.getElementById('benefitFilter').value;
+
+                let exportUrl = 'auth/export_report_pdf.php?';
+                if (startDate) {
+                    exportUrl += 'start_date=' + encodeURIComponent(startDate) + '&';
+                }
+                if (endDate) {
+                    exportUrl += 'end_date=' + encodeURIComponent(endDate) + '&';
+                }
+                if (benefitFilter) {
+                    exportUrl += 'benefit_filter=' + encodeURIComponent(benefitFilter);
+                }
+                
+                // Abre el PDF en una nueva pestaña/ventana
+                window.open(exportUrl, '_blank');
+            });
         });
     </script>
 </body>
