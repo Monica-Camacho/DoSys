@@ -1,59 +1,49 @@
 <?php
 require_once 'config.php'; // Incluye la configuración y la URL base.
-// Inicia la sesión.
+require_once 'conexion_local.php'; // Incluye la conexión a la base de datos.
 session_start();
 
 // Muestra una alerta si hay un error en el inicio de sesión.
 if (isset($_GET['error']) && $_GET['error'] == 1) {
-    echo "<script>alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');</script>";
+    // Se recomienda usar un modal o mensaje más integrado en lugar de alert().
+    // echo "<script>alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');</script>";
 }
-?>
 
-<?php
-// Simulación de una sesión de usuario iniciada
-// En una aplicación real, aquí verificarías la sesión.
-// $_SESSION['usuario_id'] = 1; // Ejemplo
-// $_SESSION['usuario_nombre'] = "Mónica Camacho"; // Ejemplo
+// 1. AUTENTICACIÓN Y OBTENCIÓN DE ID DE USUARIO
+if (!isset($_SESSION['id'])) {
+    // Si el usuario no está logueado, redirigir a la página de login.
+    header('Location: login.php');
+    exit();
+}
+$usuario_id = $_SESSION['id'];
 
-// Datos de ejemplo (Mock Data) - Reemplazar con tu lógica de backend
-$beneficios_disponibles = [
-    [
-        'id' => 1,
-        'empresa_nombre' => 'Farmacias del Ahorro',
-        'empresa_logo' => 'img/empresas/farmacias_ahorro.png',
-        'titulo' => '20% de Descuento en Medicamentos',
-        'descripcion' => 'Válido en la compra de medicamentos de marca propia. No acumulable con otras promociones.',
-        'codigo' => 'DOSYS-FAH-A2B4C6',
-        'fecha_expiracion' => '2025-12-31'
-    ],
-    [
-        'id' => 2,
-        'empresa_nombre' => 'Salud Digna',
-        'empresa_logo' => 'img/empresas/salud_digna.png',
-        'titulo' => 'Estudio de Química Sanguínea Gratis',
-        'descripcion' => 'Presenta este código en cualquier sucursal para obtener un estudio de 6 elementos sin costo.',
-        'codigo' => 'DOSYS-SDG-X8Y1Z3',
-        'fecha_expiracion' => '2025-11-30'
-    ],
-    [
-        'id' => 3,
-        'empresa_nombre' => 'Ópticas Devlyn',
-        'empresa_logo' => 'img/empresas/devlyn.png',
-        'titulo' => '30% en Lentes Oftálmicos',
-        'descripcion' => 'Aplica en la compra de armazón y micas graduadas. Válido una vez por donante.',
-        'codigo' => 'DOSYS-DEV-L9M5N8',
-        'fecha_expiracion' => '2026-01-15'
-    ],
-    [
-        'id' => 4,
-        'empresa_nombre' => 'GNC',
-        'empresa_logo' => 'img/empresas/gnc.png',
-        'titulo' => '15% de Descuento en Vitaminas',
-        'descripcion' => 'Válido en toda la línea de vitaminas y suplementos GNC. No aplica con otras ofertas.',
-        'codigo' => 'DOSYS-GNC-P7Q2R9',
-        'fecha_expiracion' => '2025-10-31'
-    ]
-];
+// --- Obtener Beneficios Disponibles para el Usuario ---
+$beneficios_disponibles = [];
+// Consulta para obtener los beneficios que el usuario ha canjeado
+// y que están en estado 'Disponible' o 'Canjeado' (si se quiere mostrar el historial)
+// y que pertenecen a la empresa del beneficio.
+$sql_beneficios = "SELECT db.id, ea.titulo, ea.descripcion, ea.fecha_expiracion, db.codigo_canje,
+                          ep.nombre_comercial AS empresa_nombre,
+                          d.ruta_archivo AS empresa_logo,
+                          img_benefit.ruta_archivo AS imagen_beneficio_ruta
+                   FROM donantes_beneficios db
+                   JOIN empresas_apoyos ea ON db.apoyo_id = ea.id
+                   JOIN empresas_perfil ep ON ea.empresa_id = ep.id
+                   LEFT JOIN documentos d ON ep.logo_documento_id = d.id
+                   LEFT JOIN documentos img_benefit ON ea.imagen_documento_id = img_benefit.id
+                   WHERE db.usuario_id = ? AND db.estado IN ('Disponible', 'Canjeado')
+                   ORDER BY db.fecha_otorgado DESC";
+
+$stmt_beneficios = $conexion->prepare($sql_beneficios);
+$stmt_beneficios->bind_param("i", $usuario_id);
+$stmt_beneficios->execute();
+$resultado_beneficios = $stmt_beneficios->get_result();
+
+while ($row = $resultado_beneficios->fetch_assoc()) {
+    $beneficios_disponibles[] = $row;
+}
+$stmt_beneficios->close();
+$conexion->close(); // Cerrar la conexión a la base de datos.
 
 ?>
 <!DOCTYPE html>
@@ -86,31 +76,55 @@ $beneficios_disponibles = [
             transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
+            overflow: hidden; /* Asegura que la imagen no se salga del borde redondeado */
         }
         .benefit-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
+        .benefit-image-container {
+            width: 100%;
+            height: 180px; /* Altura fija para las imágenes */
+            overflow: hidden;
+            background-color: #f8f9fa; /* Fondo claro si la imagen no cubre todo */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .benefit-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Cubre el área manteniendo el aspecto */
+            border-top-left-radius: 0.75rem;
+            border-top-right-radius: 0.75rem;
+        }
         .benefit-logo-container {
-            height: 120px;
-            padding: 1rem;
+            height: 80px; /* Altura más pequeña para el logo de la empresa */
+            padding: 0.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
             border-bottom: 1px dashed #ccc;
+            background-color: #fff; /* Asegura que el logo tenga un fondo blanco si el contenedor de la imagen es diferente */
         }
         .benefit-logo-container img {
-            max-width: 100%;
-            max-height: 80px;
+            max-width: 100px; /* Tamaño máximo para el logo */
+            max-height: 60px;
             object-fit: contain;
         }
         .benefit-card .card-body {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
+            padding-top: 1rem; /* Ajuste de padding */
         }
         .benefit-card .card-title {
             font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .benefit-card .card-text {
+            font-size: 0.9rem;
+            flex-grow: 1; /* Permite que la descripción ocupe el espacio disponible */
         }
         .benefit-card .btn-canjear {
             margin-top: auto;
@@ -127,6 +141,7 @@ $beneficios_disponibles = [
             font-weight: bold;
             letter-spacing: 2px;
             color: #343a40;
+            word-break: break-all; /* Para asegurar que códigos largos no desborden */
         }
     </style>
 </head>
@@ -166,22 +181,36 @@ $beneficios_disponibles = [
                 <?php foreach ($beneficios_disponibles as $beneficio): ?>
                     <div class="col-md-6 col-lg-4">
                         <div class="card benefit-card h-100">
+                            <div class="benefit-image-container">
+                                <?php if (!empty($beneficio['imagen_beneficio_ruta'])): ?>
+                                    <img src="<?php echo htmlspecialchars($beneficio['imagen_beneficio_ruta']); ?>" alt="Imagen de <?php echo htmlspecialchars($beneficio['titulo']); ?>">
+                                <?php else: ?>
+                                    <!-- Placeholder si no hay imagen de beneficio -->
+                                    <img src="https://placehold.co/400x180/E9ECEF/6C757D?text=No+Imagen" alt="No hay imagen disponible">
+                                <?php endif; ?>
+                            </div>
                             <div class="benefit-logo-container">
-                                <img src="<?php echo htmlspecialchars($beneficio['empresa_logo']); ?>" alt="Logo de <?php echo htmlspecialchars($beneficio['empresa_nombre']); ?>">
+                                <?php if (!empty($beneficio['empresa_logo'])): ?>
+                                    <img src="<?php echo htmlspecialchars($beneficio['empresa_logo']); ?>" alt="Logo de <?php echo htmlspecialchars($beneficio['empresa_nombre']); ?>">
+                                <?php else: ?>
+                                    <!-- Placeholder si no hay logo de empresa -->
+                                    <img src="https://placehold.co/100x60/E9ECEF/6C757D?text=Logo" alt="Logo de Empresa">
+                                <?php endif; ?>
                             </div>
                             <div class="card-body p-4">
                                 <h5 class="card-title"><?php echo htmlspecialchars($beneficio['titulo']); ?></h5>
                                 <p class="card-text text-muted small flex-grow-1"><?php echo htmlspecialchars($beneficio['descripcion']); ?></p>
                                 <p class="card-text small mb-3">
-                                    <i class="far fa-calendar-alt me-2"></i><strong>Expira:</strong> <?php echo date("d/m/Y", strtotime($beneficio['fecha_expiracion'])); ?>
+                                    <i class="far fa-calendar-alt me-2"></i><strong>Expira:</strong> <?php echo $beneficio['fecha_expiracion'] ? date("d/m/Y", strtotime($beneficio['fecha_expiracion'])) : 'N/A'; ?>
                                 </p>
                                 <button class="btn btn-primary w-100 btn-canjear" 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#benefitModal"
                                         data-titulo="<?php echo htmlspecialchars($beneficio['titulo']); ?>"
                                         data-empresa="<?php echo htmlspecialchars($beneficio['empresa_nombre']); ?>"
-                                        data-codigo="<?php echo htmlspecialchars($beneficio['codigo']); ?>"
-                                        data-logo="<?php echo htmlspecialchars($beneficio['empresa_logo']); ?>">
+                                        data-codigo="<?php echo htmlspecialchars($beneficio['codigo_canje']); ?>"
+                                        data-logo="<?php echo htmlspecialchars($beneficio['empresa_logo']); ?>"
+                                        data-imagen-beneficio="<?php echo htmlspecialchars($beneficio['imagen_beneficio_ruta'] ?? ''); ?>">
                                     <i class="fas fa-cut me-2"></i>Ver Código
                                 </button>
                             </div>
@@ -211,6 +240,7 @@ $beneficios_disponibles = [
                 </div>
                 <div class="modal-body text-center">
                     <img id="modalEmpresaLogo" src="" alt="Logo de la Empresa" class="mb-3" style="max-height: 60px;">
+                    <img id="modalImagenBeneficio" src="" alt="Imagen del Beneficio" class="mb-3" style="max-width: 100%; height: auto; border-radius: 5px; display: none;">
                     <h4 id="modalTituloBeneficio" class="mb-3"></h4>
                     <p>Presenta este código en la sucursal para hacerlo válido:</p>
                     <div class="coupon-code text-center my-3">
@@ -242,10 +272,12 @@ $beneficios_disponibles = [
                 var empresa = button.getAttribute('data-empresa');
                 var codigo = button.getAttribute('data-codigo');
                 var logo = button.getAttribute('data-logo');
+                var imagenBeneficio = button.getAttribute('data-imagen-beneficio'); // Nueva línea
                 var qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(codigo)}`;
 
                 var modalTitle = benefitModal.querySelector('.modal-title');
                 var modalLogo = benefitModal.querySelector('#modalEmpresaLogo');
+                var modalImagenBeneficio = benefitModal.querySelector('#modalImagenBeneficio'); // Nueva línea
                 var modalTituloBeneficio = benefitModal.querySelector('#modalTituloBeneficio');
                 var modalCodigo = benefitModal.querySelector('#modalCodigo');
                 var modalQrCode = benefitModal.querySelector('#modalQrCode');
@@ -255,6 +287,15 @@ $beneficios_disponibles = [
                 modalTituloBeneficio.textContent = titulo;
                 modalCodigo.textContent = codigo;
                 modalQrCode.src = qrUrl;
+
+                // Mostrar u ocultar la imagen de beneficio en el modal
+                if (imagenBeneficio && imagenBeneficio !== 'N/A') {
+                    modalImagenBeneficio.src = imagenBeneficio;
+                    modalImagenBeneficio.style.display = 'block';
+                } else {
+                    modalImagenBeneficio.style.display = 'none';
+                    modalImagenBeneficio.src = ''; // Limpiar src para evitar mostrar imagen rota
+                }
             });
         });
     </script>
