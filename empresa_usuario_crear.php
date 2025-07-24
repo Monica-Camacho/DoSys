@@ -3,28 +3,43 @@ require_once 'config.php';
 require_once 'conexion_local.php';
 session_start();
 
-// 1. AUTENTICACIÓN Y PERMISOS DE ADMINISTRADOR
+// 1. AUTENTICACIÓN Y PERMISOS
 if (!isset($_SESSION['id'])) {
     header('Location: login.php');
     exit();
 }
 $admin_id = $_SESSION['id'];
 
-$sql_permisos = "SELECT rol_id FROM usuarios WHERE id = ?";
+// Obtener la empresa_id y el rol del usuario logueado
+$sql_permisos = "SELECT ue.empresa_id, u.rol_id
+                 FROM usuarios_x_empresas ue
+                 JOIN usuarios u ON ue.usuario_id = u.id
+                 WHERE ue.usuario_id = ?";
 $stmt_permisos = $conexion->prepare($sql_permisos);
 $stmt_permisos->bind_param("i", $admin_id);
 $stmt_permisos->execute();
 $resultado_permisos = $stmt_permisos->get_result();
-$rol_admin = $resultado_permisos->fetch_assoc()['rol_id'] ?? null;
-$stmt_permisos->close();
 
-if ($rol_admin != 1) { // Si el rol no es 1 (Administrador), no puede crear usuarios.
-    $_SESSION['error_message'] = "No tienes permiso para acceder a esta página.";
-    header('Location: organizacion_usuarios.php');
+if ($resultado_permisos->num_rows === 0) {
+    $_SESSION['error_message'] = "No tienes permiso para acceder a esta página o no estás asociado a una empresa.";
+    header('Location: index.php'); // Redirigir a una página segura si no tiene permisos
     exit();
 }
 
-// Obtener lista de roles para el dropdown
+$permisos = $resultado_permisos->fetch_assoc();
+$empresa_id = $permisos['empresa_id'];
+$rol_admin = $permisos['rol_id'];
+$stmt_permisos->close();
+
+// Solo los administradores (rol_id = 1) de la empresa pueden crear usuarios
+if ($rol_admin != 1) {
+    $_SESSION['error_message'] = "No tienes permiso para crear usuarios en la empresa.";
+    header('Location: empresa_usuarios.php'); // Redirigir a la gestión de usuarios si no es admin
+    exit();
+}
+
+// Obtener lista de roles para el dropdown (solo roles permitidos para usuarios de empresa)
+// Asumiendo que los roles 1 (Administrador) y 2 (Visualizador) son los aplicables.
 $roles = $conexion->query("SELECT id, nombre FROM roles WHERE id IN (1, 2)")->fetch_all(MYSQLI_ASSOC);
 $conexion->close();
 
@@ -39,7 +54,7 @@ if (isset($_SESSION['error_message'])) {
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>DoSys - Añadir Nuevo Voluntario</title>
+    <title>DoSys - Añadir Nuevo Usuario de Empresa</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <link rel="icon" type="image/png" href="img/logos/DoSys_chico.png">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans&family=Inter&display=swap" rel="stylesheet">
@@ -55,8 +70,8 @@ if (isset($_SESSION['error_message'])) {
     <div class="container-fluid bg-light py-5">
         <div class="container">
             <div>
-                <h1 class='display-5 mb-0'>Añadir Nuevo Voluntario</h1>
-                <p class="fs-5 text-muted mb-0">Completa los datos para registrar un nuevo miembro en tu equipo.</p>
+                <h1 class='display-5 mb-0'>Añadir Nuevo Usuario de Empresa</h1>
+                <p class="fs-5 text-muted mb-0">Completa los datos para registrar un nuevo miembro en tu equipo empresarial.</p>
             </div>
         </div>
     </div>
@@ -64,8 +79,7 @@ if (isset($_SESSION['error_message'])) {
     <div class="container-fluid py-5">
         <div class="container">
             <div class="card border-0 shadow-sm"><div class="card-body p-4 p-md-5">
-                <!-- Se elimina el div de alerta directa para usar el modal -->
-                <form action="auth/crear_usuario_equipo.php" method="POST" class="row g-4">
+                <form action="auth/crear_usuario_empresa.php" method="POST" class="row g-4">
                     <div class="col-md-4">
                         <label for="nombre" class="form-label">Nombre(s)</label>
                         <input type="text" class="form-control" id="nombre" name="nombre" required>
@@ -99,8 +113,8 @@ if (isset($_SESSION['error_message'])) {
                     </div>
                     
                     <div class="col-12 mt-5 text-center">
-                        <a href="organizacion_usuarios.php" class="btn btn-secondary me-3">Cancelar</a>
-                        <button type="submit" class="btn btn-primary">Crear Voluntario</button>
+                        <a href="empresa_usuarios.php" class="btn btn-secondary me-3">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">Crear Usuario</button>
                     </div>
                 </form>
             </div></div>
@@ -111,7 +125,7 @@ if (isset($_SESSION['error_message'])) {
     <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a> 
     <?php require_once 'templates/scripts.php'; ?>
 
-    <!-- Modal de Error -->
+    <!-- Modal de Error (reutilizado de organizacion_usuario_crear.php) -->
     <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">

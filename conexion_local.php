@@ -2,7 +2,7 @@
 $servidor = "localhost"; // Cambiar si se usa un servidor remoto
 $usuario = "root"; // Usuario de la base de datos
 $clave = ""; // Contraseña de la base de datos
-$base_datos = "dosys_db_v3"; // Nombre de tu base de datos
+$base_datos = "dosys_db_v6"; // Nombre de tu base de datos
 
 $conexion = new mysqli($servidor, $usuario, $clave, $base_datos);
 

@@ -252,7 +252,7 @@ $estatus_donacion_mapa = [
                             </ul>
                             <h4 class="card-title mt-4 mb-4">Beneficios para Donantes</h4>
                             <p class="text-muted">Gracias a tu generosidad, tienes acceso a promociones de nuestras empresas aliadas.</p>
-                            <a href="c-empresas_aliadas.php" class="btn btn-outline-primary w-100">Ver Beneficios</a>
+                            <a href="persona_beneficios.php" class="btn btn-outline-primary w-100">Ver Beneficios</a>
                         </div>
                     </div>
                 </div>
