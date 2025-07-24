@@ -12,28 +12,35 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
 <html lang="es">
 
 <head>
-    <script src="https://cdn.userway.org/widget.js" data-account="C07GrJafQK"></script>
-    <meta charset="utf-8">
-    <title>DoSys - Nuestros Logros</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="img/logos/dosyslogochico.ico">
+        <meta charset="utf-8">
+        <title>DoSys - Nuestros Logros</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="" name="keywords">
+        <meta content="" name="description">
 
-    <!-- Google Web Fonts, Iconos y Estilos -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
-    
-    <!-- Librerías de Estilos -->
-    <link href="lib/animate/animate.min.css" rel="stylesheet">
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="img/logos/DoSys_chico.png">
 
-    <!-- Estilos de Bootstrap y de la Plantilla -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+        <!-- Google Web Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
+
+        <!-- Icon Font Stylesheet -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+        <!-- Libraries Stylesheet -->
+        <link rel="stylesheet" href="lib/animate/animate.min.css"/>
+        <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+        <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+
+        <!-- Customized Bootstrap Stylesheet -->
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Template Stylesheet -->
+        <link href="css/style.css" rel="stylesheet">
 
     <style>
         .logro-item .carousel-item img {
@@ -42,6 +49,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
             border-radius: 0.5rem;
         }
     </style>
+
 </head>
 
 <body>
@@ -96,7 +104,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
             <div class="row g-5 align-items-center">
                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
                     <h2 class="display-6 mb-4">XIX Concurso Iberoamericano de Proyectos Estudiantiles</h2>
-                    <p class="text-primary fw-bold">Febrero 2025 - UJAT</p>
+                    <p class="text-primary fw-bold">Febrero logros/2025 - UJAT</p>
                     <p><i class="fas fa-trophy me-2 text-warning"></i><strong>Logro:</strong> Reconocimiento de Plata en "Desarrollo de Software y Videojuegos", con pase a la etapa nacional.</p>
                     <blockquote class="blockquote fst-italic">
                         "Este reconocimiento marca el inicio de una nueva etapa para DoSys, demostrando que nuestro esfuerzo y dedicación están dando frutos."
@@ -121,7 +129,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
             <div class="row g-5 align-items-center">
                 <div class="col-lg-6 wow fadeIn order-lg-2" data-wow-delay="0.1s">
                     <h2 class="display-6 mb-4">5º Foro El Edén de la Ciencia</h2>
-                    <p class="text-primary fw-bold">Noviembre 2024 - UJAT</p>
+                    <p class="text-primary fw-bold">Noviembre logros/2024 - UJAT</p>
                     <p><i class="fas fa-award me-2 text-warning"></i><strong>Logro:</strong> Tercer Lugar en el Área de Ingenierías y Desarrollo Tecnológico.</p>
                     <blockquote class="blockquote fst-italic">
                         "Fue una experiencia increíble ver cómo DoSys fue reconocido por su innovación y aplicabilidad en el sector tecnológico. Este logro nos motiva a seguir mejorando."
@@ -146,7 +154,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
             <div class="row g-5 align-items-center">
                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
                     <h2 class="display-6 mb-4">INNOVATECNM Etapa Regional</h2>
-                    <p class="text-primary fw-bold">Septiembre 2024 - ITVH</p>
+                    <p class="text-primary fw-bold">Septiembre logros/2024 - ITVH</p>
                     <p><i class="fas fa-flag me-2 text-warning"></i><strong>Logro:</strong> Participación en la etapa regional en el Área de Servicios para la Salud.</p>
                     <blockquote class="blockquote fst-italic">
                         "Llegar a la etapa regional fue un gran paso para DoSys. Pudimos conectarnos con expertos y recibir retroalimentación valiosa para seguir creciendo."
@@ -171,7 +179,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
             <div class="row g-5 align-items-center">
                 <div class="col-lg-6 wow fadeIn order-lg-2" data-wow-delay="0.1s">
                     <h2 class="display-6 mb-4">Campaña de Donación al ISSET</h2>
-                    <p class="text-primary fw-bold">Junio 2024 - ISSET</p>
+                    <p class="text-primary fw-bold">Junio logros/2024 - ISSET</p>
                     <p><i class="fas fa-hands-helping me-2 text-warning"></i><strong>Logro:</strong> Campaña exitosa de donación altruista.</p>
                     <blockquote class="blockquote fst-italic">
                         "Ver a DoSys en acción durante la campaña de donación al ISSET fue muy gratificante. Pudimos comprobar su impacto positivo en la gestión de donaciones."
@@ -196,7 +204,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
             <div class="row g-5 align-items-center">
                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
                     <h2 class="display-6 mb-4">INNOVATECNM Etapa Local</h2>
-                    <p class="text-primary fw-bold">Mayo 2024 - ITVH</p>
+                    <p class="text-primary fw-bold">Mayo logros/2024 - ITVH</p>
                     <p><i class="fas fa-medal me-2 text-warning"></i><strong>Logro:</strong> Segundo Lugar en el Área de Servicios para la Salud.</p>
                     <blockquote class="blockquote fst-italic">
                         "Ganar el segundo lugar en la etapa local fue un gran impulso para nuestro equipo. Nos dio la confianza para seguir adelante y mejorar DoSys."
@@ -260,11 +268,11 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
                 }
             }
 
-            createCarousel("carouselInnovatecLocal", 5, "img/Conocenos/2024_Mayo/imagen_", ".jpg");
-            createCarousel("carouselIsset", 11, "img/Conocenos/2024_Junio/imagen_", ".jpg");
-            createCarousel("carouselInnovatecRegional", 7, "img/Conocenos/2024_Septiembre/imagen_", ".jpg");
-            createCarousel("carouselForo", 4, "img/Conocenos/2024_Noviembre/imagen_", ".jpg");
-            createCarousel("carouselInfomatrix", 7, "img/Conocenos/2025_Febrero/imagen_", ".jpg");
+            createCarousel("carouselInnovatecLocal", 5, "img/elements/logros/2024_mayo/imagen_", ".jpg");
+            createCarousel("carouselIsset", 11, "img/elements/logros/2024_junio/imagen_", ".jpg");
+            createCarousel("carouselInnovatecRegional", 7, "img/elements/logros/2024_septiembre/imagen_", ".jpg");
+            createCarousel("carouselForo", 4, "img/elements/logros/2024_noviembre/imagen_", ".jpg");
+            createCarousel("carouselInfomatrix", 7, "img/elements/logros/2025_febrero/imagen_", ".jpg");
         });
     </script>
 </body>
