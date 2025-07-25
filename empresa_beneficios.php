@@ -39,19 +39,6 @@ if ($rol_admin != 1) {
     exit();
 }
 
-// Capturar mensajes de éxito o error de la sesión
-$success_message = '';
-if (isset($_SESSION['success_message'])) {
-    $success_message = $_SESSION['success_message'];
-    unset($_SESSION['success_message']);
-}
-
-$error_message = '';
-if (isset($_SESSION['error_message'])) {
-    $error_message = $_SESSION['error_message'];
-    unset($_SESSION['error_message']);
-}
-
 // Lógica para obtener los beneficios de la empresa
 $beneficios_empresa = [];
 $sql_beneficios = "SELECT ea.id, ea.titulo, ea.descripcion, ea.fecha_expiracion, ea.activo,
@@ -62,7 +49,7 @@ $sql_beneficios = "SELECT ea.id, ea.titulo, ea.descripcion, ea.fecha_expiracion,
                    JOIN tipos_apoyo td ON ea.tipo_apoyo_id = td.id
                    LEFT JOIN documentos d ON ea.imagen_documento_id = d.id
                    WHERE ea.empresa_id = ?
-                   ORDER BY ea.fecha_expiracion DESC";
+                   ORDER BY ea.activo DESC, ea.id DESC";
 $stmt_beneficios = $conexion->prepare($sql_beneficios);
 $stmt_beneficios->bind_param("i", $empresa_id);
 $stmt_beneficios->execute();
@@ -75,38 +62,37 @@ $stmt_beneficios->close();
 // Obtener tipos de apoyo para el formulario de creación/edición
 $tipos_apoyo = $conexion->query("SELECT id, nombre FROM tipos_apoyo ORDER BY nombre ASC")->fetch_all(MYSQLI_ASSOC);
 
-$conexion->close(); // Cerrar la conexión
+$conexion->close();
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
-        <meta charset="utf-8">
-        <title>DoSys - Gestion de Beneficios</title>
-        <meta content="width=device-width, initial-scale=1.0" name="viewport">
-        <meta content="" name="keywords">
-        <meta content="" name="description">
+    <meta charset="utf-8">
+    <title>DoSys - Gestión de Beneficios</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="img/logos/DoSys_chico.png">
 
-        <!-- Favicon -->
-        <link rel="icon" type="image/png" href="img/logos/DoSys_chico.png">
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
 
-        <!-- Google Web Fonts -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:slnt,wght@-10..0,100..900&display=swap" rel="stylesheet">
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
-        <!-- Icon Font Stylesheet -->
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Libraries Stylesheet -->
+    <link rel="stylesheet" href="lib/animate/animate.min.css"/>
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 
-        <!-- Libraries Stylesheet -->
-        <link rel="stylesheet" href="lib/animate/animate.min.css"/>
-        <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
 
-        <!-- Customized Bootstrap Stylesheet -->
-        <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
 
-        <!-- Template Stylesheet -->
-        <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
     <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div></div>
@@ -124,17 +110,11 @@ $conexion->close(); // Cerrar la conexión
 
     <div class="container-fluid py-5">
         <div class="container">
-            <?php if (!empty($success_message)): ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <?php echo $success_message; ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
+            <?php if (isset($_SESSION['success_message'])): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert"><?php echo $_SESSION['success_message']; unset($_SESSION['success_message']); ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
             <?php endif; ?>
-            <?php if (!empty($error_message)): ?>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <?php echo $error_message; ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
+            <?php if (isset($_SESSION['error_message'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert"><?php echo $_SESSION['error_message']; unset($_SESSION['error_message']); ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
             <?php endif; ?>
 
             <div class="d-flex justify-content-end mb-4">
@@ -163,13 +143,13 @@ $conexion->close(); // Cerrar la conexión
                                             <td><?php echo htmlspecialchars($beneficio['tipo_apoyo_nombre']); ?></td>
                                             <td><?php echo $beneficio['fecha_expiracion'] ? date("d/m/Y", strtotime($beneficio['fecha_expiracion'])) : 'N/A'; ?></td>
                                             <td>
-                                                <span class="badge bg-<?php echo $beneficio['activo'] ? 'success' : 'danger'; ?>">
+                                                <span class="badge bg-<?php echo $beneficio['activo'] ? 'success' : 'secondary'; ?>">
                                                     <?php echo $beneficio['activo'] ? 'Sí' : 'No'; ?>
                                                 </span>
                                             </td>
                                             <td>
                                                 <?php if (!empty($beneficio['imagen_beneficio_ruta'])): ?>
-                                                    <img src="<?php echo htmlspecialchars($beneficio['imagen_beneficio_ruta']); ?>" alt="Imagen de Beneficio" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                                                    <img src="<?php echo BASE_URL . htmlspecialchars($beneficio['imagen_beneficio_ruta']); ?>" alt="Imagen de Beneficio" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
                                                 <?php else: ?>
                                                     N/A
                                                 <?php endif; ?>
@@ -184,7 +164,7 @@ $conexion->close(); // Cerrar la conexión
                                                         data-fecha-expiracion="<?php echo htmlspecialchars($beneficio['fecha_expiracion']); ?>"
                                                         data-activo="<?php echo htmlspecialchars($beneficio['activo']); ?>"
                                                         data-tipo-apoyo-id="<?php echo htmlspecialchars($beneficio['tipo_apoyo_id']); ?>"
-                                                        data-imagen-ruta="<?php echo htmlspecialchars($beneficio['imagen_beneficio_ruta']); ?>">
+                                                        data-imagen-ruta="<?php echo !empty($beneficio['imagen_beneficio_ruta']) ? BASE_URL . htmlspecialchars($beneficio['imagen_beneficio_ruta']) : ''; ?>">
                                                     <i class="fas fa-edit"></i> Editar
                                                 </button>
                                                 <button class="btn btn-sm btn-outline-danger delete-benefit-btn" 
@@ -214,7 +194,6 @@ $conexion->close(); // Cerrar la conexión
     <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a> 
     <?php require_once 'templates/scripts.php'; ?>
 
-    <!-- Modal para Añadir Beneficio -->
     <div class="modal fade" id="addBenefitModal" tabindex="-1" aria-labelledby="addBenefitModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
@@ -225,47 +204,19 @@ $conexion->close(); // Cerrar la conexión
                 <form action="auth/gestionar_beneficios_empresa.php" method="POST" enctype="multipart/form-data">
                     <div class="modal-body row g-3">
                         <input type="hidden" name="action" value="add">
-                        <div class="col-12">
-                            <label for="addTitulo" class="form-label">Título del Beneficio</label>
-                            <input type="text" class="form-control" id="addTitulo" name="titulo" required>
-                        </div>
-                        <div class="col-12">
-                            <label for="addDescripcion" class="form-label">Descripción</label>
-                            <textarea class="form-control" id="addDescripcion" name="descripcion" rows="3" required></textarea>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="addTipoApoyo" class="form-label">Tipo de Apoyo</label>
-                            <select class="form-select" id="addTipoApoyo" name="tipo_apoyo_id" required>
-                                <option value="" selected disabled>Selecciona un tipo...</option>
-                                <?php foreach ($tipos_apoyo as $tipo): ?>
-                                    <option value="<?php echo $tipo['id']; ?>"><?php echo htmlspecialchars($tipo['nombre']); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="addFechaExpiracion" class="form-label">Fecha de Expiración (opcional)</label>
-                            <input type="date" class="form-control" id="addFechaExpiracion" name="fecha_expiracion">
-                        </div>
-                        <div class="col-12">
-                            <label for="addImagenBeneficio" class="form-label">Imagen de Referencia (JPG, PNG)</label>
-                            <input type="file" class="form-control" id="addImagenBeneficio" name="imagen_beneficio" accept="image/jpeg, image/png">
-                            <small class="text-muted">Max. 2MB. Se recomienda una imagen clara para el beneficio.</small>
-                        </div>
-                        <div class="col-12 form-check">
-                            <input class="form-check-input" type="checkbox" id="addActivo" name="activo" value="1" checked>
-                            <label class="form-check-label" for="addActivo">Beneficio Activo</label>
-                        </div>
+                        <div class="col-12"><label for="addTitulo" class="form-label">Título del Beneficio</label><input type="text" class="form-control" id="addTitulo" name="titulo" required></div>
+                        <div class="col-12"><label for="addDescripcion" class="form-label">Descripción</label><textarea class="form-control" id="addDescripcion" name="descripcion" rows="3" required></textarea></div>
+                        <div class="col-md-6"><label for="addTipoApoyo" class="form-label">Tipo de Apoyo</label><select class="form-select" id="addTipoApoyo" name="tipo_apoyo_id" required><option value="" selected disabled>Selecciona un tipo...</option><?php foreach ($tipos_apoyo as $tipo): ?><option value="<?php echo $tipo['id']; ?>"><?php echo htmlspecialchars($tipo['nombre']); ?></option><?php endforeach; ?></select></div>
+                        <div class="col-md-6"><label for="addFechaExpiracion" class="form-label">Fecha de Expiración (opcional)</label><input type="date" class="form-control" id="addFechaExpiracion" name="fecha_expiracion"></div>
+                        <div class="col-12"><label for="addImagenBeneficio" class="form-label">Imagen de Referencia (JPG, PNG)</label><input type="file" class="form-control" id="addImagenBeneficio" name="imagen_beneficio" accept="image/jpeg, image/png"><small class="text-muted">Max. 2MB.</small></div>
+                        <div class="col-12 form-check"><input class="form-check-input" type="checkbox" id="addActivo" name="activo" value="1" checked><label class="form-check-label" for="addActivo">Beneficio Activo</label></div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Guardar Beneficio</button>
-                    </div>
+                    <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar Beneficio</button></div>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Modal para Editar Beneficio -->
     <div class="modal fade" id="editBenefitModal" tabindex="-1" aria-labelledby="editBenefitModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
@@ -277,80 +228,35 @@ $conexion->close(); // Cerrar la conexión
                     <div class="modal-body row g-3">
                         <input type="hidden" name="action" value="edit">
                         <input type="hidden" name="benefit_id" id="editBenefitId">
-                        <div class="col-12">
-                            <label for="editTitulo" class="form-label">Título del Beneficio</label>
-                            <input type="text" class="form-control" id="editTitulo" name="titulo" required>
-                        </div>
-                        <div class="col-12">
-                            <label for="editDescripcion" class="form-label">Descripción</label>
-                            <textarea class="form-control" id="editDescripcion" name="descripcion" rows="3" required></textarea>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="editTipoApoyo" class="form-label">Tipo de Apoyo</label>
-                            <select class="form-select" id="editTipoApoyo" name="tipo_apoyo_id" required>
-                                <option value="" selected disabled>Selecciona un tipo...</option>
-                                <?php foreach ($tipos_apoyo as $tipo): ?>
-                                    <option value="<?php echo $tipo['id']; ?>"><?php echo htmlspecialchars($tipo['nombre']); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="editFechaExpiracion" class="form-label">Fecha de Expiración (opcional)</label>
-                            <input type="date" class="form-control" id="editFechaExpiracion" name="fecha_expiracion">
-                        </div>
-                        <div class="col-12">
-                            <label for="editImagenBeneficio" class="form-label">Cambiar Imagen de Referencia (JPG, PNG)</label>
-                            <input type="file" class="form-control" id="editImagenBeneficio" name="imagen_beneficio" accept="image/jpeg, image/png">
-                            <small class="text-muted">Dejar en blanco para mantener la imagen actual. Max. 2MB.</small>
-                            <div id="currentImagePreview" class="mt-2" style="display: none;">
-                                <p class="mb-1">Imagen actual:</p>
-                                <img src="" alt="Imagen Actual" style="max-width: 150px; height: auto; border-radius: 5px;">
-                            </div>
-                        </div>
-                        <div class="col-12 form-check">
-                            <input class="form-check-input" type="checkbox" id="editActivo" name="activo" value="1">
-                            <label class="form-check-label" for="editActivo">Beneficio Activo</label>
-                        </div>
+                        <div class="col-12"><label for="editTitulo" class="form-label">Título del Beneficio</label><input type="text" class="form-control" id="editTitulo" name="titulo" required></div>
+                        <div class="col-12"><label for="editDescripcion" class="form-label">Descripción</label><textarea class="form-control" id="editDescripcion" name="descripcion" rows="3" required></textarea></div>
+                        <div class="col-md-6"><label for="editTipoApoyo" class="form-label">Tipo de Apoyo</label><select class="form-select" id="editTipoApoyo" name="tipo_apoyo_id" required><option value="" disabled>Selecciona un tipo...</option><?php foreach ($tipos_apoyo as $tipo): ?><option value="<?php echo $tipo['id']; ?>"><?php echo htmlspecialchars($tipo['nombre']); ?></option><?php endforeach; ?></select></div>
+                        <div class="col-md-6"><label for="editFechaExpiracion" class="form-label">Fecha de Expiración (opcional)</label><input type="date" class="form-control" id="editFechaExpiracion" name="fecha_expiracion"></div>
+                        <div class="col-12"><label for="editImagenBeneficio" class="form-label">Cambiar Imagen (JPG, PNG)</label><input type="file" class="form-control" id="editImagenBeneficio" name="imagen_beneficio" accept="image/jpeg, image/png"><small class="text-muted">Dejar en blanco para mantener la imagen actual. Max. 2MB.</small><div id="currentImagePreview" class="mt-2" style="display: none;"><p class="mb-1">Imagen actual:</p><img src="" alt="Imagen Actual" style="max-width: 150px; height: auto; border-radius: 5px;"></div></div>
+                        <div class="col-12 form-check"><input class="form-check-input" type="checkbox" id="editActivo" name="activo" value="1"><label class="form-check-label" for="editActivo">Beneficio Activo</label></div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                    </div>
+                    <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar Cambios</button></div>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Modal de Confirmación de Eliminación -->
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Eliminación</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    ¿Estás seguro de que deseas eliminar el beneficio "<strong id="benefitTituloToDelete"></strong>"? Esta acción es irreversible.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <form id="deleteBenefitForm" action="auth/gestionar_beneficios_empresa.php" method="POST" style="display: inline;">
-                        <input type="hidden" name="action" value="delete">
-                        <input type="hidden" name="benefit_id" id="benefitIdToDelete">
-                        <button type="submit" class="btn btn-danger">Eliminar</button>
-                    </form>
-                </div>
+                <div class="modal-header"><h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Eliminación</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">¿Estás seguro de que deseas eliminar el beneficio "<strong id="benefitTituloToDelete"></strong>"? Esta acción es irreversible.</div>
+                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><form id="deleteBenefitForm" action="auth/gestionar_beneficios_empresa.php" method="POST" style="display: inline;"><input type="hidden" name="action" value="delete"><input type="hidden" name="benefit_id" id="benefitIdToDelete"><button type="submit" class="btn btn-danger">Eliminar</button></form></div>
             </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Lógica para precargar el modal de edición
             var editBenefitModal = document.getElementById('editBenefitModal');
             if (editBenefitModal) {
                 editBenefitModal.addEventListener('show.bs.modal', function (event) {
-                    var button = event.relatedTarget; // Botón que activó el modal
+                    var button = event.relatedTarget;
                     var id = button.getAttribute('data-id');
                     var titulo = button.getAttribute('data-titulo');
                     var descripcion = button.getAttribute('data-descripcion');
@@ -375,21 +281,20 @@ $conexion->close(); // Cerrar la conexión
                     modalActivoCheckbox.checked = (activo == 1);
                     modalTipoApoyoSelect.value = tipoApoyoId;
 
-                    if (imagenRuta && imagenRuta !== 'N/A') {
+                    if (imagenRuta) {
                         currentImageElement.src = imagenRuta;
                         currentImagePreviewDiv.style.display = 'block';
                     } else {
                         currentImagePreviewDiv.style.display = 'none';
-                        currentImageElement.src = ''; // Limpiar src para evitar mostrar imagen rota
+                        currentImageElement.src = '';
                     }
                 });
             }
 
-            // Lógica para precargar el modal de eliminación
             var confirmDeleteModal = document.getElementById('confirmDeleteModal');
             if (confirmDeleteModal) {
                 confirmDeleteModal.addEventListener('show.bs.modal', function (event) {
-                    var button = event.relatedTarget; // Botón que activó el modal
+                    var button = event.relatedTarget;
                     var id = button.getAttribute('data-id');
                     var titulo = button.getAttribute('data-titulo');
 
