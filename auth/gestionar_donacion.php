@@ -55,12 +55,10 @@ switch ($accion) {
         $nuevo_estatus_id = 3; // 3: Recibido
         $mensaje_exito = "¡Excelente! La donación ha sido marcada como recibida.";
         break;
-    // --- INICIO DE LA MODIFICACIÓN ---
     case 'no_concretado':
         $nuevo_estatus_id = 4; // 4: No Concretado
         $mensaje_exito = "La donación ha sido marcada como no concretada.";
         break;
-    // --- FIN DE LA MODIFICACIÓN ---
     default:
         // Si la acción no es válida, no hacer nada.
         header('Location: ../organizacion_donantes.php');
@@ -73,7 +71,42 @@ $stmt_update = $conexion->prepare($sql_update);
 $stmt_update->bind_param("ii", $nuevo_estatus_id, $donacion_id);
 
 if ($stmt_update->execute()) {
+    
+    // --- INICIO DE CÓDIGO AÑADIDO ---
+    // Si la acción fue 'recibir', procedemos a otorgar el beneficio.
+    if ($accion === 'recibir') {
+        
+        // 1. Obtener el ID del donante de la donación recién actualizada
+        $stmt_get_donante = $conexion->prepare("SELECT donante_id FROM donaciones WHERE id = ?");
+        $stmt_get_donante->bind_param("i", $donacion_id);
+        $stmt_get_donante->execute();
+        $donante_id = $stmt_get_donante->get_result()->fetch_assoc()['donante_id'];
+        $stmt_get_donante->close();
+
+        if ($donante_id) {
+            // 2. Seleccionar un beneficio activo al azar
+            $sql_get_apoyo = "SELECT id FROM empresas_apoyos WHERE activo = 1 ORDER BY RAND() LIMIT 1";
+            $resultado_apoyo = $conexion->query($sql_get_apoyo);
+            
+            if ($resultado_apoyo && $resultado_apoyo->num_rows > 0) {
+                $apoyo_id = $resultado_apoyo->fetch_assoc()['id'];
+
+                // 3. Insertar el nuevo beneficio para el donante
+                $sql_insert_beneficio = "INSERT INTO donantes_beneficios (donacion_id, usuario_id, apoyo_id, estado) VALUES (?, ?, ?, 'Disponible')";
+                $stmt_insert = $conexion->prepare($sql_insert_beneficio);
+                $stmt_insert->bind_param("iii", $donacion_id, $donante_id, $apoyo_id);
+                $stmt_insert->execute();
+                $stmt_insert->close();
+                
+                // Actualizamos el mensaje de éxito
+                $mensaje_exito = "¡Donación recibida! Se ha otorgado un beneficio al donante.";
+            }
+        }
+    }
+    // --- FIN DE CÓDIGO AÑADIDO ---
+
     $_SESSION['success_message'] = $mensaje_exito;
+
 } else {
     $_SESSION['error_message'] = "Ocurrió un error al actualizar la donación.";
 }

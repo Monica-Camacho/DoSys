@@ -29,15 +29,8 @@ if ($resultado_permisos->num_rows === 0) {
 
 $permisos = $resultado_permisos->fetch_assoc();
 $empresa_id = $permisos['empresa_id'];
-$rol_admin = $permisos['rol_id'];
+$rol_admin = $permisos['rol_id']; // Esta variable es la clave para los permisos
 $stmt_permisos->close();
-
-// Solo los administradores (rol_id = 1) de la empresa pueden gestionar beneficios
-if ($rol_admin != 1) {
-    $_SESSION['error_message'] = "No tienes permiso para gestionar beneficios de la empresa.";
-    header('Location: empresa_dashboard.php');
-    exit();
-}
 
 // Lógica para obtener los beneficios de la empresa
 $beneficios_empresa = [];
@@ -59,16 +52,14 @@ while ($row = $resultado_beneficios->fetch_assoc()) {
 }
 $stmt_beneficios->close();
 
-// Obtener tipos de apoyo para el formulario de creación/edición
 $tipos_apoyo = $conexion->query("SELECT id, nombre FROM tipos_apoyo ORDER BY nombre ASC")->fetch_all(MYSQLI_ASSOC);
-
 $conexion->close();
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>DoSys - Gestión de Beneficios</title>
+    <title>DoSys - Gestion de Beneficios</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     
     <!-- Favicon -->
@@ -92,7 +83,6 @@ $conexion->close();
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
-
 </head>
 <body>
     <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div></div>
@@ -117,10 +107,13 @@ $conexion->close();
                 <div class="alert alert-danger alert-dismissible fade show" role="alert"><?php echo $_SESSION['error_message']; unset($_SESSION['error_message']); ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
             <?php endif; ?>
 
-            <div class="d-flex justify-content-end mb-4">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBenefitModal"><i class="fas fa-plus-circle me-2"></i>Añadir Nuevo Beneficio</button>
+            <div class="d-flex justify-content-end mb-4 gap-2">
+                <?php if ($rol_admin == 1): ?>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBenefitModal"><i class="fas fa-plus-circle me-2"></i>Añadir Nuevo Beneficio</button>
+                <?php endif; ?>
+                
                 <a href="empresa_canjear_beneficio.php" class="btn btn-success" role="button">
-                    <i class="fas fa-plus-circle me-2"></i>Canjear Beneficio
+                    <i class="fas fa-ticket-alt me-2"></i>Canjear Beneficio
                 </a>    
             </div>
 
@@ -135,7 +128,9 @@ $conexion->close();
                                     <th scope="col">Expira</th>
                                     <th scope="col">Activo</th>
                                     <th scope="col">Imagen</th>
-                                    <th scope="col">Acciones</th>
+                                    <?php if ($rol_admin == 1): ?>
+                                        <th scope="col" class="text-center">Acciones</th>
+                                    <?php endif; ?>
                                 </tr>
                             </thead>
                             <tbody>
@@ -145,11 +140,7 @@ $conexion->close();
                                             <td><strong><?php echo htmlspecialchars($beneficio['titulo']); ?></strong></td>
                                             <td><?php echo htmlspecialchars($beneficio['tipo_apoyo_nombre']); ?></td>
                                             <td><?php echo $beneficio['fecha_expiracion'] ? date("d/m/Y", strtotime($beneficio['fecha_expiracion'])) : 'N/A'; ?></td>
-                                            <td>
-                                                <span class="badge bg-<?php echo $beneficio['activo'] ? 'success' : 'secondary'; ?>">
-                                                    <?php echo $beneficio['activo'] ? 'Sí' : 'No'; ?>
-                                                </span>
-                                            </td>
+                                            <td><span class="badge bg-<?php echo $beneficio['activo'] ? 'success' : 'secondary'; ?>"><?php echo $beneficio['activo'] ? 'Sí' : 'No'; ?></span></td>
                                             <td>
                                                 <?php if (!empty($beneficio['imagen_beneficio_ruta'])): ?>
                                                     <img src="<?php echo BASE_URL . htmlspecialchars($beneficio['imagen_beneficio_ruta']); ?>" alt="Imagen de Beneficio" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
@@ -157,33 +148,31 @@ $conexion->close();
                                                     N/A
                                                 <?php endif; ?>
                                             </td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-2 edit-benefit-btn" 
-                                                        data-bs-toggle="modal" 
-                                                        data-bs-target="#editBenefitModal"
-                                                        data-id="<?php echo $beneficio['id']; ?>"
-                                                        data-titulo="<?php echo htmlspecialchars($beneficio['titulo']); ?>"
-                                                        data-descripcion="<?php echo htmlspecialchars($beneficio['descripcion']); ?>"
-                                                        data-fecha-expiracion="<?php echo htmlspecialchars($beneficio['fecha_expiracion']); ?>"
-                                                        data-activo="<?php echo htmlspecialchars($beneficio['activo']); ?>"
-                                                        data-tipo-apoyo-id="<?php echo htmlspecialchars($beneficio['tipo_apoyo_id']); ?>"
-                                                        data-imagen-ruta="<?php echo !empty($beneficio['imagen_beneficio_ruta']) ? BASE_URL . htmlspecialchars($beneficio['imagen_beneficio_ruta']) : ''; ?>">
-                                                    <i class="fas fa-edit"></i> Editar
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger delete-benefit-btn" 
-                                                        data-bs-toggle="modal" 
-                                                        data-bs-target="#confirmDeleteModal" 
-                                                        data-id="<?php echo $beneficio['id']; ?>" 
-                                                        data-titulo="<?php echo htmlspecialchars($beneficio['titulo']); ?>">
-                                                    <i class="fas fa-trash-alt"></i> Eliminar
-                                                </button>
-                                            </td>
+                                            <?php if ($rol_admin == 1): ?>
+                                                <td class="text-center">
+                                                    <button class="btn btn-sm btn-outline-primary me-2 edit-benefit-btn" 
+                                                            data-bs-toggle="modal" data-bs-target="#editBenefitModal"
+                                                            data-id="<?php echo $beneficio['id']; ?>"
+                                                            data-titulo="<?php echo htmlspecialchars($beneficio['titulo']); ?>"
+                                                            data-descripcion="<?php echo htmlspecialchars($beneficio['descripcion']); ?>"
+                                                            data-fecha-expiracion="<?php echo htmlspecialchars($beneficio['fecha_expiracion']); ?>"
+                                                            data-activo="<?php echo htmlspecialchars($beneficio['activo']); ?>"
+                                                            data-tipo-apoyo-id="<?php echo htmlspecialchars($beneficio['tipo_apoyo_id']); ?>"
+                                                            data-imagen-ruta="<?php echo !empty($beneficio['imagen_beneficio_ruta']) ? BASE_URL . htmlspecialchars($beneficio['imagen_beneficio_ruta']) : ''; ?>">
+                                                        <i class="fas fa-edit"></i> Editar
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-danger delete-benefit-btn" 
+                                                            data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" 
+                                                            data-id="<?php echo $beneficio['id']; ?>" 
+                                                            data-titulo="<?php echo htmlspecialchars($beneficio['titulo']); ?>">
+                                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                                    </button>
+                                                </td>
+                                            <?php endif; ?>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php else: ?>
-                                    <tr>
-                                        <td colspan="6" class="text-center">No hay beneficios registrados para tu empresa.</td>
-                                    </tr>
+                                    <tr><td colspan="<?php echo ($rol_admin == 1) ? '6' : '5'; ?>" class="text-center">No hay beneficios registrados para tu empresa.</td></tr>
                                 <?php endif; ?>
                             </tbody>
                         </table>
@@ -193,122 +182,120 @@ $conexion->close();
         </div>
     </div>
 
+    <?php if ($rol_admin == 1): ?>
+        <div class="modal fade" id="addBenefitModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header"><h5 class="modal-title">Añadir Nuevo Beneficio</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                    <form action="auth/gestionar_beneficios_empresa.php" method="POST" enctype="multipart/form-data">
+                        <div class="modal-body row g-3">
+                            <input type="hidden" name="action" value="add">
+                            <div class="col-12"><label class="form-label">Título del Beneficio</label><input type="text" class="form-control" name="titulo" required></div>
+                            <div class="col-12"><label class="form-label">Descripción</label><textarea class="form-control" name="descripcion" rows="3" required></textarea></div>
+                            <div class="col-md-6"><label class="form-label">Tipo de Apoyo</label><select class="form-select" name="tipo_apoyo_id" required><option value="" selected disabled>Selecciona...</option><?php foreach ($tipos_apoyo as $tipo): ?><option value="<?php echo $tipo['id']; ?>"><?php echo htmlspecialchars($tipo['nombre']); ?></option><?php endforeach; ?></select></div>
+                            <div class="col-md-6"><label class="form-label">Fecha de Expiración (opcional)</label><input type="date" class="form-control" name="fecha_expiracion"></div>
+                            <div class="col-12"><label class="form-label">Imagen de Referencia (JPG, PNG)</label><input type="file" class="form-control" name="imagen_beneficio" accept="image/jpeg, image/png"><small class="text-muted">Max. 2MB.</small></div>
+                            <div class="col-12 form-check"><input class="form-check-input" type="checkbox" name="activo" value="1" checked><label class="form-check-label">Beneficio Activo</label></div>
+                        </div>
+                        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar</button></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="editBenefitModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header"><h5 class="modal-title">Editar Beneficio</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                    <form action="auth/gestionar_beneficios_empresa.php" method="POST" enctype="multipart/form-data">
+                        <div class="modal-body row g-3">
+                            <input type="hidden" name="action" value="edit">
+                            <input type="hidden" name="benefit_id" id="editBenefitId">
+                            <div class="col-12"><label class="form-label">Título del Beneficio</label><input type="text" class="form-control" id="editTitulo" name="titulo" required></div>
+                            <div class="col-12"><label class="form-label">Descripción</label><textarea class="form-control" id="editDescripcion" name="descripcion" rows="3" required></textarea></div>
+                            <div class="col-md-6"><label class="form-label">Tipo de Apoyo</label><select class="form-select" id="editTipoApoyo" name="tipo_apoyo_id" required><option value="" disabled>Selecciona...</option><?php foreach ($tipos_apoyo as $tipo): ?><option value="<?php echo $tipo['id']; ?>"><?php echo htmlspecialchars($tipo['nombre']); ?></option><?php endforeach; ?></select></div>
+                            <div class="col-md-6"><label class="form-label">Fecha de Expiración (opcional)</label><input type="date" class="form-control" id="editFechaExpiracion" name="fecha_expiracion"></div>
+                            <div class="col-12"><label class="form-label">Cambiar Imagen (JPG, PNG)</label><input type="file" class="form-control" name="imagen_beneficio" accept="image/jpeg, image/png"><small class="text-muted">Dejar en blanco para mantener la imagen actual. Max. 2MB.</small><div id="currentImagePreview" class="mt-2" style="display: none;"><p class="mb-1">Imagen actual:</p><img src="" alt="Imagen Actual" style="max-width: 150px; height: auto; border-radius: 5px;"></div></div>
+                            <div class="col-12 form-check"><input class="form-check-input" type="checkbox" id="editActivo" name="activo" value="1"><label class="form-check-label" for="editActivo">Beneficio Activo</label></div>
+                        </div>
+                        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar Cambios</button></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="confirmDeleteModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header"><h5 class="modal-title">Confirmar Eliminación</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                    <div class="modal-body">¿Estás seguro de que deseas eliminar el beneficio "<strong id="benefitTituloToDelete"></strong>"? Esta acción es irreversible.</div>
+                    <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><form id="deleteBenefitForm" action="auth/gestionar_beneficios_empresa.php" method="POST" style="display: inline;"><input type="hidden" name="action" value="delete"><input type="hidden" name="benefit_id" id="benefitIdToDelete"><button type="submit" class="btn btn-danger">Eliminar</button></form></div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <?php require_once 'templates/footer.php'; ?>
     <a href="#" class="btn btn-primary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a> 
     <?php require_once 'templates/scripts.php'; ?>
+    
+    <?php if ($rol_admin == 1): ?>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var editBenefitModal = document.getElementById('editBenefitModal');
+                if (editBenefitModal) {
+                    editBenefitModal.addEventListener('show.bs.modal', function (event) {
+                        var button = event.relatedTarget;
+                        var id = button.getAttribute('data-id');
+                        var titulo = button.getAttribute('data-titulo');
+                        var descripcion = button.getAttribute('data-descripcion');
+                        var fechaExpiracion = button.getAttribute('data-fecha-expiracion');
+                        var activo = button.getAttribute('data-activo');
+                        var tipoApoyoId = button.getAttribute('data-tipo-apoyo-id');
+                        var imagenRuta = button.getAttribute('data-imagen-ruta');
 
-    <div class="modal fade" id="addBenefitModal" tabindex="-1" aria-labelledby="addBenefitModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addBenefitModalLabel">Añadir Nuevo Beneficio</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="auth/gestionar_beneficios_empresa.php" method="POST" enctype="multipart/form-data">
-                    <div class="modal-body row g-3">
-                        <input type="hidden" name="action" value="add">
-                        <div class="col-12"><label for="addTitulo" class="form-label">Título del Beneficio</label><input type="text" class="form-control" id="addTitulo" name="titulo" required></div>
-                        <div class="col-12"><label for="addDescripcion" class="form-label">Descripción</label><textarea class="form-control" id="addDescripcion" name="descripcion" rows="3" required></textarea></div>
-                        <div class="col-md-6"><label for="addTipoApoyo" class="form-label">Tipo de Apoyo</label><select class="form-select" id="addTipoApoyo" name="tipo_apoyo_id" required><option value="" selected disabled>Selecciona un tipo...</option><?php foreach ($tipos_apoyo as $tipo): ?><option value="<?php echo $tipo['id']; ?>"><?php echo htmlspecialchars($tipo['nombre']); ?></option><?php endforeach; ?></select></div>
-                        <div class="col-md-6"><label for="addFechaExpiracion" class="form-label">Fecha de Expiración (opcional)</label><input type="date" class="form-control" id="addFechaExpiracion" name="fecha_expiracion"></div>
-                        <div class="col-12"><label for="addImagenBeneficio" class="form-label">Imagen de Referencia (JPG, PNG)</label><input type="file" class="form-control" id="addImagenBeneficio" name="imagen_beneficio" accept="image/jpeg, image/png"><small class="text-muted">Max. 2MB.</small></div>
-                        <div class="col-12 form-check"><input class="form-check-input" type="checkbox" id="addActivo" name="activo" value="1" checked><label class="form-check-label" for="addActivo">Beneficio Activo</label></div>
-                    </div>
-                    <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar Beneficio</button></div>
-                </form>
-            </div>
-        </div>
-    </div>
+                        var modalIdInput = editBenefitModal.querySelector('#editBenefitId');
+                        var modalTituloInput = editBenefitModal.querySelector('#editTitulo');
+                        var modalDescripcionInput = editBenefitModal.querySelector('#editDescripcion');
+                        var modalFechaExpiracionInput = editBenefitModal.querySelector('#editFechaExpiracion');
+                        var modalActivoCheckbox = editBenefitModal.querySelector('#editActivo');
+                        var modalTipoApoyoSelect = editBenefitModal.querySelector('#editTipoApoyo');
+                        var currentImagePreviewDiv = editBenefitModal.querySelector('#currentImagePreview');
+                        var currentImageElement = editBenefitModal.querySelector('#currentImagePreview img');
 
-    <div class="modal fade" id="editBenefitModal" tabindex="-1" aria-labelledby="editBenefitModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editBenefitModalLabel">Editar Beneficio</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="auth/gestionar_beneficios_empresa.php" method="POST" enctype="multipart/form-data">
-                    <div class="modal-body row g-3">
-                        <input type="hidden" name="action" value="edit">
-                        <input type="hidden" name="benefit_id" id="editBenefitId">
-                        <div class="col-12"><label for="editTitulo" class="form-label">Título del Beneficio</label><input type="text" class="form-control" id="editTitulo" name="titulo" required></div>
-                        <div class="col-12"><label for="editDescripcion" class="form-label">Descripción</label><textarea class="form-control" id="editDescripcion" name="descripcion" rows="3" required></textarea></div>
-                        <div class="col-md-6"><label for="editTipoApoyo" class="form-label">Tipo de Apoyo</label><select class="form-select" id="editTipoApoyo" name="tipo_apoyo_id" required><option value="" disabled>Selecciona un tipo...</option><?php foreach ($tipos_apoyo as $tipo): ?><option value="<?php echo $tipo['id']; ?>"><?php echo htmlspecialchars($tipo['nombre']); ?></option><?php endforeach; ?></select></div>
-                        <div class="col-md-6"><label for="editFechaExpiracion" class="form-label">Fecha de Expiración (opcional)</label><input type="date" class="form-control" id="editFechaExpiracion" name="fecha_expiracion"></div>
-                        <div class="col-12"><label for="editImagenBeneficio" class="form-label">Cambiar Imagen (JPG, PNG)</label><input type="file" class="form-control" id="editImagenBeneficio" name="imagen_beneficio" accept="image/jpeg, image/png"><small class="text-muted">Dejar en blanco para mantener la imagen actual. Max. 2MB.</small><div id="currentImagePreview" class="mt-2" style="display: none;"><p class="mb-1">Imagen actual:</p><img src="" alt="Imagen Actual" style="max-width: 150px; height: auto; border-radius: 5px;"></div></div>
-                        <div class="col-12 form-check"><input class="form-check-input" type="checkbox" id="editActivo" name="activo" value="1"><label class="form-check-label" for="editActivo">Beneficio Activo</label></div>
-                    </div>
-                    <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar Cambios</button></div>
-                </form>
-            </div>
-        </div>
-    </div>
+                        modalIdInput.value = id;
+                        modalTituloInput.value = titulo;
+                        modalDescripcionInput.value = descripcion;
+                        modalFechaExpiracionInput.value = fechaExpiracion;
+                        modalActivoCheckbox.checked = (activo == 1);
+                        modalTipoApoyoSelect.value = tipoApoyoId;
 
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header"><h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Eliminación</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body">¿Estás seguro de que deseas eliminar el beneficio "<strong id="benefitTituloToDelete"></strong>"? Esta acción es irreversible.</div>
-                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><form id="deleteBenefitForm" action="auth/gestionar_beneficios_empresa.php" method="POST" style="display: inline;"><input type="hidden" name="action" value="delete"><input type="hidden" name="benefit_id" id="benefitIdToDelete"><button type="submit" class="btn btn-danger">Eliminar</button></form></div>
-            </div>
-        </div>
-    </div>
+                        if (imagenRuta) {
+                            currentImageElement.src = imagenRuta;
+                            currentImagePreviewDiv.style.display = 'block';
+                        } else {
+                            currentImagePreviewDiv.style.display = 'none';
+                            currentImageElement.src = '';
+                        }
+                    });
+                }
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var editBenefitModal = document.getElementById('editBenefitModal');
-            if (editBenefitModal) {
-                editBenefitModal.addEventListener('show.bs.modal', function (event) {
-                    var button = event.relatedTarget;
-                    var id = button.getAttribute('data-id');
-                    var titulo = button.getAttribute('data-titulo');
-                    var descripcion = button.getAttribute('data-descripcion');
-                    var fechaExpiracion = button.getAttribute('data-fecha-expiracion');
-                    var activo = button.getAttribute('data-activo');
-                    var tipoApoyoId = button.getAttribute('data-tipo-apoyo-id');
-                    var imagenRuta = button.getAttribute('data-imagen-ruta');
+                var confirmDeleteModal = document.getElementById('confirmDeleteModal');
+                if (confirmDeleteModal) {
+                    confirmDeleteModal.addEventListener('show.bs.modal', function (event) {
+                        var button = event.relatedTarget;
+                        var id = button.getAttribute('data-id');
+                        var titulo = button.getAttribute('data-titulo');
 
-                    var modalIdInput = editBenefitModal.querySelector('#editBenefitId');
-                    var modalTituloInput = editBenefitModal.querySelector('#editTitulo');
-                    var modalDescripcionInput = editBenefitModal.querySelector('#editDescripcion');
-                    var modalFechaExpiracionInput = editBenefitModal.querySelector('#editFechaExpiracion');
-                    var modalActivoCheckbox = editBenefitModal.querySelector('#editActivo');
-                    var modalTipoApoyoSelect = editBenefitModal.querySelector('#editTipoApoyo');
-                    var currentImagePreviewDiv = editBenefitModal.querySelector('#currentImagePreview');
-                    var currentImageElement = editBenefitModal.querySelector('#currentImagePreview img');
+                        var modalBenefitIdInput = confirmDeleteModal.querySelector('#benefitIdToDelete');
+                        var modalBenefitTituloSpan = confirmDeleteModal.querySelector('#benefitTituloToDelete');
 
-                    modalIdInput.value = id;
-                    modalTituloInput.value = titulo;
-                    modalDescripcionInput.value = descripcion;
-                    modalFechaExpiracionInput.value = fechaExpiracion;
-                    modalActivoCheckbox.checked = (activo == 1);
-                    modalTipoApoyoSelect.value = tipoApoyoId;
-
-                    if (imagenRuta) {
-                        currentImageElement.src = imagenRuta;
-                        currentImagePreviewDiv.style.display = 'block';
-                    } else {
-                        currentImagePreviewDiv.style.display = 'none';
-                        currentImageElement.src = '';
-                    }
-                });
-            }
-
-            var confirmDeleteModal = document.getElementById('confirmDeleteModal');
-            if (confirmDeleteModal) {
-                confirmDeleteModal.addEventListener('show.bs.modal', function (event) {
-                    var button = event.relatedTarget;
-                    var id = button.getAttribute('data-id');
-                    var titulo = button.getAttribute('data-titulo');
-
-                    var modalBenefitIdInput = confirmDeleteModal.querySelector('#benefitIdToDelete');
-                    var modalBenefitTituloSpan = confirmDeleteModal.querySelector('#benefitTituloToDelete');
-
-                    modalBenefitIdInput.value = id;
-                    modalBenefitTituloSpan.textContent = titulo;
-                });
-            }
-        });
-    </script>
+                        modalBenefitIdInput.value = id;
+                        modalBenefitTituloSpan.textContent = titulo;
+                    });
+                }
+            });
+        </script>
+    <?php endif; ?>
 </body>
 </html>

@@ -50,10 +50,9 @@ $user_role = $is_logged_in ? ($_SESSION['rol_id'] ?? 0) : 0;
                             <div class="dropdown-menu dropdown-menu-end">
                                 <?php switch ($user_type):
                                     case 1: // Menú Persona ?>
-                                        <a href="<?php echo BASE_URL; ?>persona_dashboard.php" class="dropdown-item">Panel Personañ</a>
+                                        <a href="<?php echo BASE_URL; ?>persona_dashboard.php" class="dropdown-item">Panel Personal</a>
                                         <a href="<?php echo BASE_URL; ?>persona_beneficios.php" class="dropdown-item">Mis Beneficios</a>
-                                        <a href="<?php echo BASE_URL; ?>persona_configuracion.php" class="dropdown-item">Configuración</a>
-
+                                        
                                         <div class="dropdown-divider"></div>
                                         <li class="dropdown-header">Cuenta</li>
                                         <a href="<?php echo BASE_URL; ?>persona_perfil.php" class="dropdown-item">Mi Cuenta Personal</a>
