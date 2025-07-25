@@ -119,6 +119,9 @@ $conexion->close();
 
             <div class="d-flex justify-content-end mb-4">
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBenefitModal"><i class="fas fa-plus-circle me-2"></i>Añadir Nuevo Beneficio</button>
+                <a href="empresa_canjear_beneficio.php" class="btn btn-success" role="button">
+                    <i class="fas fa-plus-circle me-2"></i>Canjear Beneficio
+                </a>    
             </div>
 
             <div class="card border-0 shadow-sm">
