@@ -151,7 +151,7 @@ $conexion->close();
                      <div class="d-flex flex-column text-center align-items-center bg-white p-4 rounded shadow-sm">
                         <!-- La imagen ahora muestra la foto del usuario o la de por defecto -->
                         <img class="img-fluid rounded-circle mb-3" 
-                             src="<?php echo !empty($perfil['foto_url']) ? BASE_URL . htmlspecialchars($perfil['foto_url']) : BASE_URL . 'img/user.jpg'; ?>" 
+                             src="<?php echo !empty($perfil['foto_url']) ? BASE_URL . htmlspecialchars($perfil['foto_url']) : BASE_URL . 'img/elements/sin_user.jpg'; ?>" 
                              alt="Foto de Perfil" 
                              style="width: 150px; height: 150px; object-fit: cover;">
                         

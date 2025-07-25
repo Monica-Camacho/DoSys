@@ -148,7 +148,7 @@ $conexion->close();
                 <div class="col-lg-4">
                     <div class="d-flex flex-column text-center align-items-center bg-white p-4 rounded shadow-sm">
                         <img id="profileImage" class="img-fluid rounded-circle mb-3" 
-                            src="<?php echo !empty($empresa['logo_url']) ? BASE_URL . htmlspecialchars($empresa['logo_url']) : BASE_URL . 'img/logo.jpg'; ?>" 
+                            src="<?php echo !empty($empresa['logo_url']) ? BASE_URL . htmlspecialchars($empresa['logo_url']) : BASE_URL . 'img/elements/sin_logo.jpg'; ?>" 
                             alt="Logo de la Empresa" style="width: 150px; height: 150px; object-fit: cover;">
                         
                         <h4 class="mb-1"><?php echo htmlspecialchars($empresa['nombre_comercial'] ?? 'Nombre de la Empresa'); ?></h4>
